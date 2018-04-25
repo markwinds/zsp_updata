@@ -33,6 +33,7 @@ void Search_line_init()
 
 void Search_line()
 {
+  temp_s[7] = 0.5;
 	int left_black[CAMERA_H];                          //左边黑线数组
 	int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
 	int left_next_line = 0;                            //判断扫描是否进入了新的一行
@@ -345,109 +346,109 @@ void Search_line()
 		1.根据左右边界确定中心点的位置
 		2.标记无效中心点
 	*/
-	jh = LINE_NUM - 1;
-
-	if (2 == iscross_flag)
+	if (2 == iscross_flag)  //在十字道内计算中心的方法
 	{
-		while (jh >= 0 && left_black[jh] != -2 && right_black[jh] != -2)
+		jh = LINE_NUM - 1;
+		if (20 < cross_distance_count && cross_distance_count< 130) //在这个范围内补线
 		{
-			if (jh == (LINE_NUM - 1))
+			while (jh >= 0 && left_black[jh] != -2 && right_black[jh] != -2)
 			{
-				if (-1 == right_black[jh])
+				if (jh == (LINE_NUM - 1))  //第一次进入循环
 				{
-					middleline[jh] = (left_black[jh] + CAMERA_W) / 2;
-					cross_temp[1] = LINE_NUM - 1;   //起始行全丢线就算找到下界
-				}	
-				else if (-1 == left_black[jh])
-				{
-					middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
-					cross_temp[1] = LINE_NUM - 1;   //起始行全丢线就算找到下界
-				}
-				else
-					middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
-			}
-				
-			else
-			{
-				/*从最下面开始扫描当出现一边丢线时就一直进入这个if找十字上界 */
-				if ((-1 == left_black[jh] || -1 == right_black[jh] || cross_temp[1] != -1) && cross_temp[0] != -2)
-				{
-					if (-1 == cross_temp[1])
+					if (-1 == right_black[jh])
 					{
-						cross_temp[1] = jh + 1;   //记录补线下界
-						temp_s[5] = cross_temp[1];
-						temp_s[7] = middleline[cross_temp[1]];
-					}
-					if (jh <= 0)  //未找到上界
+						middleline[jh] = (left_black[jh] + CAMERA_W) / 2;
+						cross_temp[1] = LINE_NUM - 1;   //起始行全丢线就算找到下界
+					}	
+					else if (-1 == left_black[jh])
 					{
-						for (i = 0; i < cross_temp[1]; i++)
-						{
-							//middleline[i] = middleline[LINE_NUM - 1] + (middleline[cross_temp[1]] - middleline[LINE_NUM - 1])*(LINE_NUM - 1 -i)/(LINE_NUM - 1 - cross_temp[1]);
-							middleline[i] = (CAMERA_W / 2 + middleline[cross_temp[1]]) / 2;
-						}
-					}
-					else if (left_black[jh] != -1 && right_black[jh] != -1)
-					{
-						cross_temp[0] = jh;   //记录补线上界
-						temp_s[4] = cross_temp[0];
-						
 						middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
-						middleline[jh] += ((CAMERA_W / 2 - middleline[jh]) / 2);
-						temp_s[6] = middleline[cross_temp[0]];
-						for (i = cross_temp[0] + 1; i < cross_temp[1]; i++)
+						cross_temp[1] = LINE_NUM - 1;   //起始行全丢线就算找到下界
+					}
+					else  //如果起始行不丢线
+						middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
+				}
+				
+				else //除了起始行，其他的行都执行这里面的代码
+				{
+					/*从最下面开始扫描当出现一边丢线时就一直进入这个if找十字上界 */
+					/*进入这个if要满足上界未找到（找到时cross_temp[0]标记为-2）且（第一次开始丢线或者已经有过丢线）*/
+					if ((-1 == left_black[jh] || -1 == right_black[jh] || cross_temp[1] != -1) && cross_temp[0] != -2) 
+					{
+						if (-1 == cross_temp[1]) //如果是第一次丢线
 						{
-							middleline[i] = middleline[cross_temp[1]] + (middleline[cross_temp[0]] - middleline[cross_temp[1]])*(i - cross_temp[1]) / (cross_temp[1] - cross_temp[0]);
-							//middleline[i] = (middleline[cross_temp[0]] + middleline[cross_temp[1]]) / 2;
-							//temp_s[9] = 10;
+							cross_temp[1] = jh + 1;   //记录补线下界
+							//temp_s[5] = cross_temp[1];
+							//temp_s[7] = middleline[cross_temp[1]];
 						}
-						cross_temp[0] = -2; //不在进入这个if
+						if (jh <= 0)  //未找到上界
+						{
+							for (i = 0; i < cross_temp[1]; i++)
+							{
+								middleline[i] = middleline[cross_temp[1]] + (CAMERA_W/2 - middleline[cross_temp[1]])*(cross_temp[1] -i)/(cross_temp[1]);
+								//middleline[i] = (CAMERA_W / 2 + middleline[cross_temp[1]]) / 2;
+							}
+						}
+						else if (left_black[jh] != -1 && right_black[jh] != -1)//两边都不丢线即找到补线上界
+						{
+							cross_temp[0] = jh;   //记录补线上界
+							//temp_s[4] = cross_temp[0];
+						
+							middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
+							middleline[jh] += ((CAMERA_W / 2 - middleline[jh]) / 2);
+							//temp_s[6] = middleline[cross_temp[0]];
+							for (i = cross_temp[0] + 1; i < cross_temp[1]; i++)
+							{
+								middleline[i] = middleline[cross_temp[1]] + (middleline[cross_temp[0]] - middleline[cross_temp[1]])*(i - cross_temp[1]) / (cross_temp[1] - cross_temp[0]);//下界列+上下界列差*当前行差/上下界行差
+								//middleline[i] = (middleline[cross_temp[0]] + middleline[cross_temp[1]]) / 2;
+								//temp_s[9] = 10;
+							}
+							cross_temp[0] = -2; //不在进入这个if
+						}
+					}
+					else //还未丢线时直接计算中点
+					{
+						if (-1 == right_black[jh])
+						{
+							middleline[jh] = (left_black[jh] + CAMERA_W) / 2;
+						}
+						else
+						{
+							middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
+						}
+
 					}
 				}
-				else
-				{
-					middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
-				}
+				jh--;
 			}
-			jh--;
+			if (left_black[jh] == -2 || right_black[jh] != -2)
+			{
+				middleline[jh] = -2;
+			}
 		}
-		if (left_black[jh] == -2 || right_black[jh] != -2)
+		else
 		{
-			middleline[jh] = -2;
+			nomal_middle(left_black, right_black, middleline);
+		}
+
+		if (326 < cross_distance_count && cross_distance_count< 430)//如果到了准备出十字
+		{
+			jh = LINE_NUM - 1;
+			while (jh >= 0)
+			{
+				middleline[jh] = middleline[jh] + temp_s[7]*(middleline[jh] - CAMERA_W / 2);
+				if (middleline[jh] > CAMERA_W - 1 - 6 || middleline[jh] < 0 + 6)
+				{
+					middleline[jh] = -2;
+					break;
+				}
+				jh--;
+			}
 		}
 	}
 	else
 	{
-		while (jh >= 0 && left_black[jh] != -2 && right_black[jh] != -2)
-		{
-			if (jh == (LINE_NUM - 1))
-			{
-				if (-1 == right_black[jh])
-					middleline[jh] = (left_black[jh] + CAMERA_W) / 2;
-				else
-					middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
-			}
-			else
-			{
-				if (-1 == left_black[jh] || -1 == right_black[jh])
-				{
-					if (-1 == left_black[jh] && -1 == right_black[jh]) middleline[jh] = CAMERA_W / 2;
-					else
-					{
-						if (-1 == right_black[jh]) middleline[jh] = left_black[jh] + 36 / (1 + (60 - jh)*TRAPEZOID_CORRECT / 40);
-						else middleline[jh] = right_black[jh] - 36 / (1 + (60 - jh)*TRAPEZOID_CORRECT / 40);
-					}
-				}
-				else
-				{
-					middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
-				}
-			}
-			jh--;
-		}
-		if (left_black[jh] == -2 || right_black[jh] != -2)
-		{
-			middleline[jh] = -2;
-		}
+		nomal_middle(left_black, right_black, middleline);
 	}
 	
 
@@ -541,5 +542,45 @@ void Negation()
 		}
 	}
 }
+
+void nomal_middle(int left_black[],int right_black[],int middleline[])
+{
+	int jh;
+
+	jh = LINE_NUM - 1;
+	while (jh >= 0 && left_black[jh] != -2 && right_black[jh] != -2)
+	{
+		if (jh == (LINE_NUM - 1))
+		{
+			if (-1 == right_black[jh])
+				middleline[jh] = (left_black[jh] + CAMERA_W) / 2;
+			else
+				middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
+		}
+		else
+		{
+			if (-1 == left_black[jh] || -1 == right_black[jh])
+			{
+				if (-1 == left_black[jh] && -1 == right_black[jh]) middleline[jh] = CAMERA_W / 2;
+				else
+				{
+					if (-1 == right_black[jh]) middleline[jh] = left_black[jh] + ROAD_WIDE / (1 + (60 - jh)*TRAPEZOID_CORRECT / 40);
+					else middleline[jh] = right_black[jh] - ROAD_WIDE / (1 + (60 - jh)*TRAPEZOID_CORRECT / 40);
+				}
+			}
+			else
+			{
+				middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
+			}
+		}
+		jh--;
+	}
+	if (left_black[jh] == -2 || right_black[jh] != -2)
+	{
+		middleline[jh] = -2;
+	}
+}
+
+
 
 

@@ -118,6 +118,7 @@ void Open_UI()
 		//LCD_num(tem_site_data[0], quad_val, BLACK, WHITE);
 		LCD_num(tem_site_data[1], ui_data[2], BLACK, WHITE);
 		LCD_num(tem_site_data[2], ui_data[3], BLACK, WHITE);
+		LCD_num(tem_site_data[3], temp_s[7], BLACK, WHITE);
 		key_on = 0;
 		enable_irq(PORTD_IRQn);
 	}

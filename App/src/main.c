@@ -48,6 +48,7 @@ void  main(void)
             Update_Motor();
 			camera_get_img();                            //相机获取图像                               
 			img_extract(img, imgbuff, CAMERA_SIZE);      //解压图像
+			//temp_s[6] = Find_slope();
 			Search_line();                               //找线
 			Negation();
 			img_compress(img, imgbuff, CAMERA_SIZE);     //图像压缩
@@ -56,12 +57,8 @@ void  main(void)
 			//LCD_numf(tem_site_data[2], temp_s[1], GREEN, BLUE);
 			
 			LCD_numf(tem_site_str[3], iscross_flag, GREEN, BLUE);
-			LCD_numf(tem_site_data[3], cross_distance_count, GREEN, BLUE);
-			LCD_numf(tem_site_str[4], temp_s[4] , GREEN, BLUE);
-			LCD_numf(tem_site_data[4], temp_s[6], GREEN, BLUE);
-			LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
-			LCD_numf(tem_site_data[5], temp_s[7], GREEN, BLUE);
-			LCD_numf(tem_site_str[2], temp_s[9], GREEN, BLUE);
+			LCD_numf(tem_site_data[3], temp_s[7] , GREEN, BLUE);
+			LCD_numf(tem_site_str[4], cross_distance_count, GREEN, BLUE);
 			
 			Control_core();
 
@@ -70,8 +67,8 @@ void  main(void)
 		else Open_UI();
 
 
-		//ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
-		ftm_pwm_duty(FTM0, FTM_CH5, 0);
+		ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
+		//ftm_pwm_duty(FTM0, FTM_CH5, 0);
 		ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree);       //舵机 
         //ftm_pwm_duty(FTM0, FTM_CH6, 390);
 	}//while

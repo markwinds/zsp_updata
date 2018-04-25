@@ -12,6 +12,7 @@
 
 #define CAMERA_HARDWARE_ERROR  4          //摄像头杆偏离中线导致的硬件偏差,右偏为正
 #define TRAPEZOID_CORRECT   0.35     //梯形矫正 此值越大矫正力度越大
+#define ROAD_WIDE	        39    //路宽的一半
 //#define DIP_CORRECT         1.414   //倾角矫正
 
 /*以下的宏可能以后用不到*/
@@ -44,5 +45,6 @@ extern  void Search_line_init();
 extern  void Search_line();
 extern float Find_slope();
 extern void Negation();
+extern void nomal_middle(int left_black[], int right_black[], int middleline[]);
 
 #endif

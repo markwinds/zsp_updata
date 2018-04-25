@@ -52,7 +52,7 @@ void Update_Motor()
 		iscross_flag = 0;
 		cross_distance_count = 0;
 	}
-	if (cross_distance_count > 30 && 2 == iscross_flag)    //如果在判断是十字后跑了30厘米那就清空
+	if (cross_distance_count > 430 && 2 == iscross_flag)    //如果在判断是十字后跑了30厘米那就清空
 	{
 		iscross_flag = 0;
 		cross_distance_count = 0;
