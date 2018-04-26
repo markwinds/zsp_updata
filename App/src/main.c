@@ -1,5 +1,4 @@
 /*摄像头60*80，屏幕128*128*/
-
 #include "common.h"
 #include "include.h"
 
@@ -10,13 +9,24 @@ void DMA0_IRQHandler();
 
 int _temp = 0;
 
+Screen_Data screen_data[] = {
+{ "speed0",&(temp_s[0]),0.3 },
+{ "speed1",&(temp_s[1]),99 },
+{ "speed2",&(temp_s[2]),2 },
+{ "speed3",&(temp_s[3]),3 },
+{ "speed4",&(temp_s[4]),4 },
+{ "speed5",&(temp_s[5]),5 },
+{ "speed6",&(temp_s[6]),6 },
+{ "speed7",&(temp_s[7]),7 },
+{ "speed8",&(temp_s[8]),8 },
+{ "speed9",&(temp_s[9]),9 }
+};
+
 /*
 图像不压缩直接显示
 */
 void  main(void)
 {
-
-
 	Site_t site = { 0, 0 };             
 	Size_t size;  
 	Size_t imgsize = { CAMERA_W, CAMERA_H };
@@ -39,6 +49,7 @@ void  main(void)
 	set_vector_handler(PORTD_VECTORn, PORTD_IRQHandler);   //ui所需中断的初始化
 	Quad_Init();                                           //编码器中断
 	
+	
 
 	while (1)
 	{    
@@ -56,19 +67,19 @@ void  main(void)
 			//LCD_numf(tem_site_str[2], temp_s[0], GREEN, BLUE);  
 			//LCD_numf(tem_site_data[2], temp_s[1], GREEN, BLUE);
 			
-			LCD_numf(tem_site_str[3], iscross_flag, GREEN, BLUE);
-			LCD_numf(tem_site_data[3], temp_s[7] , GREEN, BLUE);
-			LCD_numf(tem_site_str[4], cross_distance_count, GREEN, BLUE);
+			//LCD_numf(tem_site_str[3], iscross_flag, GREEN, BLUE);
+			//LCD_numf(tem_site_data[3], temp_s[7] , GREEN, BLUE);
+			//LCD_numf(tem_site_str[4], cross_distance_count, GREEN, BLUE);
 			
 			Control_core();
 
 			if (1 == key_on) enable_irq(PORTD_IRQn);     //激活按键中断
 		}
-		else Open_UI();
+		else Open_UI(10);
 
 
-		ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
-		//ftm_pwm_duty(FTM0, FTM_CH5, 0);
+		//ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
+		ftm_pwm_duty(FTM0, FTM_CH5, 0);
 		ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree);       //舵机 
         //ftm_pwm_duty(FTM0, FTM_CH6, 390);
 	}//while

@@ -436,7 +436,7 @@ void Search_line()
 			jh = LINE_NUM - 1;
 			while (jh >= 0)
 			{
-				middleline[jh] = middleline[jh] + temp_s[7]*(middleline[jh] - CAMERA_W / 2);
+				middleline[jh] = middleline[jh] + 0.5*(middleline[jh] - CAMERA_W / 2);
 				if (middleline[jh] > CAMERA_W - 1 - 6 || middleline[jh] < 0 + 6)
 				{
 					middleline[jh] = -2;
