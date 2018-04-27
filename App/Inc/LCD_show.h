@@ -18,9 +18,6 @@ typedef struct Screen_Data //传参结构体
 	float icrement;   //参数累加数 如果是100就是on\off
 }Screen_Data;
 
-
-
-
 /*新增lcd功能*/
 typedef struct Lcd_State //状态结构体
 {
@@ -65,12 +62,9 @@ extern int ui_data[];
 extern Site_t tem_site_str[];
 extern Site_t tem_site_data[];
 
-
-
 void PORTD_IRQHandler();
 void UI_INIT();
-void Open_UI(int n);
-
+void Open_UI();
 
 
 #endif

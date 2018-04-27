@@ -1,4 +1,5 @@
 #include "include.h"
+#include <string.h>
 
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
@@ -78,97 +79,24 @@ void PORTD_IRQHandler()
 			onpress_R();
 		}
 	}
-	key_on = 1;
-	disable_irq(PORTD_IRQn);
-	//else
-	//{
-	//	if (flag & (1 << 13))   
-	//	{
-	//		if (ui_point)
-	//		{
-	//			if (GREEN == colour[ui_point])   //背景色改变
-	//			{
-	//				colour[ui_point] = RED;
-	//			}
-	//			else
-	//			{
-	//				colour[ui_point] = GREEN;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			lcd_mode = IMG_MODE;
-	//		}
-	//	}
-	//	else if (flag & (1 << 12))  //右键按下
-	//	{
-	//		if (ui_point)
-	//		{
-	//			if (RED == colour[ui_point])  //背景为红色表示可以改对应值
-	//			{
-	//				ui_data[ui_point]++;
-	//			}
-	//		}
-	//	}
-	//	else if (flag & (1 << 11))  //左键按下
-	//	{
-	//		if (ui_point)
-	//		{
-	//			if (RED == colour[ui_point])  //背景为红色表示可以改对应值
-	//			{
-	//				ui_data[ui_point]--;
-	//				if (ui_data[ui_point] < 0) ui_data[ui_point] = 0;
-	//			}
-	//		}
-	//	}
-	//	else if (flag & (1 << 10)) //上键按下
-	//	{
-	//		if (GREEN == colour[ui_point] && ui_point != 0)
-	//		{
-	//			if (1 == ui_point)
-	//			{
-	//				colour[ui_point] = WHITE;
-	//				ui_point--;
-	//			}
-	//			else
-	//			{
-	//				colour[ui_point] = WHITE;
-	//				ui_point--;
-	//				colour[ui_point] = GREEN;
-	//			}
-	//		}
-	//	}
-	//	else if (flag & (1 << 14)) //下键按下
-	//	{
-	//		if (GREEN == colour[ui_point] && ui_point != ITEM_NUM)
-	//		{
-	//			if (0 == ui_point)
-	//			{
-	//				ui_point++;
-	//				colour[ui_point] = GREEN;
-	//			}
-	//			else
-	//			{
-	//				colour[ui_point] = WHITE;
-	//				ui_point++;
-	//				colour[ui_point] = GREEN;
-	//			}
-	//		}
-
-	//	}
-	//	else {}
-
-	//}
-	//key_on = 1;
-	//disable_irq(PORTD_IRQn);
+	key_on = 1; //记录有按键按下
+	disable_irq(PORTD_IRQn); //消抖
 }
 
 
-void Open_UI(int n)
+/*结构体的元素个数存放在colour[MAX_OPTION - 1]中 
+消抖时间控制在最后几行*/
+void Open_UI()
 {
 	int i = 0;
 	int m = 0;
+	int n = 0;
 	
+	for (n = 0;; n++)
+	{
+		if (0==strcmp(screen_data[n].data_name, "end")) break;
+		if (n > 200)break;
+	}
 	colour[MAX_OPTION - 1] = 300*n; //记录要处理的数据个数
 	if (1 == key_on)//有按键按下才刷新
 	{
@@ -192,24 +120,10 @@ void Open_UI(int n)
 			}
 		}
 		key_on = 0;
-		i = 100000;
-		while (i--);
+		for (i = 0; i < 1000; i++)
+			for (m = 0; m < 5000; m++);//消抖
 		enable_irq(PORTD_IRQn);
 	}
-	//if (1 == key_on)
-	//{
-	//	LCD_clear(WHITE);
-	//	LCD_str(tem_site_str[0], "dgree:", BLACK, colour[1]);
-	//	LCD_str(tem_site_str[1], "ANG:", BLACK, colour[2]);
-	//	LCD_str(tem_site_str[2], "STA:", BLACK, colour[3]);
-	//	LCD_num(tem_site_data[0], _temp, BLACK, WHITE);
-	//	//LCD_num(tem_site_data[0], quad_val, BLACK, WHITE);
-	//	LCD_num(tem_site_data[1], ui_data[2], BLACK, WHITE);
-	//	LCD_num(tem_site_data[2], ui_data[3], BLACK, WHITE);
-	//	LCD_num(tem_site_data[3], temp_s[7], BLACK, WHITE);
-	//	key_on = 0;
-	//	enable_irq(PORTD_IRQn);
-	//}
 }
 
 
@@ -373,4 +287,5 @@ void onpress_R()
 {
 	p_current_state = p_current_state->press_R(p_current_state);
 }
+
 

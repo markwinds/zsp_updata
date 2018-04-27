@@ -19,7 +19,8 @@ Screen_Data screen_data[] = {
 { "speed6",&(temp_s[6]),6 },
 { "speed7",&(temp_s[7]),7 },
 { "speed8",&(temp_s[8]),8 },
-{ "speed9",&(temp_s[9]),9 }
+{ "speed9",&(temp_s[9]),9 },
+{ "end",&(temp_s[9]),1202 }
 };
 
 /*
@@ -75,7 +76,7 @@ void  main(void)
 
 			if (1 == key_on) enable_irq(PORTD_IRQn);     //激活按键中断
 		}
-		else Open_UI(10);
+		else Open_UI();
 
 
 		//ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
