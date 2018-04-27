@@ -4,10 +4,10 @@
 #include "include.h"
 #include "common.h"
 
-#define	DEGREE_MAX    120     //¶æ»ú×î´óÆ«½Ç
-#define M_QUITE_AREA  7     //ÖĞËÙÆ«²îµÄ¾²Ì¬Çø£¬½«¶ÔÊı¾İÊ¹ÓÃ¾²Ì¬´¦Àí
-#define M_BACK1       3.5      //ÍÑÀëÖĞÏßµÄËÙ¶ÈÎª1µ²Ê±
-#define M_BACK1_SPEED 3      //»ØÖĞËÙ¶ÈÎª1µ²
+#define	DEGREE_MAX    120     //èˆµæœºæœ€å¤§åè§’
+#define M_QUITE_AREA  7     //ä¸­é€Ÿåå·®çš„é™æ€åŒºï¼Œå°†å¯¹æ•°æ®ä½¿ç”¨é™æ€å¤„ç†
+#define M_BACK1       3.5      //è„±ç¦»ä¸­çº¿çš„é€Ÿåº¦ä¸º1æŒ¡æ—¶
+#define M_BACK1_SPEED 3      //å›ä¸­é€Ÿåº¦ä¸º1æŒ¡
 #define M_BACK2       2
 #define M_BACK2_SPEED 2
 #define M_BACK_SPEED  1
@@ -30,8 +30,8 @@ typedef enum Speed_mode
 }Speed_mode;
 
 extern Speed_mode car_mode;
-extern float steer_engine_degree;        //¶æ»ú×ª¶¯µÄ½Ç¶È
-extern int motor_speed;                //µç»ú×ªËÙ
+extern float steer_engine_degree;        //èˆµæœºè½¬åŠ¨çš„è§’åº¦
+extern int motor_speed;                //ç”µæœºè½¬é€Ÿ
 
 
 extern void Steer_Pid();

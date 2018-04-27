@@ -8,36 +8,36 @@
 #define UI_MODE  2
 #define ITEM_NUM 3
 
-#define MAX_OPTION 30 //lcdÄÜÊ¹ÓÃµÄ×î´óµÄ²ÎÊı¸öÊı
+#define MAX_OPTION 30 //lcdèƒ½ä½¿ç”¨çš„æœ€å¤§çš„å‚æ•°ä¸ªæ•°
 
 
-typedef struct Screen_Data //´«²Î½á¹¹Ìå
+typedef struct Screen_Data //ä¼ å‚ç»“æ„ä½“
 {
-	char *data_name;  //²ÎÊıÃû³Æ
-	float *data_value; //²ÎÊıÖµ
-	float icrement;   //²ÎÊıÀÛ¼ÓÊı Èç¹ûÊÇ100¾ÍÊÇon\off
+	char *data_name;  //å‚æ•°åç§°
+	float *data_value; //å‚æ•°å€¼
+	float icrement;   //å‚æ•°ç´¯åŠ æ•° å¦‚æœæ˜¯100å°±æ˜¯on\off
 }Screen_Data;
 
 
 
 
-/*ĞÂÔölcd¹¦ÄÜ*/
-typedef struct Lcd_State //×´Ì¬½á¹¹Ìå
+/*æ–°å¢lcdåŠŸèƒ½*/
+typedef struct Lcd_State //çŠ¶æ€ç»“æ„ä½“
 {
-	struct Lcd_State *(*press_M)(struct Lcd_State *pThis); //º¯ÊıÖ¸Õë£¬press_MÖ¸ÏòÒ»¸ö·µ»ØÖµÊÇLcd_StateÖ¸ÕëÀàĞÍ£¬²ÎÊıÊÇLcd_StateÖ¸ÕëÀàĞÍµÄº¯Êı
-	struct Lcd_State *(*press_U)(struct Lcd_State *pThis); //Ö¸ÏòÉÏ½¨°´ÏÂÊ±µÄ´¦Àíº¯Êı
+	struct Lcd_State *(*press_M)(struct Lcd_State *pThis); //å‡½æ•°æŒ‡é’ˆï¼Œpress_MæŒ‡å‘ä¸€ä¸ªè¿”å›å€¼æ˜¯Lcd_StateæŒ‡é’ˆç±»å‹ï¼Œå‚æ•°æ˜¯Lcd_StateæŒ‡é’ˆç±»å‹çš„å‡½æ•°
+	struct Lcd_State *(*press_U)(struct Lcd_State *pThis); //æŒ‡å‘ä¸Šå»ºæŒ‰ä¸‹æ—¶çš„å¤„ç†å‡½æ•°
 	struct Lcd_State *(*press_D)(struct Lcd_State *pThis);
 	struct Lcd_State *(*press_L)(struct Lcd_State *pThis);
 	struct Lcd_State *(*press_R)(struct Lcd_State *pThis);
 }Lcd_State;
 
-void onpress_M(); //ÖĞ¼ä°´ÏÂÊ±µÄ´¦Àíº¯Êı
+void onpress_M(); //ä¸­é—´æŒ‰ä¸‹æ—¶çš„å¤„ç†å‡½æ•°
 void onpress_U();
 void onpress_D();
 void onpress_L();
 void onpress_R();
 
-extern Lcd_State *p_current_state;//Ö¸Ïòµ±Ç°×´Ì¬µÄÖ¸Õë
+extern Lcd_State *p_current_state;//æŒ‡å‘å½“å‰çŠ¶æ€çš„æŒ‡é’ˆ
 
 Lcd_State *quit_Lcd(Lcd_State *pThis);
 Lcd_State *goto_Begin(Lcd_State *pThis);
@@ -49,7 +49,7 @@ Lcd_State *data_Down(Lcd_State *pThis);
 Lcd_State *data_Up(Lcd_State *pThis);
 Lcd_State *goto_Before(Lcd_State *pThis);
 
-extern Lcd_State wait_middle, wait_begin, wait_end, normal_page; //lcdµÈ´ı°´¼üÊ±µÄ4ÖÖ×´Ì¬
+extern Lcd_State wait_middle, wait_begin, wait_end, normal_page; //lcdç­‰å¾…æŒ‰é”®æ—¶çš„4ç§çŠ¶æ€
 
 
 extern int page;

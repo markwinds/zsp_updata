@@ -1,21 +1,21 @@
 /*
-ÈüµÀÎª1£¬ºÚÏßÎª0
+èµ›é“ä¸º1ï¼Œé»‘çº¿ä¸º0
 */
 #include "searchroad.h"
 #include "common.h"
 #include "include.h"
 
 
-float average_offset[11] = { 0,0,0,0,0,0,0,0,0,0,0 };                 //Æ«²î¶È£¬ÎªÆ½¾ùÆ«²î¶È
-uint8 imgbuff[CAMERA_SIZE];                                         //¶¨Òå´æ´¢½ÓÊÕÍ¼ÏñµÄÊı×é
+float average_offset[11] = { 0,0,0,0,0,0,0,0,0,0,0 };                 //åå·®åº¦ï¼Œä¸ºå¹³å‡åå·®åº¦
+uint8 imgbuff[CAMERA_SIZE];                                         //å®šä¹‰å­˜å‚¨æ¥æ”¶å›¾åƒçš„æ•°ç»„
 uint8 img[CAMERA_H][CAMERA_W];
 
-int iscross_flag = 0;            //ÅĞ¶ÏÊÇ·ñÊÇÊ®×ÖµÀµÄ±êÖ¾ 0±íÊ¾Ã»ÓĞ½øÈë1±íÊ¾³õ²½ÅĞ¶Ï²¢¿ªÊ¼¼ÆÊı¾àÀë
-int iscross_count = 0;           //Ê®×ÖµÀ¾àÀë¼ÆÊı
+int iscross_flag = 0;            //åˆ¤æ–­æ˜¯å¦æ˜¯åå­—é“çš„æ ‡å¿— 0è¡¨ç¤ºæ²¡æœ‰è¿›å…¥1è¡¨ç¤ºåˆæ­¥åˆ¤æ–­å¹¶å¼€å§‹è®¡æ•°è·ç¦»
+int iscross_count = 0;           //åå­—é“è·ç¦»è®¡æ•°
 
-int isisland_flag = 0;           //ÊÇ·ñÊÇ»·µºµÄÅĞ¶Ï 0±íÊ¾Ã»ÓĞ½øÈë1±íÊ¾³õ²½ÅĞ¶Ï²¢¿ªÊ¼¼ÆÊı¾àÀë
+int isisland_flag = 0;           //æ˜¯å¦æ˜¯ç¯å²›çš„åˆ¤æ–­ 0è¡¨ç¤ºæ²¡æœ‰è¿›å…¥1è¡¨ç¤ºåˆæ­¥åˆ¤æ–­å¹¶å¼€å§‹è®¡æ•°è·ç¦»
 int isisland_flag1 = 0;
-int isisland_count = 0;          //»·µº¾àÀë¼ÆÊı
+int isisland_count = 0;          //ç¯å²›è·ç¦»è®¡æ•°
 
 
 
@@ -34,22 +34,22 @@ void Search_line_init()
 void Search_line()
 {
   temp_s[7] = 0.5;
-	int left_black[CAMERA_H];                          //×ó±ßºÚÏßÊı×é
-	int left_black_before = CAMERA_W / 2;              //ÉÏÒ»´Î×ó±ßÉ¨Ãèµ½µÄºÚÏßÎ»ÖÃ
-	int left_next_line = 0;                            //ÅĞ¶ÏÉ¨ÃèÊÇ·ñ½øÈëÁËĞÂµÄÒ»ĞĞ
-	int left_find_flag = 0;                            //×ó±ßÊÇ·ñÕÒµ½ºÚÏß±êÖ¾												                
-	int jw_left;                                       //Ïò×óËÑË÷µÄµ±Ç°ÁĞ
+	int left_black[CAMERA_H];                          //å·¦è¾¹é»‘çº¿æ•°ç»„
+	int left_black_before = CAMERA_W / 2;              //ä¸Šä¸€æ¬¡å·¦è¾¹æ‰«æåˆ°çš„é»‘çº¿ä½ç½®
+	int left_next_line = 0;                            //åˆ¤æ–­æ‰«ææ˜¯å¦è¿›å…¥äº†æ–°çš„ä¸€è¡Œ
+	int left_find_flag = 0;                            //å·¦è¾¹æ˜¯å¦æ‰¾åˆ°é»‘çº¿æ ‡å¿—												                
+	int jw_left;                                       //å‘å·¦æœç´¢çš„å½“å‰åˆ—
 
-	int right_black[CAMERA_H];                         //ÓÒ±ßºÚÏßÊı×é
+	int right_black[CAMERA_H];                         //å³è¾¹é»‘çº¿æ•°ç»„
 	int right_black_before = CAMERA_W / 2;
 	int right_next_line = 0;
 	int right_find_flag = 0;
 	int jw_right;
 
-	int jh;                                            //ĞĞ²ÎÊı
-	int middleline[CAMERA_H] = { 0 };                  //´æ´¢ÖĞÏßÎ»ÖÃµÄÊı×é
-	float offset = 0;                                   //Æ«²î¶È£¬ÎªÕûÌåÆ«²î¶È
-													   //int slope[CAMERA_H] = { 0 };                       //´æ·ÅÃ¿ĞĞ¼äºÚÏßĞ±¶ÈµÄÊı×é
+	int jh;                                            //è¡Œå‚æ•°
+	int middleline[CAMERA_H] = { 0 };                  //å­˜å‚¨ä¸­çº¿ä½ç½®çš„æ•°ç»„
+	float offset = 0;                                   //åå·®åº¦ï¼Œä¸ºæ•´ä½“åå·®åº¦
+													   //int slope[CAMERA_H] = { 0 };                       //å­˜æ”¾æ¯è¡Œé—´é»‘çº¿æ–œåº¦çš„æ•°ç»„
 	int count = 0;
 	int i = 0;
 	int j = 0;
@@ -62,70 +62,70 @@ void Search_line()
 	jh = LINE_NUM-1;
 
 
-	/*-----------------------É¨ÃèÏñËØµã»ñÈ¡Í¼ÏñĞÅÏ¢------------------------*/
+	/*-----------------------æ‰«æåƒç´ ç‚¹è·å–å›¾åƒä¿¡æ¯------------------------*/
 	/*
-		1.ÀïÃæÓĞÖ±µÀ½øÈëÔ²»·µÄÅĞ¶Ï
-		2.Ö÷Òª¸üĞÂµÄÊı¾İÊÇleft_blackºÍright_blackÊı×é£¬ÆäÖĞ-1±íÊ¾´Ë±ßÎ´ÕÒµ½ºÚÏß£¬-2±íÊ¾´ËĞĞÎªºÚÏßÍ£Ö¹É¨Ãè£¨Î´±ØÊÇÈ«ºÚ£¬Ö»ÊÇ½üËÆºÚÏß£©
+		1.é‡Œé¢æœ‰ç›´é“è¿›å…¥åœ†ç¯çš„åˆ¤æ–­
+		2.ä¸»è¦æ›´æ–°çš„æ•°æ®æ˜¯left_blackå’Œright_blackæ•°ç»„ï¼Œå…¶ä¸­-1è¡¨ç¤ºæ­¤è¾¹æœªæ‰¾åˆ°é»‘çº¿ï¼Œ-2è¡¨ç¤ºæ­¤è¡Œä¸ºé»‘çº¿åœæ­¢æ‰«æï¼ˆæœªå¿…æ˜¯å…¨é»‘ï¼Œåªæ˜¯è¿‘ä¼¼é»‘çº¿ï¼‰
 	*/
-	while (jh>=0)                                             //ĞĞÌõ¼şÂú×ã½øÈëÕÒÏß£¬½«Ã¿Ò»ÓĞÍ¼ÏñµÄĞĞ¶¼É¨ÃèÒ»±é,LINE_NUM±íÊ¾ÒªÉ¨ÃèĞĞÊı
+	while (jh>=0)                                             //è¡Œæ¡ä»¶æ»¡è¶³è¿›å…¥æ‰¾çº¿ï¼Œå°†æ¯ä¸€æœ‰å›¾åƒçš„è¡Œéƒ½æ‰«æä¸€é,LINE_NUMè¡¨ç¤ºè¦æ‰«æè¡Œæ•°
 	{
-		/*-----------------×ó²àÉ¨Ãè--------------------*/
-		if (0 == left_next_line)                              //left_black_nextÓÃÀ´±êÖ¾ÊÇ·ñ½øÈëĞÂµÄÒ»ĞĞ£¬ÈôÎª0ÔòÊÇ½øÈëĞÂµÄÒ»ĞĞ
+		/*-----------------å·¦ä¾§æ‰«æ--------------------*/
+		if (0 == left_next_line)                              //left_black_nextç”¨æ¥æ ‡å¿—æ˜¯å¦è¿›å…¥æ–°çš„ä¸€è¡Œï¼Œè‹¥ä¸º0åˆ™æ˜¯è¿›å…¥æ–°çš„ä¸€è¡Œ
 		{
-			jw_left = left_black_before;                      //ÈôÊÇĞÂµÄÒ»ĞĞ¿ªÊ¼Ôò´ÓÉÏ´ÎÕÒµ½ºÚÏßµÄÎ»ÖÃ¿ªÊ¼ÕÒºÚÏß
-			left_next_line = 1;                               //±êÖ¾²ÎÊı¹éÎ»
+			jw_left = left_black_before;                      //è‹¥æ˜¯æ–°çš„ä¸€è¡Œå¼€å§‹åˆ™ä»ä¸Šæ¬¡æ‰¾åˆ°é»‘çº¿çš„ä½ç½®å¼€å§‹æ‰¾é»‘çº¿
+			left_next_line = 1;                               //æ ‡å¿—å‚æ•°å½’ä½
 		}
 
-		if (jw_left > 0 && (0 == left_find_flag))              //Èç¹ûÉ¨Ãè»¹Ã»ÓĞµ½±ßÔµÇÒÖ®Ç°µÄÉ¨ÃèÎ´ÕÒµ½ºÚµã
+		if (jw_left > 0 && (0 == left_find_flag))              //å¦‚æœæ‰«æè¿˜æ²¡æœ‰åˆ°è¾¹ç¼˜ä¸”ä¹‹å‰çš„æ‰«ææœªæ‰¾åˆ°é»‘ç‚¹
 		{
-			if ((img[jh][jw_left]) < 1)                 //É¨Ãèµ½ºÚµã
+			if ((img[jh][jw_left]) < 1)                 //æ‰«æåˆ°é»‘ç‚¹
 			{
-				if (left_black_before == jw_left && jh < 30)       //Èç¹ûµÚÒ»´ÎÉ¨Ãè¾ÍÉ¨µ½ºÚµãÇÒµ±Ç°ĞĞÔÚÆÁÄ»µÄÉÏ°ë²¿·Ö
+				if (left_black_before == jw_left && jh < 30)       //å¦‚æœç¬¬ä¸€æ¬¡æ‰«æå°±æ‰«åˆ°é»‘ç‚¹ä¸”å½“å‰è¡Œåœ¨å±å¹•çš„ä¸ŠåŠéƒ¨åˆ†
 				{
-					while (0 == img[jh][jw_left] && jw_left < CAMERA_W - 1)  //ÏòÓÒÕÒÈüµÀ ´Ë´¦²»ÄÜ<=ÒòÎªÕâÑùµÄ»°jw_left++ºó¾Í»áÊ¹ºóÃæµ÷ÓÃjw_leftÊ±Êı×éÔ½½ç
+					while (0 == img[jh][jw_left] && jw_left < CAMERA_W - 1)  //å‘å³æ‰¾èµ›é“ æ­¤å¤„ä¸èƒ½<=å› ä¸ºè¿™æ ·çš„è¯jw_left++åå°±ä¼šä½¿åé¢è°ƒç”¨jw_leftæ—¶æ•°ç»„è¶Šç•Œ
 					{
 						jw_left++;
 					}
-					if (CAMERA_W - 1 == jw_left)         //Èç¹ûÕûĞĞÊÇºÚµÄ¾ÍÍ£Ö¹É¨Ãè
+					if (CAMERA_W - 1 == jw_left)         //å¦‚æœæ•´è¡Œæ˜¯é»‘çš„å°±åœæ­¢æ‰«æ
 					{
-						left_black[jh] = -2;             //±ê¼ÇÖ®ºóµÄĞĞ¶¼ÎªÎŞĞ§ĞĞ
+						left_black[jh] = -2;             //æ ‡è®°ä¹‹åçš„è¡Œéƒ½ä¸ºæ— æ•ˆè¡Œ
 						right_black[jh] = -2;
 						break;
 					}
 					else
 					{
-						left_find_flag = 1;                           //É¨Ãèµ½ºÚÏß£¬±êÖ¾ÖÃ1
-						left_black[jh] = jw_left - 1;                   //ºÚÏßÖĞĞÄÎªjw_left
-						left_black_before = jw_left + OFF_CENTER;     //ÏÂÒ»´ÎÉ¨Ãè´ÓÉÏÒ»´ÎºÚÏßµÄÖĞĞÄÆ«Àë5¸öÏñËØµÄµØ·½¿ªÊ¼É¨Ãè
+						left_find_flag = 1;                           //æ‰«æåˆ°é»‘çº¿ï¼Œæ ‡å¿—ç½®1
+						left_black[jh] = jw_left - 1;                   //é»‘çº¿ä¸­å¿ƒä¸ºjw_left
+						left_black_before = jw_left + OFF_CENTER;     //ä¸‹ä¸€æ¬¡æ‰«æä»ä¸Šä¸€æ¬¡é»‘çº¿çš„ä¸­å¿ƒåç¦»5ä¸ªåƒç´ çš„åœ°æ–¹å¼€å§‹æ‰«æ
 						if (left_black_before > CAMERA_W - 1) left_black_before = CAMERA_W - 1;
 					}
 				}
 				else
 				{
-					left_find_flag = 1;                           //É¨Ãèµ½ºÚÏß£¬±êÖ¾ÖÃ1
-					left_black[jh] = jw_left;                     //ºÚÏßÖĞĞÄÎªjw_left
-					left_black_before = jw_left + OFF_CENTER;     //ÏÂÒ»´ÎÉ¨Ãè´ÓÉÏÒ»´ÎºÚÏßµÄÖĞĞÄÆ«Àë5¸öÏñËØµÄµØ·½¿ªÊ¼É¨Ãè
+					left_find_flag = 1;                           //æ‰«æåˆ°é»‘çº¿ï¼Œæ ‡å¿—ç½®1
+					left_black[jh] = jw_left;                     //é»‘çº¿ä¸­å¿ƒä¸ºjw_left
+					left_black_before = jw_left + OFF_CENTER;     //ä¸‹ä¸€æ¬¡æ‰«æä»ä¸Šä¸€æ¬¡é»‘çº¿çš„ä¸­å¿ƒåç¦»5ä¸ªåƒç´ çš„åœ°æ–¹å¼€å§‹æ‰«æ
 					if (left_black_before > CAMERA_W - 1) left_black_before = CAMERA_W - 1;
 				}
 			}
-			jw_left--;                                        //ÈôÃ»ÓĞÉ¨Ãèµ½ºÚÏß¾ÍÒÆ¶¯Ò»¸öÏñËØ¼ÌĞøÉ¨Ãè
+			jw_left--;                                        //è‹¥æ²¡æœ‰æ‰«æåˆ°é»‘çº¿å°±ç§»åŠ¨ä¸€ä¸ªåƒç´ ç»§ç»­æ‰«æ
 		}
-		if ((0 == jw_left) && (0 == left_find_flag))          //×ó±ßÕÒµ½×îºóÒ»¸öÏñËØÈÎÈ»Î´ÕÒµ½·ûºÏºÚÏßÌõ¼şµÄÏñËØ£¬ÔòÈÏÎªµÚÒ»¸öÎªºÚÏß
+		if ((0 == jw_left) && (0 == left_find_flag))          //å·¦è¾¹æ‰¾åˆ°æœ€åä¸€ä¸ªåƒç´ ä»»ç„¶æœªæ‰¾åˆ°ç¬¦åˆé»‘çº¿æ¡ä»¶çš„åƒç´ ï¼Œåˆ™è®¤ä¸ºç¬¬ä¸€ä¸ªä¸ºé»‘çº¿
 		{
-			if (jh < 50 && left_black[jh + 1] != -1 )  //²¹É¨£¬ÅĞ¶ÏÊÇ·ñÊÇÔ²»· Èç¹ûÇ°Ò»ĞĞÓĞÏß
+			if (jh < 50 && left_black[jh + 1] != -1 )  //è¡¥æ‰«ï¼Œåˆ¤æ–­æ˜¯å¦æ˜¯åœ†ç¯ å¦‚æœå‰ä¸€è¡Œæœ‰çº¿
 			{
-				if (left_black[jh + 1] - 2 >= 0 && left_black[jh + 1] + 3 <= CAMERA_W - 1)  //·ÀÖ¹ÏÂÃæµÄimg[jh + 1][left_black[jh + 1] - 2]Êı×éÔ½½ç
+				if (left_black[jh + 1] - 2 >= 0 && left_black[jh + 1] + 3 <= CAMERA_W - 1)  //é˜²æ­¢ä¸‹é¢çš„img[jh + 1][left_black[jh + 1] - 2]æ•°ç»„è¶Šç•Œ
 				{
-					if (1 == img[jh + 1][left_black[jh + 1] - 2] && 1 == img[jh + 1][left_black[jh + 1] + 3])  //Èç¹ûÏÂÃæÒ»ĞĞµÄÍ»³ö¼â·ûºÏÌõ¼ş
+					if (1 == img[jh + 1][left_black[jh + 1] - 2] && 1 == img[jh + 1][left_black[jh + 1] + 3])  //å¦‚æœä¸‹é¢ä¸€è¡Œçš„çªå‡ºå°–ç¬¦åˆæ¡ä»¶
 					{
-						for (i = 2; i < 5; i++)  //ÏòÏÂÉ¨µ½µÚ5ĞĞ¿´ÊÇ·ñ·ûºÏÌõ¼ş
+						for (i = 2; i < 5; i++)  //å‘ä¸‹æ‰«åˆ°ç¬¬5è¡Œçœ‹æ˜¯å¦ç¬¦åˆæ¡ä»¶
 						{
-							j = left_black[jh + i] - 1; //ÓÃj¼ÇÂ¼ÏÂÃæµÚiĞĞµÄ±ßÏßÁĞĞòºÅ
-							while (j > 0 && img[jh + i][j] != 1) //Ïò×óÕÒ0µ½1µÄÌø±ä£¬ÈüµÀÊÇ1ºÚÏßÊÇ0
+							j = left_black[jh + i] - 1; //ç”¨jè®°å½•ä¸‹é¢ç¬¬iè¡Œçš„è¾¹çº¿åˆ—åºå·
+							while (j > 0 && img[jh + i][j] != 1) //å‘å·¦æ‰¾0åˆ°1çš„è·³å˜ï¼Œèµ›é“æ˜¯1é»‘çº¿æ˜¯0
 							{
 								j--;
 							}
-							if (j <= 0) break; //Ö»ÒªÏÂÃæµÄiĞĞÓĞÒ»ĞĞ²»·ûºÏÒªÇó¾ÍÖ±½ÓÌø³ö£¬ÕâÑùµÄ»°i¾Í²»¿ÉÄÜµÈÓÚ5£¬¾Í²»»áÔö¼Ó±ê¼Ç
+							if (j <= 0) break; //åªè¦ä¸‹é¢çš„iè¡Œæœ‰ä¸€è¡Œä¸ç¬¦åˆè¦æ±‚å°±ç›´æ¥è·³å‡ºï¼Œè¿™æ ·çš„è¯iå°±ä¸å¯èƒ½ç­‰äº5ï¼Œå°±ä¸ä¼šå¢åŠ æ ‡è®°
 						}
 						if (5 == i)
 						{
@@ -153,19 +153,19 @@ void Search_line()
 				}
 			}
 			left_find_flag = 1;
-			left_black[jh] = -1;                              //-1´ú±íÉ¨Ãèµ½±ßÏßÊ±»¹Ã»ÕÒµ½ºÚÏß
+			left_black[jh] = -1;                              //-1ä»£è¡¨æ‰«æåˆ°è¾¹çº¿æ—¶è¿˜æ²¡æ‰¾åˆ°é»‘çº¿
 			left_black_before = jw_left + OFF_CENTER;  
 			if (left_black_before > CAMERA_W - 1) left_black_before = CAMERA_W - 1;
 		}
 
-		/*-----------------ÓÒ²àÉ¨Ãè--------------------*/
+		/*-----------------å³ä¾§æ‰«æ--------------------*/
 		if (0 == right_next_line)
 		{
 			jw_right = right_black_before;
 			right_next_line = 1;
 		}
 
-		if ((jw_right< (CAMERA_W - 1)) && (0 == right_find_flag))            //ÒòÎªµÚ0Î»Ò²´æÓĞÏñËØµã£¬ËùÒÔ´æÓĞÏñËØµãµÄ×îºóÒ»Î»ÊÇCAMERA_W-1
+		if ((jw_right< (CAMERA_W - 1)) && (0 == right_find_flag))            //å› ä¸ºç¬¬0ä½ä¹Ÿå­˜æœ‰åƒç´ ç‚¹ï¼Œæ‰€ä»¥å­˜æœ‰åƒç´ ç‚¹çš„æœ€åä¸€ä½æ˜¯CAMERA_W-1
 		{           
 			if ((img[jh][jw_right])<1)
 			{
@@ -199,9 +199,9 @@ void Search_line()
 			}
 			jw_right++;
 		}
-		if (jw_right == (CAMERA_W - 1) && (0 == right_find_flag))            //ÓÒ±ßºÚµãÎ´ÕÒµ½
+		if (jw_right == (CAMERA_W - 1) && (0 == right_find_flag))            //å³è¾¹é»‘ç‚¹æœªæ‰¾åˆ°
 		{
-			if (jh < 50 && right_black[jh + 1] != -1)                        //²¹É¨£¬ÅĞ¶ÏÊÇ·ñÊÇÔ²»·
+			if (jh < 50 && right_black[jh + 1] != -1)                        //è¡¥æ‰«ï¼Œåˆ¤æ–­æ˜¯å¦æ˜¯åœ†ç¯
 			{
 				if (right_black[jh + 1] + 2 <= CAMERA_W - 1 && right_black[jh + 1] - 3 > 0)
 				{
@@ -210,7 +210,7 @@ void Search_line()
 						for (i = 2; i < 5; i++)
 						{
 							j = right_black[jh + i] + 1;
-							while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //ÕâÀïÒª±È×ó±ß¶à³öÒ»¸öÅĞ¶Ï£¬ÒòÎªµ±right_black[jh + i]ÖµÎª-1Ê±
+							while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //è¿™é‡Œè¦æ¯”å·¦è¾¹å¤šå‡ºä¸€ä¸ªåˆ¤æ–­ï¼Œå› ä¸ºå½“right_black[jh + i]å€¼ä¸º-1æ—¶
 							{
 								j++;
 							}
@@ -228,7 +228,7 @@ void Search_line()
 					for (i = 2; i < 5; i++)
 					{
 						j = right_black[jh + i] + 1;
-						while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //ÕâÀïÒª±È×ó±ß¶à³öÒ»¸öÅĞ¶Ï£¬ÒòÎªµ±right_black[jh + i]ÖµÎª-1Ê±
+						while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //è¿™é‡Œè¦æ¯”å·¦è¾¹å¤šå‡ºä¸€ä¸ªåˆ¤æ–­ï¼Œå› ä¸ºå½“right_black[jh + i]å€¼ä¸º-1æ—¶
 						{
 							j++;
 						}
@@ -247,7 +247,7 @@ void Search_line()
 			if (right_black_before < 0) right_black_before = 0;
 		}	
 
-		if ((1 == left_find_flag) && (1 == right_find_flag))           //²ÎÊı»Ø¹é
+		if ((1 == left_find_flag) && (1 == right_find_flag))           //å‚æ•°å›å½’
 		{
 			left_next_line = 0;                                                
 			right_next_line = 0;
@@ -263,15 +263,15 @@ void Search_line()
 
 
 
-	/*----------------¸ù¾İÍ¼ÏñÅĞ¶ÏÂ·¿ö--------------------*/
+	/*----------------æ ¹æ®å›¾åƒåˆ¤æ–­è·¯å†µ--------------------*/
 	/*
-		1.ÅĞ¶ÏÍäµÀÔ²»· ÓÃisisland_flag µÚ¶ş¸öÎ»ÖÃ
-		2.ÅĞ¶ÏÊ®×ÖµÀ µÚÒ»¸öÎ»ÖÃ
+		1.åˆ¤æ–­å¼¯é“åœ†ç¯ ç”¨isisland_flag ç¬¬äºŒä¸ªä½ç½®
+		2.åˆ¤æ–­åå­—é“ ç¬¬ä¸€ä¸ªä½ç½®
 	*/
 	jh = LINE_NUM - 6;
 	while (jh >= 5 && left_black[jh] != -2 && right_black[jh] != -2)
 	{
-		if (left_black[jh + 3] - left_black[jh + 4] > 0 &&           //ÅĞ¶ÏÊÇ·ñÊÇÔ²»·
+		if (left_black[jh + 3] - left_black[jh + 4] > 0 &&           //åˆ¤æ–­æ˜¯å¦æ˜¯åœ†ç¯
 			left_black[jh + 2] - left_black[jh + 3] > 0 &&
 			left_black[jh + 1] - left_black[jh + 2] > 0 &&
 			left_black[jh + 0] - left_black[jh + 1] > 0 &&
@@ -282,7 +282,7 @@ void Search_line()
 			)
 		{
 			
-			if (left_black[jh + 0] - left_black[jh + 4] > 6 && left_black[jh + 0] - left_black[jh - 4] > 6)//Í»³öµã¹»¼âÈñ
+			if (left_black[jh + 0] - left_black[jh + 4] > 6 && left_black[jh + 0] - left_black[jh - 4] > 6)//çªå‡ºç‚¹å¤Ÿå°–é”
 			{
 				isisland_flag++;
 				//temp_s[0] = left_black[jh];
@@ -294,7 +294,7 @@ void Search_line()
 
 		j = 0;
 		m = 0;
-		if (-1 == left_black[jh] && -1 == right_black[jh] && iscross_flag!=2)   //ÅĞ¶ÏÊÇ·ñÊÇÊ®×Ö iscross_flagÎª2Ê±¾Í²»ÓÃÊ¶±ğÁË
+		if (-1 == left_black[jh] && -1 == right_black[jh] && iscross_flag!=2)   //åˆ¤æ–­æ˜¯å¦æ˜¯åå­— iscross_flagä¸º2æ—¶å°±ä¸ç”¨è¯†åˆ«äº†
 		{
 			for (i = 1; i < 20; i++)
 			{
@@ -322,11 +322,11 @@ void Search_line()
 			}
 			if (1 == j && 1 == m)
 			{
-				if (0 == iscross_flag)   //Èç¹ûµÚÒ»´ÎÉ¨Ãèµ½·ûºÏÌõ¼ş¾Í³õÅĞÎª1
+				if (0 == iscross_flag)   //å¦‚æœç¬¬ä¸€æ¬¡æ‰«æåˆ°ç¬¦åˆæ¡ä»¶å°±åˆåˆ¤ä¸º1
 				{
 					iscross_flag = 1;
 				}
-				else if (1 == iscross_flag && cross_distance_count > 4 && cross_distance_count < 8) //Èç¹ûÒÑ¾­³õÅĞ³É¹¦ÊÇÊ®×ÖÇÒÔÚ4µ½8ÀåÃ×ºóµÄ¸´ÅĞÖĞ³É¹¦ÅĞ¶ÏÊÇÊ®×ÖÄÇ¾ÍÈÏÎªÊÇÊ®×Ö
+				else if (1 == iscross_flag && cross_distance_count > 4 && cross_distance_count < 8) //å¦‚æœå·²ç»åˆåˆ¤æˆåŠŸæ˜¯åå­—ä¸”åœ¨4åˆ°8å˜ç±³åçš„å¤åˆ¤ä¸­æˆåŠŸåˆ¤æ–­æ˜¯åå­—é‚£å°±è®¤ä¸ºæ˜¯åå­—
 				{
 					iscross_flag = 2;
 				}
@@ -341,47 +341,47 @@ void Search_line()
 
 
 
-	/*---------------------ÖĞĞÄµãµÄ¼ÆËã------------------------*/
+	/*---------------------ä¸­å¿ƒç‚¹çš„è®¡ç®—------------------------*/
 	/*
-		1.¸ù¾İ×óÓÒ±ß½çÈ·¶¨ÖĞĞÄµãµÄÎ»ÖÃ
-		2.±ê¼ÇÎŞĞ§ÖĞĞÄµã
+		1.æ ¹æ®å·¦å³è¾¹ç•Œç¡®å®šä¸­å¿ƒç‚¹çš„ä½ç½®
+		2.æ ‡è®°æ— æ•ˆä¸­å¿ƒç‚¹
 	*/
-	if (2 == iscross_flag)  //ÔÚÊ®×ÖµÀÄÚ¼ÆËãÖĞĞÄµÄ·½·¨
+	if (2 == iscross_flag)  //åœ¨åå­—é“å†…è®¡ç®—ä¸­å¿ƒçš„æ–¹æ³•
 	{
 		jh = LINE_NUM - 1;
-		if (20 < cross_distance_count && cross_distance_count< 130) //ÔÚÕâ¸ö·¶Î§ÄÚ²¹Ïß
+		if (20 < cross_distance_count && cross_distance_count< 130) //åœ¨è¿™ä¸ªèŒƒå›´å†…è¡¥çº¿
 		{
 			while (jh >= 0 && left_black[jh] != -2 && right_black[jh] != -2)
 			{
-				if (jh == (LINE_NUM - 1))  //µÚÒ»´Î½øÈëÑ­»·
+				if (jh == (LINE_NUM - 1))  //ç¬¬ä¸€æ¬¡è¿›å…¥å¾ªç¯
 				{
 					if (-1 == right_black[jh])
 					{
 						middleline[jh] = (left_black[jh] + CAMERA_W) / 2;
-						cross_temp[1] = LINE_NUM - 1;   //ÆğÊ¼ĞĞÈ«¶ªÏß¾ÍËãÕÒµ½ÏÂ½ç
+						cross_temp[1] = LINE_NUM - 1;   //èµ·å§‹è¡Œå…¨ä¸¢çº¿å°±ç®—æ‰¾åˆ°ä¸‹ç•Œ
 					}	
 					else if (-1 == left_black[jh])
 					{
 						middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
-						cross_temp[1] = LINE_NUM - 1;   //ÆğÊ¼ĞĞÈ«¶ªÏß¾ÍËãÕÒµ½ÏÂ½ç
+						cross_temp[1] = LINE_NUM - 1;   //èµ·å§‹è¡Œå…¨ä¸¢çº¿å°±ç®—æ‰¾åˆ°ä¸‹ç•Œ
 					}
-					else  //Èç¹ûÆğÊ¼ĞĞ²»¶ªÏß
+					else  //å¦‚æœèµ·å§‹è¡Œä¸ä¸¢çº¿
 						middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
 				}
 				
-				else //³ıÁËÆğÊ¼ĞĞ£¬ÆäËûµÄĞĞ¶¼Ö´ĞĞÕâÀïÃæµÄ´úÂë
+				else //é™¤äº†èµ·å§‹è¡Œï¼Œå…¶ä»–çš„è¡Œéƒ½æ‰§è¡Œè¿™é‡Œé¢çš„ä»£ç 
 				{
-					/*´Ó×îÏÂÃæ¿ªÊ¼É¨Ãèµ±³öÏÖÒ»±ß¶ªÏßÊ±¾ÍÒ»Ö±½øÈëÕâ¸öifÕÒÊ®×ÖÉÏ½ç */
-					/*½øÈëÕâ¸öifÒªÂú×ãÉÏ½çÎ´ÕÒµ½£¨ÕÒµ½Ê±cross_temp[0]±ê¼ÇÎª-2£©ÇÒ£¨µÚÒ»´Î¿ªÊ¼¶ªÏß»òÕßÒÑ¾­ÓĞ¹ı¶ªÏß£©*/
+					/*ä»æœ€ä¸‹é¢å¼€å§‹æ‰«æå½“å‡ºç°ä¸€è¾¹ä¸¢çº¿æ—¶å°±ä¸€ç›´è¿›å…¥è¿™ä¸ªifæ‰¾åå­—ä¸Šç•Œ */
+					/*è¿›å…¥è¿™ä¸ªifè¦æ»¡è¶³ä¸Šç•Œæœªæ‰¾åˆ°ï¼ˆæ‰¾åˆ°æ—¶cross_temp[0]æ ‡è®°ä¸º-2ï¼‰ä¸”ï¼ˆç¬¬ä¸€æ¬¡å¼€å§‹ä¸¢çº¿æˆ–è€…å·²ç»æœ‰è¿‡ä¸¢çº¿ï¼‰*/
 					if ((-1 == left_black[jh] || -1 == right_black[jh] || cross_temp[1] != -1) && cross_temp[0] != -2) 
 					{
-						if (-1 == cross_temp[1]) //Èç¹ûÊÇµÚÒ»´Î¶ªÏß
+						if (-1 == cross_temp[1]) //å¦‚æœæ˜¯ç¬¬ä¸€æ¬¡ä¸¢çº¿
 						{
-							cross_temp[1] = jh + 1;   //¼ÇÂ¼²¹ÏßÏÂ½ç
+							cross_temp[1] = jh + 1;   //è®°å½•è¡¥çº¿ä¸‹ç•Œ
 							//temp_s[5] = cross_temp[1];
 							//temp_s[7] = middleline[cross_temp[1]];
 						}
-						if (jh <= 0)  //Î´ÕÒµ½ÉÏ½ç
+						if (jh <= 0)  //æœªæ‰¾åˆ°ä¸Šç•Œ
 						{
 							for (i = 0; i < cross_temp[1]; i++)
 							{
@@ -389,9 +389,9 @@ void Search_line()
 								//middleline[i] = (CAMERA_W / 2 + middleline[cross_temp[1]]) / 2;
 							}
 						}
-						else if (left_black[jh] != -1 && right_black[jh] != -1)//Á½±ß¶¼²»¶ªÏß¼´ÕÒµ½²¹ÏßÉÏ½ç
+						else if (left_black[jh] != -1 && right_black[jh] != -1)//ä¸¤è¾¹éƒ½ä¸ä¸¢çº¿å³æ‰¾åˆ°è¡¥çº¿ä¸Šç•Œ
 						{
-							cross_temp[0] = jh;   //¼ÇÂ¼²¹ÏßÉÏ½ç
+							cross_temp[0] = jh;   //è®°å½•è¡¥çº¿ä¸Šç•Œ
 							//temp_s[4] = cross_temp[0];
 						
 							middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
@@ -399,14 +399,14 @@ void Search_line()
 							//temp_s[6] = middleline[cross_temp[0]];
 							for (i = cross_temp[0] + 1; i < cross_temp[1]; i++)
 							{
-								middleline[i] = middleline[cross_temp[1]] + (middleline[cross_temp[0]] - middleline[cross_temp[1]])*(i - cross_temp[1]) / (cross_temp[1] - cross_temp[0]);//ÏÂ½çÁĞ+ÉÏÏÂ½çÁĞ²î*µ±Ç°ĞĞ²î/ÉÏÏÂ½çĞĞ²î
+								middleline[i] = middleline[cross_temp[1]] + (middleline[cross_temp[0]] - middleline[cross_temp[1]])*(i - cross_temp[1]) / (cross_temp[1] - cross_temp[0]);//ä¸‹ç•Œåˆ—+ä¸Šä¸‹ç•Œåˆ—å·®*å½“å‰è¡Œå·®/ä¸Šä¸‹ç•Œè¡Œå·®
 								//middleline[i] = (middleline[cross_temp[0]] + middleline[cross_temp[1]]) / 2;
 								//temp_s[9] = 10;
 							}
-							cross_temp[0] = -2; //²»ÔÚ½øÈëÕâ¸öif
+							cross_temp[0] = -2; //ä¸åœ¨è¿›å…¥è¿™ä¸ªif
 						}
 					}
-					else //»¹Î´¶ªÏßÊ±Ö±½Ó¼ÆËãÖĞµã
+					else //è¿˜æœªä¸¢çº¿æ—¶ç›´æ¥è®¡ç®—ä¸­ç‚¹
 					{
 						if (-1 == right_black[jh])
 						{
@@ -431,7 +431,7 @@ void Search_line()
 			nomal_middle(left_black, right_black, middleline);
 		}
 
-		if (326 < cross_distance_count && cross_distance_count< 430)//Èç¹ûµ½ÁË×¼±¸³öÊ®×Ö
+		if (326 < cross_distance_count && cross_distance_count< 430)//å¦‚æœåˆ°äº†å‡†å¤‡å‡ºåå­—
 		{
 			jh = LINE_NUM - 1;
 			while (jh >= 0)
@@ -457,7 +457,7 @@ void Search_line()
 
 
 
-	/*--------------------------¸÷ÖÖÂ·¿öÏÂµÄÔ¤±¸´¦Àí-------------------------*/
+	/*--------------------------å„ç§è·¯å†µä¸‹çš„é¢„å¤‡å¤„ç†-------------------------*/
 	//if (iscross_flag != 0)
 	//{
 
@@ -470,9 +470,9 @@ void Search_line()
 
 
 
-    /*------------------------Æ«²î¶È¼ÆËã¼°ÖĞÏßÕ¹ÏÖ-----------------------------*/
+    /*------------------------åå·®åº¦è®¡ç®—åŠä¸­çº¿å±•ç°-----------------------------*/
 	/*
-		1.ÓÃÖĞĞÄµãËã³öÆ«²î¶È
+		1.ç”¨ä¸­å¿ƒç‚¹ç®—å‡ºåå·®åº¦
 	*/
 	for (i = LINE_NUM - 1; i >= 0; i--)
 	{
@@ -481,7 +481,7 @@ void Search_line()
 		else if (-1 == middleline[i]) {}
 		else
 		{
-			offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offsetÊÇ²¹³¥£¬ÓÃÀ´ÃèÊöÕûÌåÈüµÀµÄÆ«Ïò,<0Æ«×ó
+			offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offsetæ˜¯è¡¥å¿ï¼Œç”¨æ¥æè¿°æ•´ä½“èµ›é“çš„åå‘,<0åå·¦
 			count++;
 			if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
 			if (middleline[i] < 0)middleline[i] = 0;
@@ -493,7 +493,7 @@ void Search_line()
 
 
 
-	/*---------------¸üĞÂÆ«²î¶È¶ÓÁĞ---------------------*/
+	/*---------------æ›´æ–°åå·®åº¦é˜Ÿåˆ—---------------------*/
 	for (i = 10; i > 1; i--)
 	{
 		average_offset[i] = average_offset[i - 1];
@@ -503,9 +503,9 @@ void Search_line()
 }
 
 
-float Find_slope()       //ÕÒµ½ÌİĞÎµÄĞ±ÂÊ
+float Find_slope()       //æ‰¾åˆ°æ¢¯å½¢çš„æ–œç‡
 {
-	int j = 79;     //µ±Ç°ÁĞ
+	int j = 79;     //å½“å‰åˆ—
 	int h[3] = { 2,3,4 };
 
 	while (0 == img[50][j] && j >= 0)
