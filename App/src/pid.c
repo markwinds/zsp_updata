@@ -5,7 +5,10 @@
 
 Speed_mode car_mode = CHECH;
 float steer_engine_degree = 0;              //舵机的偏转角度，可正可负，正右负左
-int motor_speed = 0;
+float motor_speed = 0;
+float STEER_KP = 4;
+float STEER_KI = 4;
+float STEER_KD = 4;
 
 void Control_core()
 {
@@ -24,11 +27,15 @@ void Control_core()
 		steer_engine_degree = average_offset[0];
 		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
 		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
-		motor_speed = 150;
+		motor_speed = 250;
 	}	
 
 	else if (OTHER == car_mode)//其他模式
 	{
+		Steer_Pid();
+		steer_engine_degree = average_offset[0];
+		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
+		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
 		//if (total_distance > 1000)
 		//{
 		//	motor_speed = 0;
@@ -58,7 +65,14 @@ void Steer_Pid()
 	//{
 	//	offset_d -= average_offset[i];
 	//}
-
-	average_offset[0] = STEER_KP * offset_p + STEER_KI * offset_i + STEER_KD * offset_d;
+	if (average_offset[0] < 4)
+	{
+		average_offset[0] = STEER_KP * offset_p + 3 * offset_i + STEER_KD * offset_d;
+	}
+	else
+	{
+		average_offset[0] = STEER_KP * offset_p + STEER_KI * offset_i + STEER_KD * offset_d;
+	}
+	
 }
 

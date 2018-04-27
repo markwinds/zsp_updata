@@ -33,7 +33,6 @@ void Search_line_init()
 
 void Search_line()
 {
-  temp_s[7] = 0.5;
 	int left_black[CAMERA_H];                          //左边黑线数组
 	int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
 	int left_next_line = 0;                            //判断扫描是否进入了新的一行
@@ -75,7 +74,7 @@ void Search_line()
 			jw_left = left_black_before;                      //若是新的一行开始则从上次找到黑线的位置开始找黑线
 			left_next_line = 1;                               //标志参数归位
 		}
-
+		//左侧正常扫描
 		if (jw_left > 0 && (0 == left_find_flag))              //如果扫描还没有到边缘且之前的扫描未找到黑点
 		{
 			if ((img[jh][jw_left]) < 1)                 //扫描到黑点
@@ -110,6 +109,7 @@ void Search_line()
 			}
 			jw_left--;                                        //若没有扫描到黑线就移动一个像素继续扫描
 		}
+		//左侧丢线扫描
 		if ((0 == jw_left) && (0 == left_find_flag))          //左边找到最后一个像素任然未找到符合黑线条件的像素，则认为第一个为黑线
 		{
 			if (jh < 50 && left_black[jh + 1] != -1 )  //补扫，判断是否是圆环 如果前一行有线
@@ -118,7 +118,7 @@ void Search_line()
 				{
 					if (1 == img[jh + 1][left_black[jh + 1] - 2] && 1 == img[jh + 1][left_black[jh + 1] + 3])  //如果下面一行的突出尖符合条件
 					{
-						for (i = 2; i < 5; i++)  //向下扫到第5行看是否符合条件
+						for (i = 2; i < 3; i++)  //向下扫到第5行看是否符合条件
 						{
 							j = left_black[jh + i] - 1; //用j记录下面第i行的边线列序号
 							while (j > 0 && img[jh + i][j] != 1) //向左找0到1的跳变，赛道是1黑线是0
@@ -126,17 +126,19 @@ void Search_line()
 								j--;
 							}
 							if (j <= 0) break; //只要下面的i行有一行不符合要求就直接跳出，这样的话i就不可能等于5，就不会增加标记
+							if (right_black[jh + i] > CAMERA_W - 1 - 12 || -1 == right_black[jh + i] ||
+								right_black[jh + i] - left_black[jh + i] < 20 || 
+								right_black[jh + i] - left_black[jh + i] > 65) break;//右边不是直道就退出
 						}
-						if (5 == i)
+						if (3 == i)
 						{
-							isisland_flag1++;
-							//isisland_flag = 1;
+							judge_island();
 						}
 					}
 				}
 				else
 				{
-					for (i = 2; i < 5; i++)
+					for (i = 2; i < 3; i++)
 					{
 						j = left_black[jh + i] - 1;
 						while (j > 0 && img[jh + i][j] != 1)
@@ -144,11 +146,13 @@ void Search_line()
 							j--;
 						}
 						if (j <= 0) break;
+						if (right_black[jh + i] > CAMERA_W - 1 - 12 || -1 == right_black[jh + i] ||
+							right_black[jh + i] - left_black[jh + i] < 20 ||
+							right_black[jh + i] - left_black[jh + i] > 65) break;//右边不是直道就退出
 					}
-					if (5 == i)
+					if (3 == i)
 					{
-						isisland_flag1++;
-						//isisland_flag = 1;
+						judge_island();
 					}
 				}
 			}
@@ -164,7 +168,7 @@ void Search_line()
 			jw_right = right_black_before;
 			right_next_line = 1;
 		}
-
+		//右侧正常扫描
 		if ((jw_right< (CAMERA_W - 1)) && (0 == right_find_flag))            //因为第0位也存有像素点，所以存有像素点的最后一位是CAMERA_W-1
 		{           
 			if ((img[jh][jw_right])<1)
@@ -199,6 +203,7 @@ void Search_line()
 			}
 			jw_right++;
 		}
+		//右侧丢线扫描
 		if (jw_right == (CAMERA_W - 1) && (0 == right_find_flag))            //右边黑点未找到
 		{
 			if (jh < 50 && right_black[jh + 1] != -1)                        //补扫，判断是否是圆环
@@ -207,7 +212,7 @@ void Search_line()
 				{
 					if (1 == img[jh + 1][right_black[jh + 1] + 2] && 1 == img[jh + 1][right_black[jh + 1] - 3])
 					{
-						for (i = 2; i < 5; i++)
+						for (i = 2; i < 3; i++)
 						{
 							j = right_black[jh + i] + 1;
 							while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //这里要比左边多出一个判断，因为当right_black[jh + i]值为-1时
@@ -215,17 +220,19 @@ void Search_line()
 								j++;
 							}
 							if (j >= (CAMERA_W - 1) || j <= 0) break;
+							if (left_black[jh + i] < 0 + 12 ||
+								right_black[jh + i] - left_black[jh + i] < 20 ||
+								right_black[jh + i] - left_black[jh + i] > 65) break;
 						}
-						if (5 == i)
+						if (3 == i)
 						{
-							isisland_flag1++;
-							//isisland_flag = 1;
+							judge_island();
 						}
 					}	
 				}
 				else
 				{
-					for (i = 2; i < 5; i++)
+					for (i = 2; i < 3; i++)
 					{
 						j = right_black[jh + i] + 1;
 						while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //这里要比左边多出一个判断，因为当right_black[jh + i]值为-1时
@@ -233,11 +240,13 @@ void Search_line()
 							j++;
 						}
 						if (j >= (CAMERA_W - 1) || j <= 0) break;
+						if (left_black[jh + i] < 0 + 12 ||
+							right_black[jh + i] - left_black[jh + i] < 20 ||
+							right_black[jh + i] - left_black[jh + i] > 65) break;
 					}
-					if (5 == i)
+					if (3 == i)
 					{
-						isisland_flag1++;
-						//isisland_flag = 1;
+						judge_island();
 					}
 				}
 			}
@@ -543,6 +552,7 @@ void Negation()
 	}
 }
 
+
 void nomal_middle(int left_black[],int right_black[],int middleline[])
 {
 	int jh;
@@ -582,5 +592,20 @@ void nomal_middle(int left_black[],int right_black[],int middleline[])
 }
 
 
+void judge_island()
+{
+	if (0 == isisland_flag1)   //如果第一次扫描到符合条件就初判为1
+	{
+		isisland_flag1 = 1;
+	}
+	else if (1 == isisland_flag1 && land_distance_count1 > 10 && land_distance_count1 < 15) //如果已经初判成功是十字且在4到8厘米后的复判中成功判断是十字那就认为是十字
+	{
+		isisland_flag1 = 2;
+	}
+	if (iscross_flag != 0)
+	{
+		isisland_flag1 = 0;
+	}
+}
 
 

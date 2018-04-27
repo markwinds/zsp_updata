@@ -5,8 +5,9 @@
 int quad_speed[3] = { 0,0,0 };
 long quad_value[2] = { 0,0 };
 int quad_temp = 0;
-int total_distance = 0;
+float total_distance = 0;
 int cross_distance_count = 0;
+int land_distance_count1 = 0;
 
 
 
@@ -43,6 +44,8 @@ void Update_Motor()
 		distance_temp++;
 	}
 	total_distance += distance_temp;
+
+	/*----十字----*/
 	if (1 == iscross_flag || 2 == iscross_flag)                    //初步判断是十字或者已经判断十字后开始累积距离
 	{
 		cross_distance_count += distance_temp;
@@ -56,5 +59,21 @@ void Update_Motor()
 	{
 		iscross_flag = 0;
 		cross_distance_count = 0;
+	}
+
+	/*----正常圆环-----*/
+	if (1 == isisland_flag1 || 2 == isisland_flag1)
+	{
+		land_distance_count1 += distance_temp;
+	}
+	if (land_distance_count1 > 15 && 1 == isisland_flag1)
+	{
+		isisland_flag1 = 0;
+		land_distance_count1 = 0;
+	}
+	if (land_distance_count1 > 230 && 2 == isisland_flag1)
+	{
+		isisland_flag1 = 0;
+		land_distance_count1 = 0;
 	}
 }

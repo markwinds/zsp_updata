@@ -10,11 +10,11 @@ void DMA0_IRQHandler();
 int _temp = 0;
 
 Screen_Data screen_data[] = {
-{ "speed0",&(temp_s[0]),0.3 },
-{ "speed1",&(temp_s[1]),99 },
-{ "speed2",&(temp_s[2]),2 },
-{ "speed3",&(temp_s[3]),3 },
-{ "speed4",&(temp_s[4]),4 },
+{ "P",&(STEER_KP),0.2 },
+{ "I",&(STEER_KI),0.2 },
+{ "D",&(STEER_KD),0.2 },
+{ "speed",&(motor_speed),10 },
+{ "length",&(total_distance),500 },
 { "speed5",&(temp_s[5]),5 },
 { "speed6",&(temp_s[6]),6 },
 { "speed7",&(temp_s[7]),7 },
@@ -68,19 +68,23 @@ void  main(void)
 			//LCD_numf(tem_site_str[2], temp_s[0], GREEN, BLUE);  
 			//LCD_numf(tem_site_data[2], temp_s[1], GREEN, BLUE);
 			
-			//LCD_numf(tem_site_str[3], iscross_flag, GREEN, BLUE);
-			//LCD_numf(tem_site_data[3], temp_s[7] , GREEN, BLUE);
-			//LCD_numf(tem_site_str[4], cross_distance_count, GREEN, BLUE);
-			
+			LCD_numf(tem_site_str[2], iscross_flag, GREEN, BLUE);
+			LCD_numf(tem_site_str[3], isisland_flag, GREEN, BLUE);
+			LCD_numf(tem_site_str[4], isisland_flag1, GREEN, BLUE);
+			LCD_numf(tem_site_data[4], land_distance_count1, GREEN, BLUE);
+
 			Control_core();
 
 			if (1 == key_on) enable_irq(PORTD_IRQn);     //激活按键中断
 		}
 		else Open_UI();
 
-
-		//ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
-		ftm_pwm_duty(FTM0, FTM_CH5, 0);
+		if (total_distance < 1000)
+		{
+			ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
+		}
+		else ftm_pwm_duty(FTM0, FTM_CH5, 0);
+		
 		ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree);       //舵机 
         //ftm_pwm_duty(FTM0, FTM_CH6, 390);
 	}//while

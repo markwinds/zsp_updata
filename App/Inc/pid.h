@@ -14,9 +14,13 @@
 #define M_BUFF_AREA   12
 #define M_BUFF_SPEED  2
 
-#define STEER_KP     3.0 
-#define STEER_KI     4.0
-#define STEER_KD     3.0
+//#define STEER_KP     3.0 
+//#define STEER_KI     3.0
+//#define STEER_KD     3.0
+
+extern float STEER_KP;
+extern float STEER_KI;
+extern float STEER_KD;
 
 
 typedef enum Speed_mode
@@ -31,7 +35,7 @@ typedef enum Speed_mode
 
 extern Speed_mode car_mode;
 extern float steer_engine_degree;        //舵机转动的角度
-extern int motor_speed;                //电机转速
+extern float motor_speed;                //电机转速
 
 
 extern void Steer_Pid();

@@ -92,6 +92,7 @@ void Open_UI()
 	int m = 0;
 	int n = 0;
 	
+        motor_speed=0;
 	for (n = 0;; n++)
 	{
 		if (0==strcmp(screen_data[n].data_name, "end")) break;
