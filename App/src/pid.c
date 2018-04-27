@@ -4,13 +4,13 @@
 
 
 Speed_mode car_mode = CHECH;
-float steer_engine_degree = 0;              //¶æ»úµÄÆ«×ª½Ç¶È£¬¿ÉÕý¿É¸º£¬ÕýÓÒ¸º×ó
+float steer_engine_degree = 0;              //èˆµæœºçš„åè½¬è§’åº¦ï¼Œå¯æ­£å¯è´Ÿï¼Œæ­£å³è´Ÿå·¦
 int motor_speed = 0;
 
 void Control_core()
 {
 
-	if (LOW_SPEED == car_mode)//µÍËÙÄ£Ê½
+	if (LOW_SPEED == car_mode)//ä½Žé€Ÿæ¨¡å¼
 	{
 		steer_engine_degree = average_offset[1]*4.5;
 		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
@@ -18,7 +18,7 @@ void Control_core()
 		motor_speed = 100;
 	}
 
-	else if (CHECH == car_mode)//µ÷ÊÔÄ£Ê½
+	else if (CHECH == car_mode)//è°ƒè¯•æ¨¡å¼
 	{
 		Steer_Pid();
 		steer_engine_degree = average_offset[0];
@@ -27,7 +27,7 @@ void Control_core()
 		motor_speed = 150;
 	}	
 
-	else if (OTHER == car_mode)//ÆäËûÄ£Ê½
+	else if (OTHER == car_mode)//å…¶ä»–æ¨¡å¼
 	{
 		//if (total_distance > 1000)
 		//{

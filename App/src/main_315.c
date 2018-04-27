@@ -2,7 +2,7 @@
 //#include "include.h"
 //
 //
-//uint8 imgbuff[CAMERA_SIZE];                             //¶¨Òå´æ´¢½ÓÊÕÍ¼ÏñµÄÊı×é
+//uint8 imgbuff[CAMERA_SIZE];                             //å®šä¹‰å­˜å‚¨æ¥æ”¶å›¾åƒçš„æ•°ç»„
 //uint8 img[CAMERA_H][CAMERA_W];
 //
 //void PORTA_IRQHandler();
@@ -10,9 +10,9 @@
 //
 //void  main()
 //{
-//    Site_t site     = {0, 0};                           //ÏÔÊ¾Í¼Ïñ×óÉÏ½ÇÎ»ÖÃ    
-//    Size_t size;                                        //lcdÏÔÊ¾ÇøÓòÍ¼Ïñ´óĞ¡
-//    Size_t imgsize  = {CAMERA_W, CAMERA_H};             //½âÑ¹Í¼Ïñ´óĞ¡
+//    Site_t site     = {0, 0};                           //æ˜¾ç¤ºå›¾åƒå·¦ä¸Šè§’ä½ç½®    
+//    Size_t size;                                        //lcdæ˜¾ç¤ºåŒºåŸŸå›¾åƒå¤§å°
+//    Size_t imgsize  = {CAMERA_W, CAMERA_H};             //è§£å‹å›¾åƒå¤§å°
 //	int i = 0;
 //
 //	LED_show MODE = img_mode;
@@ -24,14 +24,14 @@
 //	gpio_init(PTE21, GPO, 0);
 //	gpio_ddr(PTA8, GPO);
 //
-//	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler);   //ÉèÖÃ PORTA µÄÖĞ¶Ï·şÎñº¯ÊıÎª PORTA_IRQHandler
-//	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);     //ÉèÖÃ DMA0 µÄÖĞ¶Ï·şÎñº¯ÊıÎª PORTA_IRQHandler
+//	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler);   //è®¾ç½® PORTA çš„ä¸­æ–­æœåŠ¡å‡½æ•°ä¸º PORTA_IRQHandler
+//	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);     //è®¾ç½® DMA0 çš„ä¸­æ–­æœåŠ¡å‡½æ•°ä¸º PORTA_IRQHandler
 //
 //    while(1)
 //    {
-//        camera_get_img();                              //ÉãÏñÍ·»ñÈ¡Í¼Ïñ
-//                                                       //ºÚ°×ÉãÏñÍ·
-//        img_extract(img, imgbuff, CAMERA_SIZE);        //½âÑ¹
+//        camera_get_img();                              //æ‘„åƒå¤´è·å–å›¾åƒ
+//                                                       //é»‘ç™½æ‘„åƒå¤´
+//        img_extract(img, imgbuff, CAMERA_SIZE);        //è§£å‹
 //		//Search_line();
 //		//img_compress(img, imgbuff, CAMERA_SIZE);
 //		LCD_Img_Binary_Z(site, size, imgbuff, imgsize);
@@ -46,26 +46,26 @@
 //
 //
 ///*!
-//*  @brief      PORTAÖĞ¶Ï·şÎñº¯Êı
+//*  @brief      PORTAä¸­æ–­æœåŠ¡å‡½æ•°
 //*  @since      v5.0
 //*/
 //void PORTA_IRQHandler()
 //{
-//	uint8  n;    //Òı½ÅºÅ
+//	uint8  n;    //å¼•è„šå·
 //	uint32 flag;
 //
 //	while (!PORTA_ISFR);
 //	flag = PORTA_ISFR;
-//	PORTA_ISFR = ~0;                                   //ÇåÖĞ¶Ï±êÖ¾Î»
+//	PORTA_ISFR = ~0;                                   //æ¸…ä¸­æ–­æ ‡å¿—ä½
 //
-//	n = 29;                                             //³¡ÖĞ¶Ï
-//	if (flag & (1 << n))                                 //PTA29´¥·¢ÖĞ¶Ï
+//	n = 29;                                             //åœºä¸­æ–­
+//	if (flag & (1 << n))                                 //PTA29è§¦å‘ä¸­æ–­
 //	{
 //		camera_vsync();
 //	}
-//#if ( CAMERA_USE_HREF == 1 )                            //Ê¹ÓÃĞĞÖĞ¶Ï
+//#if ( CAMERA_USE_HREF == 1 )                            //ä½¿ç”¨è¡Œä¸­æ–­
 //	n = 28;
-//	if (flag & (1 << n))                                 //PTA28´¥·¢ÖĞ¶Ï
+//	if (flag & (1 << n))                                 //PTA28è§¦å‘ä¸­æ–­
 //	{
 //		camera_href();
 //	}
@@ -75,7 +75,7 @@
 //}
 //
 ///*!
-//*  @brief      DMA0ÖĞ¶Ï·şÎñº¯Êı
+//*  @brief      DMA0ä¸­æ–­æœåŠ¡å‡½æ•°
 //*  @since      v5.0
 //*/
 //void DMA0_IRQHandler()
@@ -87,16 +87,16 @@
 
 /*!
 *     COPYRIGHT NOTICE
-*     Copyright (c) 2013,É½Íâ¿Æ¼¼
+*     Copyright (c) 2013,å±±å¤–ç§‘æŠ€
 *     All rights reserved.
-*     ¼¼ÊõÌÖÂÛ£ºÉ½ÍâÂÛÌ³ http://www.vcan123.com
+*     æŠ€æœ¯è®¨è®ºï¼šå±±å¤–è®ºå› http://www.vcan123.com
 *
-*     ³ı×¢Ã÷³ö´¦Íâ£¬ÒÔÏÂËùÓĞÄÚÈİ°æÈ¨¾ùÊôÉ½Íâ¿Æ¼¼ËùÓĞ£¬Î´¾­ÔÊĞí£¬²»µÃÓÃÓÚÉÌÒµÓÃÍ¾£¬
-*     ĞŞ¸ÄÄÚÈİÊ±±ØĞë±£ÁôÉ½Íâ¿Æ¼¼µÄ°æÈ¨ÉùÃ÷¡£
+*     é™¤æ³¨æ˜å‡ºå¤„å¤–ï¼Œä»¥ä¸‹æ‰€æœ‰å†…å®¹ç‰ˆæƒå‡å±å±±å¤–ç§‘æŠ€æ‰€æœ‰ï¼Œæœªç»å…è®¸ï¼Œä¸å¾—ç”¨äºå•†ä¸šç”¨é€”ï¼Œ
+*     ä¿®æ”¹å†…å®¹æ—¶å¿…é¡»ä¿ç•™å±±å¤–ç§‘æŠ€çš„ç‰ˆæƒå£°æ˜ã€‚
 *
 * @file       main.c
-* @brief      É½ÍâK60 Æ½Ì¨Ö÷³ÌĞò
-* @author     É½Íâ¿Æ¼¼
+* @brief      å±±å¤–K60 å¹³å°ä¸»ç¨‹åº
+* @author     å±±å¤–ç§‘æŠ€
 * @version    v5.0
 * @date       2013-08-28
 */
@@ -105,13 +105,13 @@
 #include "include.h"
 
 
-//º¯ÊıÉùÃ÷
+//å‡½æ•°å£°æ˜
 void PORTA_IRQHandler();
 void DMA0_IRQHandler();
 
 
 uint8 sharp_turn=0;
-uint8 imgbuff[CAMERA_SIZE];                             //¶¨Òå´æ´¢½ÓÊÕÍ¼ÏñµÄÊı×é
+uint8 imgbuff[CAMERA_SIZE];                             //å®šä¹‰å­˜å‚¨æ¥æ”¶å›¾åƒçš„æ•°ç»„
 uint8 img[CAMERA_H][CAMERA_W];
 
 
@@ -133,8 +133,8 @@ void  main(void)
     ftm_pwm_init(FTM0, FTM_CH5, 300, 0);
 	ftm_pwm_init(FTM0, FTM_CH6, 300, 43);
 
-	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler);   //ÉèÖÃ PORTA µÄÖĞ¶Ï·şÎñº¯ÊıÎª PORTA_IRQHandler
-	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);     //ÉèÖÃ DMA0 µÄÖĞ¶Ï·şÎñº¯ÊıÎª PORTA_IRQHandler
+	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler);   //è®¾ç½® PORTA çš„ä¸­æ–­æœåŠ¡å‡½æ•°ä¸º PORTA_IRQHandler
+	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);     //è®¾ç½® DMA0 çš„ä¸­æ–­æœåŠ¡å‡½æ•°ä¸º PORTA_IRQHandler
 	
 
 	while (1)
@@ -187,7 +187,7 @@ void  main(void)
 		
 		//ftm_pwm_duty(FTM0, FTM_CH6, 43 + average_offset_before);
 
-		ftm_pwm_duty(FTM0, FTM_CH5,10 );                    //µç»ú
+		ftm_pwm_duty(FTM0, FTM_CH5,10 );                    //ç”µæœº
 		//if (SHARP_TURN_LEFT == sharp_turn)
 		//{
 		//	ftm_pwm_duty(FTM0, FTM_CH6, 43 - TURN_DEGREE);
@@ -200,7 +200,7 @@ void  main(void)
 		//}
 		//else
 		//{
-		//	ftm_pwm_duty(FTM0, FTM_CH6,43+ average_offset);           //¶æ»ú
+		//	ftm_pwm_duty(FTM0, FTM_CH6,43+ average_offset);           //èˆµæœº
 		//}
 		
 	}
@@ -209,26 +209,26 @@ void  main(void)
 
 
 /*!
-*  @brief      PORTAÖĞ¶Ï·şÎñº¯Êı£¬ÓëÉãÏñÍ·ÓĞ¹Ø
+*  @brief      PORTAä¸­æ–­æœåŠ¡å‡½æ•°ï¼Œä¸æ‘„åƒå¤´æœ‰å…³
 *  @since      v5.0
 */
 void PORTA_IRQHandler()
 {
-	uint8  n;    //Òı½ÅºÅ
+	uint8  n;    //å¼•è„šå·
 	uint32 flag;
 
 	while (!PORTA_ISFR);
 	flag = PORTA_ISFR;
-	PORTA_ISFR = ~0;                                   //ÇåÖĞ¶Ï±êÖ¾Î»
+	PORTA_ISFR = ~0;                                   //æ¸…ä¸­æ–­æ ‡å¿—ä½
 
-	n = 29;                                             //³¡ÖĞ¶Ï
-	if (flag & (1 << n))                                 //PTA29´¥·¢ÖĞ¶Ï
+	n = 29;                                             //åœºä¸­æ–­
+	if (flag & (1 << n))                                 //PTA29è§¦å‘ä¸­æ–­
 	{
 		camera_vsync();
 	}
-#if ( CAMERA_USE_HREF == 1 )                            //Ê¹ÓÃĞĞÖĞ¶Ï
+#if ( CAMERA_USE_HREF == 1 )                            //ä½¿ç”¨è¡Œä¸­æ–­
 	n = 28;
-	if (flag & (1 << n))                                 //PTA28´¥·¢ÖĞ¶Ï
+	if (flag & (1 << n))                                 //PTA28è§¦å‘ä¸­æ–­
 	{
 		camera_href();
 	}
@@ -238,7 +238,7 @@ void PORTA_IRQHandler()
 }
 
 /*!
-*  @brief      DMA0ÖĞ¶Ï·şÎñº¯Êı£¬ÓëÉãÏñÍ·ÓĞ¹Ø
+*  @brief      DMA0ä¸­æ–­æœåŠ¡å‡½æ•°ï¼Œä¸æ‘„åƒå¤´æœ‰å…³
 *  @since      v5.0
 */
 void DMA0_IRQHandler()
