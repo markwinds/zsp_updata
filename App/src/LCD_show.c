@@ -2,41 +2,41 @@
 
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
-int colour[MAX_OPTION]; //0ÔªËØÒ²±£´æÓĞÓĞĞ§Êı¾İ
+int colour[MAX_OPTION]; //0å…ƒç´ ä¹Ÿä¿å­˜æœ‰æœ‰æ•ˆæ•°æ®
 Site_t tem_site_str[] = { 0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100 };
 Site_t tem_site_data[] = { 60, 0, 60, 20, 60, 40, 60, 60, 60, 80, 60, 100};
 
-int page = 1;  //lcdµ±Ç°ËùÔÚÒ³
-int current_row = 0; //µ±Ç°ËùÔÚĞĞ
+int page = 1;  //lcdå½“å‰æ‰€åœ¨é¡µ
+int current_row = 0; //å½“å‰æ‰€åœ¨è¡Œ
 
-/*----------¸÷ÖÖ×´Ì¬ÏÂ¶ÔÓ¦µÄ5¸ö½¨µÄ²Ù×÷--------*/
+/*----------å„ç§çŠ¶æ€ä¸‹å¯¹åº”çš„5ä¸ªå»ºçš„æ“ä½œ--------*/
 Lcd_State wait_middle = {
-	quit_Lcd,        //ÖĞ ÍË³ölcd,ÏÔÊ¾Í¼Ïñ
-	goto_Begin,      //ÉÏ
-	goto_Begin,      //ÏÂ
-	ignore_Oprate,   //×ó
-	ignore_Oprate    //ÓÒ
+	quit_Lcd,        //ä¸­ é€€å‡ºlcd,æ˜¾ç¤ºå›¾åƒ
+	goto_Begin,      //ä¸Š
+	goto_Begin,      //ä¸‹
+	ignore_Oprate,   //å·¦
+	ignore_Oprate    //å³
 };
 Lcd_State wait_begin = {
-	goto_Set,        //ÖĞ 
-	goto_Wait,       //ÉÏ
-	goto_next,       //ÏÂ
-	data_Down,       //×ó
-	data_Up          //ÓÒ
+	goto_Set,        //ä¸­ 
+	goto_Wait,       //ä¸Š
+	goto_next,       //ä¸‹
+	data_Down,       //å·¦
+	data_Up          //å³
 };
 Lcd_State wait_end = {
-	goto_Set,        //ÖĞ ÍË³ölcd,ÏÔÊ¾Í¼Ïñ
-	goto_Before,     //ÉÏ
-	goto_Wait,       //ÏÂ
-	data_Down,       //×ó
-	data_Up          //ÓÒ
+	goto_Set,        //ä¸­ é€€å‡ºlcd,æ˜¾ç¤ºå›¾åƒ
+	goto_Before,     //ä¸Š
+	goto_Wait,       //ä¸‹
+	data_Down,       //å·¦
+	data_Up          //å³
 };
 Lcd_State normal_page = {
-	goto_Set,        //ÖĞ ÍË³ölcd,ÏÔÊ¾Í¼Ïñ
-	goto_Before,     //ÉÏ
-	goto_next,       //ÏÂ
-	data_Down,       //×ó
-	data_Up          //ÓÒ
+	goto_Set,        //ä¸­ é€€å‡ºlcd,æ˜¾ç¤ºå›¾åƒ
+	goto_Before,     //ä¸Š
+	goto_next,       //ä¸‹
+	data_Down,       //å·¦
+	data_Up          //å³
 };
 
 Lcd_State *p_current_state = &wait_middle;
@@ -48,16 +48,16 @@ void PORTD_IRQHandler()
 
 	while (!PORTD_ISFR);
 	flag = PORTD_ISFR;
-	PORTD_ISFR = ~0;                                   //ÇåÖĞ¶Ï±êÖ¾Î»
+	PORTD_ISFR = ~0;                                   //æ¸…ä¸­æ–­æ ‡å¿—ä½
 
 
 	if (IMG_MODE == lcd_mode)
 	{
-		if (flag & (1 << 13))  lcd_mode = UI_MODE;         //Èç¹ûÖĞ¼ü°´ÏÂ£¬Ôò½øÈëuiÄ£Ê½ //LCD_clear(WHITE);												  
+		if (flag & (1 << 13))  lcd_mode = UI_MODE;         //å¦‚æœä¸­é”®æŒ‰ä¸‹ï¼Œåˆ™è¿›å…¥uiæ¨¡å¼ //LCD_clear(WHITE);												  
 	}
 	else
 	{
-		if (flag & (1 << 13))   //ÖĞ¼ü°´ÏÂ
+		if (flag & (1 << 13))   //ä¸­é”®æŒ‰ä¸‹
 		{
 			onpress_M();
 		}
@@ -86,7 +86,7 @@ void PORTD_IRQHandler()
 	//	{
 	//		if (ui_point)
 	//		{
-	//			if (GREEN == colour[ui_point])   //±³¾°É«¸Ä±ä
+	//			if (GREEN == colour[ui_point])   //èƒŒæ™¯è‰²æ”¹å˜
 	//			{
 	//				colour[ui_point] = RED;
 	//			}
@@ -100,28 +100,28 @@ void PORTD_IRQHandler()
 	//			lcd_mode = IMG_MODE;
 	//		}
 	//	}
-	//	else if (flag & (1 << 12))  //ÓÒ¼ü°´ÏÂ
+	//	else if (flag & (1 << 12))  //å³é”®æŒ‰ä¸‹
 	//	{
 	//		if (ui_point)
 	//		{
-	//			if (RED == colour[ui_point])  //±³¾°ÎªºìÉ«±íÊ¾¿ÉÒÔ¸Ä¶ÔÓ¦Öµ
+	//			if (RED == colour[ui_point])  //èƒŒæ™¯ä¸ºçº¢è‰²è¡¨ç¤ºå¯ä»¥æ”¹å¯¹åº”å€¼
 	//			{
 	//				ui_data[ui_point]++;
 	//			}
 	//		}
 	//	}
-	//	else if (flag & (1 << 11))  //×ó¼ü°´ÏÂ
+	//	else if (flag & (1 << 11))  //å·¦é”®æŒ‰ä¸‹
 	//	{
 	//		if (ui_point)
 	//		{
-	//			if (RED == colour[ui_point])  //±³¾°ÎªºìÉ«±íÊ¾¿ÉÒÔ¸Ä¶ÔÓ¦Öµ
+	//			if (RED == colour[ui_point])  //èƒŒæ™¯ä¸ºçº¢è‰²è¡¨ç¤ºå¯ä»¥æ”¹å¯¹åº”å€¼
 	//			{
 	//				ui_data[ui_point]--;
 	//				if (ui_data[ui_point] < 0) ui_data[ui_point] = 0;
 	//			}
 	//		}
 	//	}
-	//	else if (flag & (1 << 10)) //ÉÏ¼ü°´ÏÂ
+	//	else if (flag & (1 << 10)) //ä¸Šé”®æŒ‰ä¸‹
 	//	{
 	//		if (GREEN == colour[ui_point] && ui_point != 0)
 	//		{
@@ -138,7 +138,7 @@ void PORTD_IRQHandler()
 	//			}
 	//		}
 	//	}
-	//	else if (flag & (1 << 14)) //ÏÂ¼ü°´ÏÂ
+	//	else if (flag & (1 << 14)) //ä¸‹é”®æŒ‰ä¸‹
 	//	{
 	//		if (GREEN == colour[ui_point] && ui_point != ITEM_NUM)
 	//		{
@@ -169,11 +169,11 @@ void Open_UI(int n)
 	int i = 0;
 	int m = 0;
 	
-	colour[MAX_OPTION - 1] = 300*n; //¼ÇÂ¼Òª´¦ÀíµÄÊı¾İ¸öÊı
-	if (1 == key_on)//ÓĞ°´¼ü°´ÏÂ²ÅË¢ĞÂ
+	colour[MAX_OPTION - 1] = 300*n; //è®°å½•è¦å¤„ç†çš„æ•°æ®ä¸ªæ•°
+	if (1 == key_on)//æœ‰æŒ‰é”®æŒ‰ä¸‹æ‰åˆ·æ–°
 	{
 		m = 6 * (page - 1);
-		LCD_clear(WHITE);//ÇåÆÁ·ÀÖ¹ÉÏ´ÎÁôÏÂ²ĞÓ°
+		LCD_clear(WHITE);//æ¸…å±é˜²æ­¢ä¸Šæ¬¡ç•™ä¸‹æ®‹å½±
 		for (i = 0; i < 6; i++)
 		{
 			if (m + i >= n)
@@ -182,12 +182,12 @@ void Open_UI(int n)
 			}
 			if (99 == screen_data[m + i].icrement)
 			{
-				LCD_str(tem_site_str[i], screen_data[m + i].data_name, BLACK, colour[m + i]);  //¼ÇµÃ»ØÀ´¸ÄÑÕÉ«
+				LCD_str(tem_site_str[i], screen_data[m + i].data_name, BLACK, colour[m + i]);  //è®°å¾—å›æ¥æ”¹é¢œè‰²
 				LCD_str(tem_site_data[i], (((int)(*(screen_data[m + i].data_value))) % 2 )? "ON" : "OFF", BLACK, WHITE);
 			}
 			else
 			{
-				LCD_str(tem_site_str[i], screen_data[m + i].data_name, BLACK, colour[m + i]);//¼ÇµÃ»ØÀ´¸ÄÑÕÉ«
+				LCD_str(tem_site_str[i], screen_data[m + i].data_name, BLACK, colour[m + i]);//è®°å¾—å›æ¥æ”¹é¢œè‰²
 				LCD_numf(tem_site_data[i], (float)(*(screen_data[m + i].data_value)), BLACK, WHITE);
 			}
 		}
@@ -221,21 +221,21 @@ void UI_INIT()
 	{
 		colour[i] = WHITE;
 	}
-	/*ÅäÖÃ¸÷¸ö°´¼üµÄÖĞ¶Ï*/
-	port_init(PTD14, ALT1 | IRQ_FALLING | PULLUP);  //ÏÂ
-	port_init(PTD13, ALT1 | IRQ_FALLING | PULLUP);  //ÖĞ
-	port_init(PTD12, ALT1 | IRQ_FALLING | PULLUP);      //ÓÒ
-	port_init(PTD11, ALT1 | IRQ_FALLING | PULLUP);      //×ó
-	port_init(PTD10, ALT1 | IRQ_FALLING | PULLUP);      //ÉÏ
-	enable_irq(PORTD_IRQn);                //Ê¹ÄÜd¶ÔÓ¦µÄ¶Ë¿ÚÒ²¾ÍÊÇ°´¼üµÄport
+	/*é…ç½®å„ä¸ªæŒ‰é”®çš„ä¸­æ–­*/
+	port_init(PTD14, ALT1 | IRQ_FALLING | PULLUP);  //ä¸‹
+	port_init(PTD13, ALT1 | IRQ_FALLING | PULLUP);  //ä¸­
+	port_init(PTD12, ALT1 | IRQ_FALLING | PULLUP);      //å³
+	port_init(PTD11, ALT1 | IRQ_FALLING | PULLUP);      //å·¦
+	port_init(PTD10, ALT1 | IRQ_FALLING | PULLUP);      //ä¸Š
+	enable_irq(PORTD_IRQn);                //ä½¿èƒ½då¯¹åº”çš„ç«¯å£ä¹Ÿå°±æ˜¯æŒ‰é”®çš„port
 }
 
 
 
 
 
-/*-----------------ĞÂÔö¹¦ÄÜµÄº¯Êı-----------------*/
-Lcd_State *quit_Lcd(Lcd_State *pThis) //ÍË³ölcdÄ£Ê½
+/*-----------------æ–°å¢åŠŸèƒ½çš„å‡½æ•°-----------------*/
+Lcd_State *quit_Lcd(Lcd_State *pThis) //é€€å‡ºlcdæ¨¡å¼
 {
 	page = 1;
 	current_row = 0;
@@ -243,10 +243,10 @@ Lcd_State *quit_Lcd(Lcd_State *pThis) //ÍË³ölcdÄ£Ê½
 	return &wait_middle;
 }
 
-Lcd_State *goto_Begin(Lcd_State *pThis) //´ÓµÈ´ıÄ£Ê½½øÈë±¾Ò³µÚÒ»ĞĞ
+Lcd_State *goto_Begin(Lcd_State *pThis) //ä»ç­‰å¾…æ¨¡å¼è¿›å…¥æœ¬é¡µç¬¬ä¸€è¡Œ
 {
 	current_row = 1;
-	colour[6 * (page - 1) + current_row - 1] = GREEN; //Ñ¡ÖĞµÄĞĞ±ä³ÉÂÌÉ«
+	colour[6 * (page - 1) + current_row - 1] = GREEN; //é€‰ä¸­çš„è¡Œå˜æˆç»¿è‰²
 	if (1 == page) return &wait_begin;
 	else return &normal_page;
 	
@@ -266,7 +266,7 @@ Lcd_State *goto_Set(Lcd_State *pThis)
 
 Lcd_State *goto_Wait(Lcd_State *pThis)
 {
-	if (GREEN == colour[6 * (page - 1) + current_row - 1]) //ÔÚÎ´Ñ¡ÖĞµÄÇé¿öÏÂ²ÅÔËĞĞ
+	if (GREEN == colour[6 * (page - 1) + current_row - 1]) //åœ¨æœªé€‰ä¸­çš„æƒ…å†µä¸‹æ‰è¿è¡Œ
 	{
 		colour[6 * (page - 1) + current_row - 1] = WHITE;
 		return &wait_middle;
@@ -281,11 +281,11 @@ Lcd_State *goto_next(Lcd_State *pThis)
 	if (GREEN == colour[6 * (page - 1) + current_row - 1])
 	{
 		colour[6 * (page - 1) + current_row - 1] = WHITE;
-		if (1 == colour[MAX_OPTION - 1] / 300 || 6 * (page - 1) + current_row - 1 == ((colour[MAX_OPTION - 1] / 300) - 1)) //Èç¹ûÖ»ÓĞÒ»¸öÊı¾İÒª´¦Àí»òÕßµ±Ç°Ò³ÃæÖ»ÓĞÒ»ĞĞ
+		if (1 == colour[MAX_OPTION - 1] / 300 || 6 * (page - 1) + current_row - 1 == ((colour[MAX_OPTION - 1] / 300) - 1)) //å¦‚æœåªæœ‰ä¸€ä¸ªæ•°æ®è¦å¤„ç†æˆ–è€…å½“å‰é¡µé¢åªæœ‰ä¸€è¡Œ
 		{
 			return &wait_middle;
 		}
-		if (6 * (page - 1) + current_row - 1 == ((colour[MAX_OPTION - 1] / 300) - 2)) //Èç¹ûÔÙÍùÏÂÒ»ĞĞ¾ÍÊÇ×îºóÒ»ĞĞ
+		if (6 * (page - 1) + current_row - 1 == ((colour[MAX_OPTION - 1] / 300) - 2)) //å¦‚æœå†å¾€ä¸‹ä¸€è¡Œå°±æ˜¯æœ€åä¸€è¡Œ
 		{
 			i = 1;
 		}
