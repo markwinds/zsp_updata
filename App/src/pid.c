@@ -5,7 +5,7 @@
 
 Speed_mode car_mode = CHECH;
 float steer_engine_degree = 0;              //舵机的偏转角度，可正可负，正右负左
-float motor_speed = 0;
+float motor_speed = 100;
 float STEER_KP = 4;
 float STEER_KI = 4;
 float STEER_KD = 4;
@@ -27,7 +27,7 @@ void Control_core()
 		steer_engine_degree = average_offset[0];
 		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
 		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
-		motor_speed = 250;
+		//motor_speed = 100;
 	}	
 
 	else if (OTHER == car_mode)//其他模式

@@ -10,12 +10,15 @@
 
 #define MAX_OPTION 30 //lcd能使用的最大的参数个数
 
+#define SECTOR_NUM  (FLASH_SECTOR_NUM-1)    
+
 
 typedef struct Screen_Data //传参结构体
 {
 	char *data_name;  //参数名称
 	float *data_value; //参数值
 	float icrement;   //参数累加数 如果是100就是on\off
+	int ip;  //是否存放入flash的标志位
 }Screen_Data;
 
 /*新增lcd功能*/
@@ -53,6 +56,8 @@ extern int page;
 extern int current_row;
 extern Screen_Data screen_data[];
 
+extern float flash_in;
+extern float motor_go;  //在显示状态下控制电机是否转动的变量
 extern int _temp;
 extern uint8 key_on;
 extern uint8 lcd_mode;
@@ -65,6 +70,8 @@ extern Site_t tem_site_data[];
 void PORTD_IRQHandler();
 void UI_INIT();
 void Open_UI();
+extern void flash_In();
+extern void flash_Out();
 
 
 #endif

@@ -325,7 +325,7 @@ void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己
 		return;
 	}
 
-	num = num * 100;
+	num = (num+0.005) * 100.0;//四舍五入
 	temp1 = num;
 	temp2 = num;
 	while (temp1)  /*得到数字长度t*/

@@ -3,12 +3,14 @@
 
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
+float motor_go = 0;  //在显示状态下控制电机是否转动的变量
 int colour[MAX_OPTION]; //0元素也保存有有效数据
 Site_t tem_site_str[] = { 0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100 };
 Site_t tem_site_data[] = { 60, 0, 60, 20, 60, 40, 60, 60, 60, 80, 60, 100};
 
 int page = 1;  //lcd当前所在页
 int current_row = 0; //当前所在行
+float flash_in = 0;  //是否写入flash
 
 /*----------各种状态下对应的5个建的操作--------*/
 Lcd_State wait_middle = {
@@ -92,7 +94,6 @@ void Open_UI()
 	int m = 0;
 	int n = 0;
 	
-        motor_speed=0;
 	for (n = 0;; n++)
 	{
 		if (0==strcmp(screen_data[n].data_name, "end")) break;
@@ -250,6 +251,10 @@ Lcd_State *data_Down(Lcd_State *pThis)
 	if (RED == colour[6 * (page - 1) + current_row - 1])
 	{
 		*(screen_data[6 * (page - 1) + current_row - 1].data_value) -= screen_data[6 * (page - 1) + current_row - 1].icrement;
+		if (screen_data[6 * (page - 1) + current_row - 1].ip == -1)  //写flash操作
+		{
+			flash_In();
+		}
 	}
 	return pThis;
 }
@@ -259,6 +264,10 @@ Lcd_State *data_Up(Lcd_State *pThis)
 	if (RED == colour[6 * (page - 1) + current_row - 1])
 	{
 		*(screen_data[6 * (page - 1) + current_row - 1].data_value) += screen_data[6 * (page - 1) + current_row - 1].icrement;
+		if (screen_data[6 * (page - 1) + current_row - 1].ip == -1)  //写flash操作
+		{
+			flash_In();
+		}
 	}
 	return pThis;
 }
@@ -290,3 +299,54 @@ void onpress_R()
 }
 
 
+
+void flash_In() //将数据写入flash
+{
+	int i = 0;
+
+	flash_erase_sector(SECTOR_NUM); //擦除扇区,擦一次只能写一次
+	while (strcmp(screen_data[i].data_name, "end") != 0)
+	{
+		if (screen_data[i].ip > 0)
+		{
+			flash_write(SECTOR_NUM, screen_data[i].ip * 4, (uint32)((*(screen_data[i].data_value)) * 100.0+0.5)); //四舍五入写入，防止float精度不够
+		}
+		i++;
+	}
+}
+
+void flash_Out()
+{
+	int i = 0;
+	uint32 data = 0;
+
+	while (strcmp(screen_data[i].data_name, "end") != 0)
+	{
+		if (screen_data[i].ip > 0)
+		{
+			data = flash_read(SECTOR_NUM, screen_data[i].ip * 4, uint32);
+			*(screen_data[i].data_value) = (float)((double)data / 100.0);
+		}
+		i++;
+	}
+}
+
+//void flash_Data_Init(Screen_Data screen_data[])
+//{
+//	int i = 0;
+//	uint32 data = 0;
+//
+//	while(strcmp(screen_data[i].data_name, "end") != 0)
+//	{
+//		if (screen_data[n].ip != 0)
+//		{
+//			data = flash_read(SECTOR_NUM, screen_data[i].ip * 4, uint32);
+//			temp_s[5] = (float)((double)data);
+//			/**(screen_data[i].data_value) = (float)( ( (double)(data) ) / 100.0);*/
+//			
+//		}
+//		n++;
+//	}
+//
+//	//flash_erase_sector(SECTOR_NUM);
+//}

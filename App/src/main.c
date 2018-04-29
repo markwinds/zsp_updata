@@ -10,17 +10,19 @@ void DMA0_IRQHandler();
 int _temp = 0;
 
 Screen_Data screen_data[] = {
-{ "P",&(STEER_KP),0.2 },
-{ "I",&(STEER_KI),0.2 },
-{ "D",&(STEER_KD),0.2 },
-{ "speed",&(motor_speed),10 },
-{ "length",&(total_distance),500 },
-{ "speed5",&(temp_s[5]),5 },
-{ "speed6",&(temp_s[6]),6 },
-{ "speed7",&(temp_s[7]),7 },
-{ "speed8",&(temp_s[8]),8 },
-{ "speed9",&(temp_s[9]),9 },
-{ "end",&(temp_s[9]),1202 }
+
+{ "P",&(STEER_KP),0.2,1 },
+{ "I",&(STEER_KI),0.2,2 },
+{ "D",&(STEER_KD),0.2,3 },
+
+{ "enM",&(motor_go),99,0 }, //使能电机
+{ "speed",&(motor_speed),10,4 },
+
+{ "length",&(total_distance),500,0 },
+
+{ "flash",&(flash_in),1,-1},
+
+{ "end",&(temp_s[9]),1202,0 }
 };
 
 /*
@@ -49,15 +51,14 @@ void  main(void)
 	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);     //设置 DMA0 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(PORTD_VECTORn, PORTD_IRQHandler);   //ui所需中断的初始化
 	Quad_Init();                                           //编码器中断
-	
+	flash_init();
+	flash_Out();
 	
 
 	while (1)
 	{    
 		if (IMG_MODE == lcd_mode)
 		{
-			//_temp++;
-            Update_Motor();
 			camera_get_img();                            //相机获取图像                               
 			img_extract(img, imgbuff, CAMERA_SIZE);      //解压图像
 			//temp_s[6] = Find_slope();
@@ -72,6 +73,8 @@ void  main(void)
 			LCD_numf(tem_site_str[3], isisland_flag, GREEN, BLUE);
 			LCD_numf(tem_site_str[4], isisland_flag1, GREEN, BLUE);
 			LCD_numf(tem_site_data[4], land_distance_count1, GREEN, BLUE);
+			LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
+            LCD_numf(tem_site_data[5], sizeof(double), GREEN, BLUE);
 
 			Control_core();
 
@@ -79,14 +82,24 @@ void  main(void)
 		}
 		else Open_UI();
 
-		if (total_distance < 1000)
+		Update_Motor();
+
+		if (UI_MODE == lcd_mode)
 		{
-			ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
+			if (1 == ((int)motor_go) % 2 && total_distance < 1000) ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);
+			else ftm_pwm_duty(FTM0, FTM_CH5, 0);
+			ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
 		}
-		else ftm_pwm_duty(FTM0, FTM_CH5, 0);
+		else
+		{
+			if (total_distance < 1000)
+			{
+				ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);                    //电机
+			}
+			else ftm_pwm_duty(FTM0, FTM_CH5, 0);
 		
-		ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree);       //舵机 
-        //ftm_pwm_duty(FTM0, FTM_CH6, 390);
+			ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree);       //舵机 
+		}
 	}//while
 }
 
