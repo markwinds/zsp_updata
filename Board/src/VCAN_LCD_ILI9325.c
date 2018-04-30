@@ -1,15 +1,15 @@
 /*!
  *     COPYRIGHT NOTICE
- *     Copyright (c) 2016,É½Íâ¿Æ¼¼
+ *     Copyright (c) 2016,å±±å¤–ç§‘æŠ€
  *     All rights reserved.
- *     ¼¼ÊõÌÖÂÛ£ºÉ½ÍâÂÛÌ³ http://www.vcan123.com
+ *     æŠ€æœ¯è®¨è®ºï¼šå±±å¤–è®ºå› http://www.vcan123.com
  *
- *     ³ý×¢Ã÷³ö´¦Íâ£¬ÒÔÏÂËùÓÐÄÚÈÝ°æÈ¨¾ùÊôÉ½Íâ¿Æ¼¼ËùÓÐ£¬Î´¾­ÔÊÐí£¬²»µÃÓÃÓÚÉÌÒµÓÃÍ¾£¬
- *     ÐÞ¸ÄÄÚÈÝÊ±±ØÐë±£ÁôÉ½Íâ¿Æ¼¼µÄ°æÈ¨ÉùÃ÷¡£
+ *     é™¤æ³¨æ˜Žå‡ºå¤„å¤–ï¼Œä»¥ä¸‹æ‰€æœ‰å†…å®¹ç‰ˆæƒå‡å±žå±±å¤–ç§‘æŠ€æ‰€æœ‰ï¼Œæœªç»å…è®¸ï¼Œä¸å¾—ç”¨äºŽå•†ä¸šç”¨é€”ï¼Œ
+ *     ä¿®æ”¹å†…å®¹æ—¶å¿…é¡»ä¿ç•™å±±å¤–ç§‘æŠ€çš„ç‰ˆæƒå£°æ˜Žã€‚
  *
  * @file       VCAN_LCD_ILI9325.c
- * @brief      LCD ILI9325º¯Êý¿â
- * @author     É½Íâ¿Æ¼¼
+ * @brief      LCD ILI9325å‡½æ•°åº“
+ * @author     å±±å¤–ç§‘æŠ€
  * @version    v5.1
  * @date       2014-02-03
  */
@@ -22,9 +22,9 @@
 
 #if (USE_LCD == LCD_ILI9325)
 
-//¶¨ÒåËùÓÃµ½µÄ IO¹Ü½Å
-#define LCD_RST    PTC13                //¸´Î»
-#define LCD_BL     PTB8                 //±³¹â
+//å®šä¹‰æ‰€ç”¨åˆ°çš„ IOç®¡è„š
+#define LCD_RST    PTC13                //å¤ä½
+#define LCD_BL     PTB8                 //èƒŒå…‰
 
 
 #define ILI9325_DELAY()          DELAY_MS(100)
@@ -34,7 +34,7 @@
 #define ILI9325_H       240
 #define ILI9325_W       320
 
-#if ((ILI9325_DIR_DEFAULT&1 )== 0)      //ºáÆÁ
+#if ((ILI9325_DIR_DEFAULT&1 )== 0)      //æ¨ªå±
 uint16  ili9325_h   = ILI9325_H;
 uint16  ili9325_w   = ILI9325_W;
 #else
@@ -43,20 +43,20 @@ uint16  ili9325_w   = ILI9325_H;
 #endif
 uint8   ili9325_dir = ILI9325_DIR_DEFAULT;
 /*!
- *  @brief      LCD_ILI9325³õÊ¼»¯
+ *  @brief      LCD_ILI9325åˆå§‹åŒ–
  *  @since      v5.0
  */
 void    LCD_ILI9325_init()
 {
-    gpio_init (LCD_BL, GPO, 0); //LCD±³¹â¹Ü½ÅÊä³ö1£¬±íÊ¾¹Ø±ÕLCD±³¹â
+    gpio_init (LCD_BL, GPO, 0); //LCDèƒŒå…‰ç®¡è„šè¾“å‡º1ï¼Œè¡¨ç¤ºå…³é—­LCDèƒŒå…‰
 
-    //¸´Î»LCD
+    //å¤ä½LCD
     gpio_init (LCD_RST, GPO, 0);
 
     ILI9325_DELAYMS(1);
     GPIO_SET   (LCD_RST, 1);
 
-    //³õÊ¼»¯×ÜÏß
+    //åˆå§‹åŒ–æ€»çº¿
     flexbus_8080_init();
 
     /* Start Initial Sequence ----------------------------------------------------*/
@@ -219,12 +219,12 @@ void    LCD_ILI9325_init()
 
     LCD_ILI9325_dir(ILI9325_DIR_DEFAULT) ;
 
-    PTXn_T(LCD_BL,OUT) = 1;     //¿ªLCD±³¹â
+    PTXn_T(LCD_BL,OUT) = 1;     //å¼€LCDèƒŒå…‰
 }
 
 /*!
- *  @brief      ÉèÖÃILI9325GRAMÖ¸ÕëÉ¨Ãè·½Ïò
- *  @param      option    ·½ÏòÑ¡Ôñ£¨0~3£©
+ *  @brief      è®¾ç½®ILI9325GRAMæŒ‡é’ˆæ‰«ææ–¹å‘
+ *  @param      option    æ–¹å‘é€‰æ‹©ï¼ˆ0~3ï¼‰
  *  @since      v5.0
  */
 void LCD_ILI9325_dir(uint8 option)
@@ -241,7 +241,7 @@ void LCD_ILI9325_dir(uint8 option)
     {
         case 0:
         {
-            /*ºáÆÁ*/
+            /*æ¨ªå±*/
 
             ili9325_h   = ILI9325_H;
             ili9325_w   = ILI9325_W;
@@ -254,7 +254,7 @@ void LCD_ILI9325_dir(uint8 option)
             ili9325_h   = ILI9325_W;
             ili9325_w   = ILI9325_H;
 
-            /*ÊúÆÁ*/
+            /*ç«–å±*/
             LCD_ILI9325_WR_CMD(3);
             LCD_ILI9325_WR_DATA(  (1<<12)|(0<<9)|(1<<7)|(1<<5)|(1<<4)|(0<<3)); /* set GRAM write direction and BGR=1. */
 
@@ -263,7 +263,7 @@ void LCD_ILI9325_dir(uint8 option)
         break;
         case 2:
         {
-            /*ºáÆÁ*/
+            /*æ¨ªå±*/
             ili9325_h   = ILI9325_H;
             ili9325_w   = ILI9325_W;
             LCD_ILI9325_WR_CMD(3);
@@ -273,7 +273,7 @@ void LCD_ILI9325_dir(uint8 option)
         break;
         case 3:
         {
-            /*ÊúÆÁ*/
+            /*ç«–å±*/
             ili9325_h   = ILI9325_W;
             ili9325_w   = ILI9325_H;
             LCD_ILI9325_WR_CMD(3);
@@ -282,7 +282,7 @@ void LCD_ILI9325_dir(uint8 option)
         }
         break;
         default:
-            //ÓÉÓÚ¿ªÍ·ÓÐÐ£Ñé£¬Òò¶ø²»»áÖ´ÐÐµ½ÕâÀï
+            //ç”±äºŽå¼€å¤´æœ‰æ ¡éªŒï¼Œå› è€Œä¸ä¼šæ‰§è¡Œåˆ°è¿™é‡Œ
             //LCD_ILI9325_dir(ILI9325_DIR_DEFAULT);
             break;
 
@@ -304,9 +304,9 @@ void LCD_ILI9325_dir(uint8 option)
 }
 
 /*!
- *  @brief      ÉèÖÃILI9325¿ª´°
- *  @param      site        ×óÉÏ½Ç×ø±êÎ»ÖÃ
- *  @param      size        ¿ª´°´óÐ¡
+ *  @brief      è®¾ç½®ILI9325å¼€çª—
+ *  @param      site        å·¦ä¸Šè§’åæ ‡ä½ç½®
+ *  @param      size        å¼€çª—å¤§å°
  *  @since      v5.0
  */
 void LCD_ILI9325_ptlon(Site_t site, Size_t size)
@@ -391,8 +391,8 @@ void LCD_ILI9325_ptlon(Site_t site, Size_t size)
 }
 
 /*!
- *  @brief      »ñÈ¡ ILI9325 ¸ß¶È
- *  @return     ILI9325 ¸ß¶È
+ *  @brief      èŽ·å– ILI9325 é«˜åº¦
+ *  @return     ILI9325 é«˜åº¦
  *  @since      v5.0
  */
 uint16 ILI9325_get_h()
@@ -401,8 +401,8 @@ uint16 ILI9325_get_h()
 }
 
 /*!
- *  @brief      »ñÈ¡ ILI9325 ¿í¶È
- *  @return     ILI9325 ¿í¶È
+ *  @brief      èŽ·å– ILI9325 å®½åº¦
+ *  @return     ILI9325 å®½åº¦
  *  @since      v5.0
  */
 uint16 ILI9325_get_w()
@@ -411,8 +411,8 @@ uint16 ILI9325_get_w()
 }
 
 /*!
- *  @brief      »ñÈ¡ ILI9325 ÏÔÊ¾·½Ïò
- *  @return     ILI9325 ·½Ïò
+ *  @brief      èŽ·å– ILI9325 æ˜¾ç¤ºæ–¹å‘
+ *  @return     ILI9325 æ–¹å‘
  *  @since      v5.0
  */
 uint8 ILI9325_get_dir()
