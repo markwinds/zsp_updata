@@ -276,7 +276,7 @@ void LCD_str(Site_t site, uint8 *Str, uint16 Color, uint16 bkColor)
 *  Sample usage:        Site_t site = {10,20};   //x = 10 ,y = 20
                         LCD_num(site,123, BLUE,RED);
  */
-void LCD_num(Site_t site, uint32 num, uint16 Color, uint16 bkColor)
+uint8 LCD_num(Site_t site, uint32 num, uint16 Color, uint16 bkColor)
 {
     uint32 res = num;
     uint8 t = 0;
@@ -286,7 +286,7 @@ void LCD_num(Site_t site, uint32 num, uint16 Color, uint16 bkColor)
     if( num == 0 )
     {
         LCD_char(site, '0', Color, bkColor);
-        return;
+        return 1;
     }
     while( res )  /*得到数字长度t*/
     {
@@ -304,6 +304,16 @@ void LCD_num(Site_t site, uint32 num, uint16 Color, uint16 bkColor)
 
 void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己写的，用来显示两位小数的浮点型
 {
+  
+    if(num<0){
+        LCD_char(site, '-', Color, bkColor);
+        site.x += 8;        
+    }
+    site.x += LCD_num(site, (uint32)num, Color, bkColor)*8;
+    LCD_char(site, '.', Color, bkColor);
+    site.x += 8;  
+    LCD_num(site, ((uint32)(num*100))%100,Color, bkColor);
+  /*
 	int i = 0;
 	int t = 0; 
     int s = 0;
@@ -328,7 +338,7 @@ void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己
 	num = (num+0.005) * 100.0;//四舍五入
 	temp1 = num;
 	temp2 = num;
-	while (temp1)  /*得到数字长度t*/
+	while (temp1)  //得到数字长度t
 	{
 		temp1 /= 10;
 		t++;
@@ -418,7 +428,7 @@ void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己
 		}
 		sitetemp.x = site.x;
 		LCD_char(sitetemp, '-', Color, bkColor);
-	}
+	}*/
 }
 
 /*!

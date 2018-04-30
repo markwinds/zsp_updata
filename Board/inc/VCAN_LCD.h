@@ -107,7 +107,7 @@ extern void LCD_cross          (Site_t,uint16 len,                              
 extern void LCD_clear          (uint16 rgb565);     //清屏
 
 
-extern void LCD_num            (Site_t,        uint32 num,                     uint16 Color, uint16 bkColor);  //显示数字
+extern uint8 LCD_num            (Site_t,        uint32 num,                     uint16 Color, uint16 bkColor);  //显示数字
 #define MAX_NUM_BIT 5                                                                                   //数字的最大位数（用于清掉多余的屏幕残留数字）
 #define LCD_num_C(site,num,color,bkColor)           LCD_num_BC(site, num,MAX_NUM_BIT,color,bkColor)     //显示数字（清掉多余的屏幕残留数字）
 extern void LCD_num_BC         (Site_t,        uint32 num, uint8 max_num_bit,  uint16 Color, uint16 bkColor);  //显示数字（清掉多余的屏幕残留数字）
