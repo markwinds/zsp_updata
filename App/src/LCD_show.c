@@ -3,6 +3,7 @@
 
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
+uint8 is_show_va = 0;
 float motor_go = 0;  //在显示状态下控制电机是否转动的变量
 int colour[MAX_OPTION]; //0元素也保存有有效数据
 Site_t tem_site_str[] = { 0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100 };
@@ -11,6 +12,7 @@ Site_t tem_site_data[] = { 60, 0, 60, 20, 60, 40, 60, 60, 60, 80, 60, 100};
 int page = 1;  //lcd当前所在页
 int current_row = 0; //当前所在行
 float flash_in = 0;  //是否写入flash
+
 
 /*----------各种状态下对应的5个建的操作--------*/
 Lcd_State wait_middle = {
@@ -28,21 +30,28 @@ Lcd_State wait_begin = {
 	data_Up          //右
 };
 Lcd_State wait_end = {
-	goto_Set,        //中 退出lcd,显示图像
+	goto_Set,        //中 
 	goto_Before,     //上
 	goto_Wait,       //下
 	data_Down,       //左
 	data_Up          //右
 };
 Lcd_State normal_page = {
-	goto_Set,        //中 退出lcd,显示图像
+	goto_Set,        //中 
 	goto_Before,     //上
 	goto_next,       //下
 	data_Down,       //左
 	data_Up          //右
 };
+Lcd_State imgbuff_show = {
+	quit_show,  //中
+	open_va,	//上
+	close_va,   //下
+	do_nothing, //左
+	do_nothing  //右
+};
 
-Lcd_State *p_current_state = &wait_middle;
+Lcd_State *p_current_state = &imgbuff_show;
 
 
 void PORTD_IRQHandler()
@@ -54,9 +63,9 @@ void PORTD_IRQHandler()
 	PORTD_ISFR = ~0;                                   //清中断标志位
 
 
-	if (IMG_MODE == lcd_mode)
+	if(0) //(IMG_MODE == lcd_mode)
 	{
-		if (flag & (1 << 13))  lcd_mode = UI_MODE;         //如果中键按下，则进入ui模式 //LCD_clear(WHITE);												  
+		if (flag & (1 << 13))  lcd_mode = UI_MODE;         //如果中键按下，则进入ui模式 //LCD_clear(WHITE);
 	}
 	else
 	{
@@ -122,8 +131,7 @@ void Open_UI()
 			}
 		}
 		key_on = 0;
-		for (i = 0; i < 1000; i++)
-			for (m = 0; m < 5000; m++);//消抖
+		DELAY_MS(500);//消抖
 		enable_irq(PORTD_IRQn);
 	}
 }
@@ -156,7 +164,7 @@ Lcd_State *quit_Lcd(Lcd_State *pThis) //退出lcd模式
 	page = 1;
 	current_row = 0;
 	lcd_mode = IMG_MODE;
-	return &wait_middle;
+	return &imgbuff_show;
 }
 
 Lcd_State *goto_Begin(Lcd_State *pThis) //从等待模式进入本页第一行
@@ -272,9 +280,32 @@ Lcd_State *data_Up(Lcd_State *pThis)
 	return pThis;
 }
 
+Lcd_State *quit_show(Lcd_State *pThis){
+	page = 1;
+	current_row = 0;
+	lcd_mode = UI_MODE;
+	return &wait_middle;
+}
 
+Lcd_State *close_va(Lcd_State *pThis){
+	is_show_va = 0;
+	return pThis;
+}
+
+Lcd_State *open_va(Lcd_State *pThis){
+	is_show_va = 1;
+	return pThis;
+}
+
+Lcd_State *do_nothing(Lcd_State *pThis){
+	return pThis;
+}
+
+
+/*中断调用的函数*/
 void onpress_M()
 {
+	LCD_clear(WHITE);
 	p_current_state = p_current_state->press_M(p_current_state);
 }
 

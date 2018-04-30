@@ -69,12 +69,15 @@ void  main(void)
 			//LCD_numf(tem_site_str[2], temp_s[0], GREEN, BLUE);  
 			//LCD_numf(tem_site_data[2], temp_s[1], GREEN, BLUE);
 			
-			LCD_numf(tem_site_str[2], iscross_flag, GREEN, BLUE);
-			LCD_numf(tem_site_str[3], isisland_flag, GREEN, BLUE);
-			LCD_numf(tem_site_str[4], isisland_flag1, GREEN, BLUE);
-			LCD_numf(tem_site_data[4], land_distance_count1, GREEN, BLUE);
-			LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
-            LCD_numf(tem_site_data[5], sizeof(double), GREEN, BLUE);
+			if(is_show_va){
+				LCD_numf(tem_site_str[2], iscross_flag, GREEN, BLUE);
+				LCD_numf(tem_site_str[3], isisland_flag, GREEN, BLUE);
+				LCD_numf(tem_site_str[4], isisland_flag1, GREEN, BLUE);
+				LCD_numf(tem_site_data[4], land_distance_count1, GREEN, BLUE);
+				LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
+				LCD_numf(tem_site_data[5], sizeof(double), GREEN, BLUE);				
+			}
+
 
 			Control_core();
 

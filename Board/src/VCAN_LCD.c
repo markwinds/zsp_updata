@@ -282,7 +282,7 @@ uint8 LCD_num(Site_t site, uint32 num, uint16 Color, uint16 bkColor)
     uint8 t = 0;
     Site_t sitetemp;
     sitetemp.y = site.y;
-
+    uint8 save_t;
     if( num == 0 )
     {
         LCD_char(site, '0', Color, bkColor);
@@ -292,6 +292,7 @@ uint8 LCD_num(Site_t site, uint32 num, uint16 Color, uint16 bkColor)
     {
         res /= 10;
         t++;
+        save_t = t;
     }
 
     while(num)
@@ -300,6 +301,7 @@ uint8 LCD_num(Site_t site, uint32 num, uint16 Color, uint16 bkColor)
         LCD_char(sitetemp, (num % 10) + '0', Color, bkColor);
         num /= 10 ;
     }
+    return save_t;
 }
 
 void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己写的，用来显示两位小数的浮点型
@@ -307,12 +309,14 @@ void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己
   
     if(num<0){
         LCD_char(site, '-', Color, bkColor);
+        num = -num;
         site.x += 8;        
     }
     site.x += LCD_num(site, (uint32)num, Color, bkColor)*8;
     LCD_char(site, '.', Color, bkColor);
     site.x += 8;  
     LCD_num(site, ((uint32)(num*100))%100,Color, bkColor);
+    //LCD_num_BC(site, ((uint32)(num*100))%100, uint8 max_num_bit, Color, bkColor)
   /*
 	int i = 0;
 	int t = 0; 
