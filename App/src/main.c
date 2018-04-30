@@ -11,9 +11,9 @@ int _temp = 0;
 
 Screen_Data screen_data[] = {
 
-{ "P",&(STEER_KP),0.2,1 },
-{ "I",&(STEER_KI),0.2,2 },
-{ "D",&(STEER_KD),0.2,3 },
+{ "P",&(STEER_KP),0.1,1 },
+{ "I",&(STEER_KI),0.1,2 },
+{ "D",&(STEER_KD),0.1,3 },
 
 { "enM",&(motor_go),99,0 }, //使能电机
 { "speed",&(motor_speed),10,4 },
