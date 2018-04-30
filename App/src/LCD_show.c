@@ -96,7 +96,7 @@ void Open_UI()
 	
 	for (n = 0;; n++)
 	{
-		if (0==strcmp(screen_data[n].data_name, "end")) break;
+		if (0 == strcmp(screen_data[n].data_name, "end")) break;
 		if (n > 200)break;
 	}
 	colour[MAX_OPTION - 1] = 300*n; //记录要处理的数据个数
