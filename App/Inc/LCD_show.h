@@ -52,8 +52,9 @@ Lcd_State *goto_Before(Lcd_State *pThis);
 Lcd_State *quit_show(Lcd_State *pThis);
 Lcd_State *open_va(Lcd_State *pThis);
 Lcd_State *close_va(Lcd_State *pThis);
+Lcd_State *ushow_line(Lcd_State *pThis);
+Lcd_State *show_line(Lcd_State *pThis);
 Lcd_State *do_nothing(Lcd_State *pThis);
-
 
 extern Lcd_State wait_middle, wait_begin, wait_end, normal_page, imgbuff_show; //lcd等待按键时的4种状态
 
@@ -69,6 +70,8 @@ extern uint8 key_on;
 extern uint8 lcd_mode;
 extern uint8 ui_point;
 extern uint8 is_show_va;
+extern uint8 is_show_line;
+extern uint8 please_clear;
 extern int colour[];
 extern int ui_data[];
 extern Site_t tem_site_str[];

@@ -315,6 +315,7 @@ void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己
     site.x += LCD_num(site, (uint32)num, Color, bkColor)*8;
     LCD_char(site, '.', Color, bkColor);
     site.x += 8;  
+    num += 0.005;
     LCD_num(site, ((uint32)(num*100))%100,Color, bkColor);
     //LCD_num_BC(site, ((uint32)(num*100))%100, uint8 max_num_bit, Color, bkColor)
   /*
@@ -434,7 +435,25 @@ void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己
 		LCD_char(sitetemp, '-', Color, bkColor);
 	}*/
 }
-
+void LCD_grid(){
+  Site_t site_tem[2];
+  int i, j;
+  for(i = 0; i <= 80;i+=10){
+    site_tem[0].x = i;
+    site_tem[1].y = i;
+    for(j = 0;j <= 80; j++ ){
+      if(j<=60){
+         site_tem[0].y = j;        
+         LCD_point(site_tem[0], YELLOW);       
+      }
+      if(i<=60){
+          site_tem[1].x = j;        
+         LCD_point(site_tem[1], YELLOW);            
+      }
+    
+    }
+  }
+}
 /*!
  *  @brief      显示数字（清空多余的位）
  *  @param      site            左上角坐标

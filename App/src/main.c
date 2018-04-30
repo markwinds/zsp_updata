@@ -8,7 +8,7 @@ void PORTA_IRQHandler();
 void DMA0_IRQHandler();
 
 int _temp = 0;
-
+Site_t line_site;
 Screen_Data screen_data[] = {
 
 { "P",&(STEER_KP),0.1,1 },
@@ -38,12 +38,12 @@ void  main(void)
 	//size.W = LCD_W;
 	//size.H = LCD_H/2;
 	//size.W = LCD_W/2;
-	size.H = 90; 
-	size.W = 120;
-
+	size.H = 60; 
+	size.W = 80;
+        
 	LCD_init();
 	camera_init(imgbuff);
-    ftm_pwm_init(FTM0, FTM_CH5, 300, 0);
+        ftm_pwm_init(FTM0, FTM_CH5, 300, 0);
 	ftm_pwm_init(FTM0, FTM_CH6, 300, 43);
 	UI_INIT();
 
@@ -68,7 +68,10 @@ void  main(void)
 			LCD_Img_Binary_Z(site, size, imgbuff, imgsize);//lcd显示图像
 			//LCD_numf(tem_site_str[2], temp_s[0], GREEN, BLUE);  
 			//LCD_numf(tem_site_data[2], temp_s[1], GREEN, BLUE);
-			
+			if(please_clear){
+				LCD_clear(WHITE);
+                                please_clear = 0;
+			}
 			if(is_show_va){
 				LCD_numf(tem_site_str[2], iscross_flag, GREEN, BLUE);
 				LCD_numf(tem_site_str[3], isisland_flag, GREEN, BLUE);
@@ -77,8 +80,22 @@ void  main(void)
 				LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
 				LCD_numf(tem_site_data[5], sizeof(double), GREEN, BLUE);				
 			}
-
-
+                        if(is_show_line==1 || is_show_line==3){
+                             LCD_grid();
+                        }                        
+                        if(is_show_line==2 || is_show_line==3){
+                              int i;
+                              for(i = 0; i < 60; i++){
+                                 line_site.x = left_black[i];
+                                 line_site.y = i;
+                                 if(left_black[i]>=0)LCD_point(line_site,RED);                                 
+                              }
+                              for(i = 0; i < 60; i++){
+                                 line_site.x = right_black[i];
+                                 line_site.y = i;
+                                 if(right_black[i]>=0)LCD_point(line_site,BLUE);                                 
+                              }
+                        }
 			Control_core();
 
 			if (1 == key_on) enable_irq(PORTD_IRQn);     //激活按键中断

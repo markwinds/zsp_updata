@@ -4,6 +4,9 @@
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
 uint8 is_show_va = 0;
+uint8 is_show_line = 0;
+uint8 please_clear = 0;
+uint8 tem_ir = 0;
 float motor_go = 0;  //在显示状态下控制电机是否转动的变量
 int colour[MAX_OPTION]; //0元素也保存有有效数据
 Site_t tem_site_str[] = { 0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100 };
@@ -47,8 +50,8 @@ Lcd_State imgbuff_show = {
 	quit_show,  //中
 	open_va,	//上
 	close_va,   //下
-	do_nothing, //左
-	do_nothing  //右
+	show_line, //左
+	ushow_line  //右
 };
 
 Lcd_State *p_current_state = &imgbuff_show;
@@ -63,11 +66,12 @@ void PORTD_IRQHandler()
 	PORTD_ISFR = ~0;                                   //清中断标志位
 
 
-	if(0) //(IMG_MODE == lcd_mode)
+	if(!tem_ir) //(IMG_MODE == lcd_mode)
 	{
-		if (flag & (1 << 13))  lcd_mode = UI_MODE;         //如果中键按下，则进入ui模式 //LCD_clear(WHITE);
+		tem_ir = 1;//if (flag & (1 << 13))  lcd_mode = UI_MODE;         //如果中键按下，则进入ui模式 //LCD_clear(WHITE);
+        DELAY_MS(10);
 	}
-	else
+	else if(tem_ir == 1)
 	{
 		if (flag & (1 << 13))   //中键按下
 		{
@@ -89,9 +93,10 @@ void PORTD_IRQHandler()
 		{
 			onpress_R();
 		}
+		key_on = 1; //记录有按键按下
+		disable_irq(PORTD_IRQn); //消抖		
 	}
-	key_on = 1; //记录有按键按下
-	disable_irq(PORTD_IRQn); //消抖
+
 }
 
 
@@ -131,7 +136,8 @@ void Open_UI()
 			}
 		}
 		key_on = 0;
-		DELAY_MS(500);//消抖
+		//DELAY_MS(500);//消抖
+		tem_ir = 0;
 		enable_irq(PORTD_IRQn);
 	}
 }
@@ -161,6 +167,7 @@ void UI_INIT()
 /*-----------------新增功能的函数-----------------*/
 Lcd_State *quit_Lcd(Lcd_State *pThis) //退出lcd模式
 {
+        please_clear = 1;
 	page = 1;
 	current_row = 0;
 	lcd_mode = IMG_MODE;
@@ -281,6 +288,7 @@ Lcd_State *data_Up(Lcd_State *pThis)
 }
 
 Lcd_State *quit_show(Lcd_State *pThis){
+	please_clear = 1;
 	page = 1;
 	current_row = 0;
 	lcd_mode = UI_MODE;
@@ -288,6 +296,7 @@ Lcd_State *quit_show(Lcd_State *pThis){
 }
 
 Lcd_State *close_va(Lcd_State *pThis){
+	please_clear = 1;
 	is_show_va = 0;
 	return pThis;
 }
@@ -296,7 +305,17 @@ Lcd_State *open_va(Lcd_State *pThis){
 	is_show_va = 1;
 	return pThis;
 }
-
+Lcd_State *show_line(Lcd_State *pThis){
+	is_show_line ++;
+        if(is_show_line>3){
+            is_show_line = 0;
+        }
+	return pThis;
+}
+Lcd_State *ushow_line(Lcd_State *pThis){
+	is_show_line = 0;
+	return pThis;
+}
 Lcd_State *do_nothing(Lcd_State *pThis){
 	return pThis;
 }
@@ -305,7 +324,6 @@ Lcd_State *do_nothing(Lcd_State *pThis){
 /*中断调用的函数*/
 void onpress_M()
 {
-	LCD_clear(WHITE);
 	p_current_state = p_current_state->press_M(p_current_state);
 }
 

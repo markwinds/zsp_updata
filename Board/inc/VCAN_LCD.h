@@ -101,6 +101,7 @@ extern void LCD_points         (Site_t *site,  uint32 point_num,               u
 extern void LCD_rectangle      (Site_t, Size_t,                                uint16 rgb565);                 //»­¾ØÐÎ
 extern void LCD_char           (Site_t,        uint8 ascii,                    uint16 Color, uint16 bkColor);  //ÏÔÊ¾8*16×Ö·û
 extern void LCD_str            (Site_t,        uint8 *Str,                     uint16 Color, uint16 bkColor);  //ÏÔÊ¾8*16×Ö·û´®
+extern void LCD_grid();
 
 extern void LCD_cross          (Site_t,uint16 len,                              uint16 rgb565);                 //»­Ê®×ÖÐÎ
 

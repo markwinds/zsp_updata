@@ -1,6 +1,9 @@
-/*
-赛道为1，黑线为0
-*/
+/****************************************************************
+**					      赛道为1，黑线为0                                 
+**                            更改记录
+<2018.4.30><yl>:
+	把左右线数组和中线数组设置全局变量，避免每次函数重新开辟空间以节省时间，同时更改了函数以适配
+****************************************************************/
 #include "searchroad.h"
 #include "common.h"
 #include "include.h"
@@ -9,6 +12,9 @@
 float average_offset[11] = { 0,0,0,0,0,0,0,0,0,0,0 };                 //偏差度，为平均偏差度
 uint8 imgbuff[CAMERA_SIZE];                                         //定义存储接收图像的数组
 uint8 img[CAMERA_H][CAMERA_W];
+int8 left_black[CAMERA_H];                          //左边黑线数组
+int8 right_black[CAMERA_H];                         //右边黑线数组
+int8 middleline[CAMERA_H] = { 0 };                  //存储中线位置的数组
 
 int iscross_flag = 0;            //判断是否是十字道的标志 0表示没有进入1表示初步判断并开始计数距离
 int iscross_count = 0;           //十字道距离计数
@@ -29,24 +35,21 @@ void Search_line_init()
 	//motorcontrol_int();
 
 }
-
-
 void Search_line()
 {
-	int left_black[CAMERA_H];                          //左边黑线数组
+
 	int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
 	int left_next_line = 0;                            //判断扫描是否进入了新的一行
 	int left_find_flag = 0;                            //左边是否找到黑线标志												                
 	int jw_left;                                       //向左搜索的当前列
 
-	int right_black[CAMERA_H];                         //右边黑线数组
+
 	int right_black_before = CAMERA_W / 2;
 	int right_next_line = 0;
 	int right_find_flag = 0;
 	int jw_right;
 
 	int jh;                                            //行参数
-	int middleline[CAMERA_H] = { 0 };                  //存储中线位置的数组
 	float offset = 0;                                   //偏差度，为整体偏差度
 													   //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
 	int count = 0;
@@ -553,7 +556,7 @@ void Negation()
 }
 
 
-void nomal_middle(int left_black[],int right_black[],int middleline[])
+void nomal_middle(int8 left_black[],int8 right_black[],int8 middleline[])
 {
 	int jh;
 
