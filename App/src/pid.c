@@ -27,7 +27,7 @@ void Control_core()
 		steer_engine_degree = average_offset[0];
 		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
 		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
-		//motor_speed = 100;
+		motor_speed = 0;
 	}	
 
 	else if (OTHER == car_mode)//其他模式

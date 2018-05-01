@@ -72,7 +72,7 @@ void main(void)
 			}
 			if (is_show_va) //是够在IMG_MODE模式下显示数据
 			{
-				LCD_numf(tem_site_str[2], iscross_flag, GREEN, BLUE);
+				LCD_numf(tem_site_str[2], temp_s[5], GREEN, BLUE);
 				LCD_numf(tem_site_str[3], isisland_flag, GREEN, BLUE);
 				LCD_numf(tem_site_str[4], isisland_flag1, GREEN, BLUE);
 				LCD_numf(tem_site_data[4], land_distance_count1, GREEN, BLUE);
@@ -108,6 +108,7 @@ void main(void)
 				enable_irq(PORTD_IRQn); //激活按键中断
 
 			save_Picture(); //检测是否需要将图片写入flash
+			temp_s[5]=flash_read(SECTOR_NUM-1, 0, uint32);
 		}
 		else
 			Open_UI();
