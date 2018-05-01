@@ -312,7 +312,7 @@ void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor) //这个是自己
         num = -num;
         site.x += 8;        
     }
-    site.x += LCD_num(site, (uint32)num, Color, bkColor)*8;
+    site.x += LCD_num(site, (uint32)(0.05+num), Color, bkColor)*8;
     LCD_char(site, '.', Color, bkColor);
     site.x += 8;  
     num += 0.005;

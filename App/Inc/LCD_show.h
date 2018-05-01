@@ -41,6 +41,7 @@ extern Lcd_State *p_current_state;//指向当前状态的指针
 
 Lcd_State *quit_Lcd(Lcd_State *pThis);
 Lcd_State *goto_Begin(Lcd_State *pThis);
+Lcd_State *goto_End(Lcd_State *pThis);
 Lcd_State *ignore_Oprate(Lcd_State *pThis);
 Lcd_State *goto_Set(Lcd_State *pThis);
 Lcd_State *goto_Wait(Lcd_State *pThis);

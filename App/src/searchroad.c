@@ -1,8 +1,10 @@
 /****************************************************************
-**					      赛道为1，黑线为0                                 
-**                            更改记录
-<2018.4.30><yl>:
-	把左右线数组和中线数组设置全局变量，避免每次函数重新开辟空间以节省时间，同时更改了函数以适配
+ *	
+ *				      赛道为1，黑线为0                                 
+ *                            更改记录
+ *<2018.4.30><yl>:
+ *	把左右线数组和中线数组设置全局变量，避免每次函数重新开辟空间以节省时间，同时更改了函数以适配
+ *
 ****************************************************************/
 #include "searchroad.h"
 #include "common.h"
@@ -80,7 +82,7 @@ void Search_line()
 		//左侧正常扫描
 		if (jw_left > 0 && (0 == left_find_flag))              //如果扫描还没有到边缘且之前的扫描未找到黑点
 		{
-			if ((img[jh][jw_left]) < 1)                 //扫描到黑点
+			if ((img[jh][jw_left]) < 1)                 //==0,扫描到黑点
 			{
 				if (left_black_before == jw_left && jh < 30)       //如果第一次扫描就扫到黑点且当前行在屏幕的上半部分
 				{
@@ -460,7 +462,7 @@ void Search_line()
 	}
 	else
 	{
-		nomal_middle(left_black, right_black, middleline);
+		nomal_middle();
 	}
 	
 
@@ -486,7 +488,7 @@ void Search_line()
 	/*
 		1.用中心点算出偏差度
 	*/
-	for (i = LINE_NUM - 1; i >= 0; i--)
+	for (i = LINE_NUM - 1; i >= 20; i--)
 	{
 		if (-2 == middleline[i])
 			break;
@@ -510,7 +512,7 @@ void Search_line()
 	{
 		average_offset[i] = average_offset[i - 1];
 	}
-	average_offset[1] = ((float)offset / (float)count);
+	average_offset[1] = ((float)offset / (float)(count+1));
 	average_offset[1] -= CAMERA_HARDWARE_ERROR;
 }
 
@@ -556,7 +558,7 @@ void Negation()
 }
 
 
-void nomal_middle(int8 left_black[],int8 right_black[],int8 middleline[])
+void nomal_middle()
 {
 	int jh;
 

@@ -45,7 +45,7 @@ extern  void Search_line_init();
 extern  void Search_line();
 extern float Find_slope();
 extern void Negation();
-extern void nomal_middle(int8 left_black[], int8 right_black[], int8 middleline[]);
+extern void nomal_middle();
 extern void judge_island();
 extern int8 left_black[CAMERA_H];                          //左边黑线数组
 extern int8 right_black[CAMERA_H];                          //左边黑线数组
