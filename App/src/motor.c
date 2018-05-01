@@ -20,7 +20,6 @@ int land_distance_count1 = 0;
 void Update_Motor()
 {
 	int i = 0;
-	int j = 0;
 	int distance_temp = 0;
 
 	/*--------------移动速度队列------------------*/

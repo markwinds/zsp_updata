@@ -85,6 +85,10 @@ void Open_UI();
 extern void flash_In();
 extern void flash_Out();
 extern void next_Write_Location();
+extern void flash_Picture();
+extern void save_Picture();
+extern void delete_Picture();
+extern void read_Picture();
 
 
 
