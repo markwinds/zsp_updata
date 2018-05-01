@@ -62,6 +62,8 @@ extern Lcd_State wait_middle, wait_begin, wait_end, normal_page, imgbuff_show; /
 extern int page;
 extern int current_row;
 extern Screen_Data screen_data[];
+extern int flash_picture[];
+extern uint8 save_picture;
 
 extern float flash_in;
 extern float motor_go;  //在显示状态下控制电机是否转动的变量
@@ -82,6 +84,7 @@ void UI_INIT();
 void Open_UI();
 extern void flash_In();
 extern void flash_Out();
+extern void next_Write_Location();
 
 
 
