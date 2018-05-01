@@ -1,3 +1,10 @@
+/******************************************
+ *                
+ *                   更改日志
+ * <2018.5.1><yl>:
+ * 	加入了goto_End优化了操作，更改了消抖，且效果良好。
+ *
+ *******************************************/
 #include "include.h"
 #include <string.h>
 
@@ -20,7 +27,7 @@ float flash_in = 0;  //是否写入flash
 /*----------各种状态下对应的5个建的操作--------*/
 Lcd_State wait_middle = {
 	quit_Lcd,        //中 退出lcd,显示图像
-	goto_Begin,      //上
+	goto_End,      //上
 	goto_Begin,      //下
 	ignore_Oprate,   //左
 	ignore_Oprate    //右
@@ -65,31 +72,30 @@ void PORTD_IRQHandler()
 	flag = PORTD_ISFR;
 	PORTD_ISFR = ~0;                                   //清中断标志位
 
-
-	if(!tem_ir) //(IMG_MODE == lcd_mode)
+    DELAY_MS(20);
+	if(0)//!tem_ir) //(IMG_MODE == lcd_mode)
 	{
 		tem_ir = 1;//if (flag & (1 << 13))  lcd_mode = UI_MODE;         //如果中键按下，则进入ui模式 //LCD_clear(WHITE);
-        DELAY_MS(10);
 	}
-	else if(tem_ir == 1)
+	else
 	{
-		if (flag & (1 << 13))   //中键按下
+		if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13))   //中键按下
 		{
 			onpress_M();
 		}
-		else if (flag & (1 << 10))
+		else if (gpio_get(KEY_PTxn[0]) == KEY_DOWN && flag & (1 << 10))
 		{
 			onpress_U();
 		}
-		else if (flag & (1 << 14))
+		else if (gpio_get(KEY_PTxn[1]) == KEY_DOWN && flag & (1 << 14))
 		{
 			onpress_D();
 		}
-		else if (flag & (1 << 11))
+		else if (gpio_get(KEY_PTxn[2]) == KEY_DOWN && flag & (1 << 11))
 		{
 			onpress_L();
 		}
-		else if (flag & (1 << 12))
+		else if (gpio_get(KEY_PTxn[3]) == KEY_DOWN && flag & (1 << 12))
 		{
 			onpress_R();
 		}
@@ -136,8 +142,8 @@ void Open_UI()
 			}
 		}
 		key_on = 0;
-		//DELAY_MS(500);//消抖
-		tem_ir = 0;
+		DELAY_MS(200);//消抖
+		//tem_ir = 0;
 		enable_irq(PORTD_IRQn);
 	}
 }
@@ -167,7 +173,7 @@ void UI_INIT()
 /*-----------------新增功能的函数-----------------*/
 Lcd_State *quit_Lcd(Lcd_State *pThis) //退出lcd模式
 {
-        please_clear = 1;
+    please_clear = 1;
 	page = 1;
 	current_row = 0;
 	lcd_mode = IMG_MODE;
@@ -181,6 +187,19 @@ Lcd_State *goto_Begin(Lcd_State *pThis) //从等待模式进入本页第一行
 	if (1 == page) return &wait_begin;
 	else return &normal_page;
 	
+}
+
+//new
+Lcd_State *goto_End(Lcd_State *pThis) //从等待模式进入本页第一行
+{
+	if (1 == page){
+		current_row = 6;
+	} 
+	else{
+		current_row = 1;
+	}
+	colour[6 * (page - 1) + current_row - 1] = GREEN; //选中的行变成绿色
+	return &normal_page;
 }
 
 Lcd_State *ignore_Oprate(Lcd_State *pThis)
@@ -271,6 +290,11 @@ Lcd_State *data_Down(Lcd_State *pThis)
 			flash_In();
 		}
 	}
+	else{
+		colour[6 * (page - 1) + current_row - 1] = WHITE;
+		current_row = 0;
+		return &wait_middle;
+	}
 	return pThis;
 }
 
@@ -283,6 +307,11 @@ Lcd_State *data_Up(Lcd_State *pThis)
 		{
 			flash_In();
 		}
+	}
+	else{
+		colour[6 * (page - 1) + current_row - 1] = WHITE;
+		current_row = 0;
+		return &wait_middle;
 	}
 	return pThis;
 }
@@ -316,10 +345,6 @@ Lcd_State *ushow_line(Lcd_State *pThis){
 	is_show_line = 0;
 	return pThis;
 }
-Lcd_State *do_nothing(Lcd_State *pThis){
-	return pThis;
-}
-
 
 /*中断调用的函数*/
 void onpress_M()
