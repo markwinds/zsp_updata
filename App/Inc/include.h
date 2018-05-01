@@ -49,5 +49,6 @@
 #include "pid.h"
 #include "quad.h"
 #include "motor.h"
+#include "picture.h"
 
 #endif  //__INCLUDE_H__

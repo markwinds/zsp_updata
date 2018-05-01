@@ -8,16 +8,15 @@
 #include "include.h"
 #include <string.h>
 
-int flash_picture[] = {SECTOR_NUM - 1, 0}; //从倒数第二个扇区开始写图片
-uint8 save_picture = 0;					   //判断是否要写入图片的标志
+
+
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
 uint8 is_show_va = 0;
 uint8 is_show_line = 0;
 uint8 please_clear = 0;
-uint8 tem_ir = 0;
-float motor_go = 0;		//在显示状态下控制电机是否转动的变量
-int colour[MAX_OPTION]; //0元素也保存有有效数据
+float motor_go = 0;							//在显示状态下控制电机是否转动的变量
+int colour[MAX_OPTION]; 					//0元素也保存有有效数据
 Site_t tem_site_str[] = {0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100};
 Site_t tem_site_data[] = {60, 0, 60, 20, 60, 40, 60, 60, 60, 80, 60, 100};
 
@@ -27,25 +26,18 @@ float flash_in = 0;  //是否写入flash
 
 /*----------各种状态下对应的5个建的操作--------*/
 Lcd_State wait_middle = {
-	quit_Lcd,	  //中 退出lcd,显示图像
-	goto_Begin,	//上
-	goto_Begin,	//下
-	ignore_Oprate, //左
-	ignore_Oprate  //右
-=======
-	quit_Lcd,        //中 退出lcd,显示图像
-	goto_End,      //上
-	goto_Begin,      //下
-	ignore_Oprate,   //左
-	ignore_Oprate    //右
->>>>>>> yl
+	quit_Lcd,       //中 退出lcd,显示图像
+	goto_End,      	//上
+	goto_Begin,     //下
+	ignore_Oprate,  //左
+	ignore_Oprate   //右
 };
 Lcd_State wait_begin = {
-	goto_Set,  //中
-	goto_Wait, //上
-	goto_next, //下
-	data_Down, //左
-	data_Up	//右
+	goto_Set, 		//中
+	goto_Wait, 		//上
+	goto_next, 		//下
+	data_Down, 		//左
+	data_Up			//右
 };
 Lcd_State wait_end = {
 	goto_Set,	//中
@@ -75,57 +67,39 @@ void PORTD_IRQHandler()
 {
 	uint32 flag;
 
-	while (!PORTD_ISFR)
-		;
+	while (!PORTD_ISFR);
 	flag = PORTD_ISFR;
 	PORTD_ISFR = ~0; //清中断标志位
 
-	if (!tem_ir) //(IMG_MODE == lcd_mode)
-	{
-		tem_ir = 1; //if (flag & (1 << 13))  lcd_mode = UI_MODE;         //如果中键按下，则进入ui模式 //LCD_clear(WHITE);
-		DELAY_MS(10);
-	}
-	else if (tem_ir == 1)
-	{
-		if (flag & (1 << 13)) //中键按下
-=======
-	PORTD_ISFR = ~0;                                   //清中断标志位
-
     DELAY_MS(20);
-	if(0)//!tem_ir) //(IMG_MODE == lcd_mode)
+
+	if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13))   //中键按下
+
 	{
-		tem_ir = 1;//if (flag & (1 << 13))  lcd_mode = UI_MODE;         //如果中键按下，则进入ui模式 //LCD_clear(WHITE);
+		onpress_M();
 	}
-	else
+	else if (gpio_get(KEY_PTxn[0]) == KEY_DOWN && flag & (1 << 10))
 	{
-		if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13))   //中键按下
->>>>>>> yl
-		{
-			onpress_M();
-		}
-		else if (gpio_get(KEY_PTxn[0]) == KEY_DOWN && flag & (1 << 10))
-		{
-			onpress_U();
-		}
-		else if (gpio_get(KEY_PTxn[1]) == KEY_DOWN && flag & (1 << 14))
-		{
-			onpress_D();
-		}
-		else if (gpio_get(KEY_PTxn[2]) == KEY_DOWN && flag & (1 << 11))
-		{
-			onpress_L();
-		}
-		else if (gpio_get(KEY_PTxn[3]) == KEY_DOWN && flag & (1 << 12))
-		{
-			onpress_R();
-		}
-		else if (flag & (1 << 7) && IMG_MODE == lcd_mode) //如果是flash按键按下,且是在图像模式下
-		{
-			save_picture = 1; //如果flash写入图像信息的键按下，标志位置1,这里没有进入Open_UI函数，所以不能用tem_ir消抖，所以save_Picture函数要自带消抖
-		}
-		key_on = 1;				 //记录有按键按下
-		disable_irq(PORTD_IRQn); //消抖
+		onpress_U();
 	}
+	else if (gpio_get(KEY_PTxn[1]) == KEY_DOWN && flag & (1 << 14))
+	{
+		onpress_D();
+	}
+	else if (gpio_get(KEY_PTxn[2]) == KEY_DOWN && flag & (1 << 11))
+	{
+		onpress_L();
+	}
+	else if (gpio_get(KEY_PTxn[3]) == KEY_DOWN && flag & (1 << 12))
+	{
+		onpress_R();
+	}
+	else if ((gpio_get(KEY_PTxn[3]) == KEY_DOWN && flag & (1 << 12)) && IMG_MODE == lcd_mode) //如果是flash按键按下,且是在图像模式下
+	{
+		save_picture = 1; //如果flash写入图像信息的键按下，标志位置1
+	}
+	key_on = 1;				 //记录有按键按下
+	disable_irq(PORTD_IRQn); //消抖
 }
 
 /*结构体的元素个数存放在colour[MAX_OPTION - 1]中 
@@ -167,7 +141,6 @@ void Open_UI()
 		}
 		key_on = 0;
 		DELAY_MS(200);//消抖
-		//tem_ir = 0;
 		enable_irq(PORTD_IRQn);
 	}
 }
@@ -193,9 +166,6 @@ void UI_INIT()
 /*-----------------新增功能的函数-----------------*/
 Lcd_State *quit_Lcd(Lcd_State *pThis) //退出lcd模式
 {
-<<<<<<< HEAD
-	please_clear = 1;
-=======
 	page = 1;
 	current_row = 0;
 	lcd_mode = IMG_MODE;
@@ -389,8 +359,6 @@ Lcd_State *do_nothing(Lcd_State *pThis)
 {
 	return pThis;
 }
-=======
->>>>>>> yl
 
 /*中断调用的函数*/
 void onpress_M()
@@ -418,6 +386,7 @@ void onpress_R()
 	p_current_state = p_current_state->press_R(p_current_state);
 }
 
+/*flash操作函数*/
 void flash_In() //将数据写入flash
 {
 	int i = 0;
@@ -447,111 +416,4 @@ void flash_Out()
 		}
 		i++;
 	}
-}
-
-void save_Picture()
-{
-	if (1 == save_picture)
-	{
-		flash_Picture();
-		DELAY_MS(500);	//先消抖
-		save_picture = 0; //清空标志位
-		enable_irq(PORTD_IRQn);
-	}
-}
-
-void flash_Picture() //将图片的信息写入flash
-{
-	int i = 0;
-
-	/*找到可以存放数据的扇区*/
-	while (813 == flash_read(flash_picture[0], flash_picture[1] * 4, uint32)) //在每组图片信息的头部flash有标志是否已经存储图片的标志位，存储图片时标志位是813
-	{
-		next_Write_Location();
-	}
-	/*写入对应的数据*/
-	if (0 == flash_picture[1]) //如果是一个新的扇区
-	{
-		flash_erase_sector(flash_picture[0]); //擦除该扇区，也就是扇区初始化
-	}
-	for (i = -1; i < 600; i++) //图片数据
-	{
-		if (-1 == i) //写入头标志
-		{
-			flash_write(flash_picture[0], flash_picture[1] * 4, 813);
-			flash_picture[1]++;
-			continue;
-		}
-		flash_write(flash_picture[0], flash_picture[1] * 4, imgbuff[i]);
-		flash_picture[1]++;
-	}
-	for (i = 0; i < 60; i++)
-	{
-		flash_write(flash_picture[0], flash_picture[1] * 4, middleline[i]);
-		flash_picture[1]++;
-	}
-	for (i = 0; i < 60; i++)
-	{
-		flash_write(flash_picture[0], flash_picture[1] * 4, left_black[i]);
-		flash_picture[1]++;
-	}
-	for (i = 0; i < 60; i++)
-	{
-		flash_write(flash_picture[0], flash_picture[1] * 4, right_black[i]);
-		flash_picture[1]++;
-	}
-	next_Write_Location();
-}
-
-void next_Write_Location() //寻找下一个写入的位置
-{
-	if (flash_picture[1] >= 1000) //一个扇区存储两幅图片的信息，第一幅的起始偏移地址是0，第二幅是1000
-	{
-		flash_picture[1] = 0;
-		flash_picture[0]--;
-	}
-	else
-	{
-		flash_picture[1] = 1000;
-	}
-	if (flash_picture[0] < SECTOR_NUM - 1 - 50) //如果写入超过的50个扇区
-	{
-		flash_picture[1] = 0;
-		flash_picture[0] = SECTOR_NUM - 1;
-	}
-}
-
-void delete_Picture()
-{
-	flash_picture[1] = 0;
-	flash_picture[0] = SECTOR_NUM - 1;
-	while (813 == flash_read(flash_picture[0], flash_picture[1] * 4, uint32))
-	{
-		flash_erase_sector(flash_picture[0]);
-		flash_picture[0]--;
-	}
-	flash_picture[1] = 0;
-	flash_picture[0] = SECTOR_NUM - 1;
-}
-
-void read_Picture()
-{
-	int i=0;
-	uint8 data=0;
-
-	flash_picture[1] = 0;
-	flash_picture[0] = SECTOR_NUM - 1;
-	while (813 == flash_read(flash_picture[0], flash_picture[1] * 4, uint32)) //在每组图片信息的头部flash有标志是否已经存储图片的标志位，存储图片时标志位是813
-	{
-		flash_picture[1]++; //跳过标志位
-		for (i = 0; i < 780; i++) //图片数据
-		{
-			data=flash_read(flash_picture[0], flash_picture[1] * 4, uint32);
-			vcan_sendimg(&data,sizeof(data));
-			flash_picture[1]++;
-		}
-		next_Write_Location();
-	}
-	flash_picture[1] = 0;
-	flash_picture[0] = SECTOR_NUM - 1;
 }
