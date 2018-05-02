@@ -36,8 +36,8 @@ void main(void)
 	//size.W = LCD_W;
 	//size.H = LCD_H/2;
 	//size.W = LCD_W/2;
-	size.H = 60;
-	size.W = 80;
+	 size.H = 60;
+	 size.W = 80;
 
 	LCD_init();
 	camera_init(imgbuff);
@@ -51,6 +51,7 @@ void main(void)
 	Quad_Init();										 //编码器中断
 	flash_init();
 	flash_Out();
+	delete_Picture();
 
 	while (1)
 	{
@@ -62,9 +63,10 @@ void main(void)
 			Search_line(); 								//找线
 			Negation();
 			img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
-			LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
-			//LCD_numf(tem_site_str[2], temp_s[0], GREEN, BLUE);
-			//LCD_numf(tem_site_data[2], temp_s[1], GREEN, BLUE);
+
+			
+			//LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
+
 			if (please_clear)  
 			{
 				LCD_clear(WHITE);
@@ -72,12 +74,10 @@ void main(void)
 			}
 			if (is_show_va) 							//是能够在IMG_MODE模式下显示数据
 			{
-				LCD_numf(tem_site_str[2], temp_s[5], GREEN, BLUE);
-				LCD_numf(tem_site_str[3], isisland_flag, GREEN, BLUE);
-				LCD_numf(tem_site_str[4], isisland_flag1, GREEN, BLUE);
-				LCD_numf(tem_site_data[4], land_distance_count1, GREEN, BLUE);
-				LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
-				LCD_numf(tem_site_data[5], sizeof(double), GREEN, BLUE);
+				LCD_numf(tem_site_str[3], temp_s[4], GREEN, BLUE);
+				LCD_numf(tem_site_str[4], temp_s[3], GREEN, BLUE);
+				read_Picture();
+				LCD_Img_Binary_Z(site, size, imgbuff1, imgsize);
 			}
 			/*彩色显示边线*/
 			if (is_show_line == 1 || is_show_line == 3)	//网格
@@ -108,7 +108,6 @@ void main(void)
 				enable_irq(PORTD_IRQn); //激活按键中断
 
 			save_Picture(); //检测是否需要将图片写入flash
-			//temp_s[5]=flash_read(SECTOR_NUM-1, 0, uint32);
 		}
 		else
 			Open_UI();

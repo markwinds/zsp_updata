@@ -94,9 +94,10 @@ void PORTD_IRQHandler()
 	{
 		onpress_R();
 	}
-	else if ((gpio_get(KEY_PTxn[3]) == KEY_DOWN && flag & (1 << 12)) && IMG_MODE == lcd_mode) //如果是flash按键按下,且是在图像模式下
+	else if ((gpio_get(KEY_PTxn[4]) == KEY_DOWN && flag & (1 << 7)) && IMG_MODE == lcd_mode) //如果是flash按键按下,且是在图像模式下
 	{
 		save_picture = 1; //如果flash写入图像信息的键按下，标志位置1
+		temp_s[4]++;
 	}
 	key_on = 1;				 //记录有按键按下
 	disable_irq(PORTD_IRQn); //消抖
