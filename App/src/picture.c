@@ -268,25 +268,3 @@ void read_Picture_Array()
 		}
 	}
 }
-
-// void read_Picture()
-// {
-// 	int i=0;
-// 	uint8 data=0;
-
-// 	flash_picture[1] = 0;
-// 	flash_picture[0] = SECTOR_NUM - 1;
-// 	while (813 == flash_read(flash_picture[0], flash_picture[1] * 4, uint32)) //在每组图片信息的头部flash有标志是否已经存储图片的标志位，存储图片时标志位是813
-// 	{
-// 		flash_picture[1]++; //跳过标志位
-// 		for (i = 0; i < 780; i++) //图片数据
-// 		{
-// 			data=flash_read(flash_picture[0], flash_picture[1] * 4, uint32);
-// 			vcan_sendimg(&data,sizeof(data));
-// 			flash_picture[1]++;
-// 		}
-// 		next_Write_Location();
-// 	}
-// 	flash_picture[1] = 0;
-// 	flash_picture[0] = SECTOR_NUM - 1;
-// }
