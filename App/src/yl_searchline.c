@@ -123,7 +123,7 @@ void Get_middle_line()
                     } 
 					else
                     {
-                        if(right_black[LINE_NUM] == -1) right_black[LINE_NUM] = CAMERA_W - 1;
+                        if(right_black[LINE_NUM] < 0) right_black[LINE_NUM - 1] = CAMERA_W - 1;
                         tem_val = right_black[jh] - (int16)(33.82 + 0.977*abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
                         middleline[jh] = ( (tem_val < 0) ? (0) : tem_val);
                     } 
