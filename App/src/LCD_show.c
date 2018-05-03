@@ -180,6 +180,7 @@ Lcd_State *quit_Lcd(Lcd_State *pThis) //退出lcd模式
 	page = 1;
 	current_row = 0;
 	lcd_mode = IMG_MODE;
+	please_clear = 1;
 	return &imgbuff_show;
 }
 

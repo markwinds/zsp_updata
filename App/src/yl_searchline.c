@@ -3,7 +3,7 @@
 #include "include.h"
 
 int8 state_line[5];
-enum road_condition road_mark = rest;
+enum road_condition road_mark = straightaway;
 
 //这个暂时还没用到
 void Judge_body()
@@ -83,8 +83,13 @@ int8 Judge_block(int16 *jh, uint8 *s_num)
         else if(tem_store[1] == tem_store[0]){
             *s_num ++;
         }
+        else if(*s_num < 6){
+            tem_store[0] = tem_store[1];
+            *s_num = 0;
+        }
         else return tem_store[0];
     }
+    if(*s_num < 6) return 0;
     return tem_store[0];
 }
 
@@ -118,6 +123,7 @@ void Get_middle_line()
                     } 
 					else
                     {
+                        if(right_black[LINE_NUM] == -1) right_black[LINE_NUM] = CAMERA_W - 1;
                         tem_val = right_black[jh] - (int16)(33.82 + 0.977*abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
                         middleline[jh] = ( (tem_val < 0) ? (0) : tem_val);
                     } 
@@ -138,7 +144,6 @@ void Get_middle_line()
         if (left_black[jh] == -2 || right_black[jh] == -2)
         {
             middleline[jh] = -2;
-<<<<<<< HEAD
         }
 }
 
@@ -158,5 +163,4 @@ void Get_error_cal()
 			// if (middleline[i] < 0)middleline[i] = 0;
 		}
 	}
-=======
 }
