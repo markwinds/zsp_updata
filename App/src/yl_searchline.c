@@ -5,6 +5,7 @@
 int8 state_line[5];
 enum road_condition road_mark = cross;
 
+//这个暂时还没用到
 void Judge_body()
 {
     uint8 state_line_num[5];  
@@ -31,9 +32,11 @@ void Judge_body()
     }
     else if(abs(state_line[0]) == 1 && state_line[1] == 2 && abs(state_line[2]) == 1 && state_line[3] == 2 && state_line[0] == state_line[2]){
         //圆环预判
+        
         //judge_island();
     }
     else if(state_line[0] == 0){
+        road_mark = rest; //电机停止工作
         // quit();
     }
     else{
@@ -87,6 +90,7 @@ int8 Judge_block(int16 *jh, uint8 *s_num)
     return 0;
 }
 
+//基本上就是队友的代码，改了单边丟线情况
 void Get_middle_line(){
     int jh;
     int16 tem_val;
@@ -107,14 +111,15 @@ void Get_middle_line(){
 				if (-1 == left_black[jh] && -1 == right_black[jh]) middleline[jh] = CAMERA_W / 2;
 				else
 				{
+                    //这里用的公式是matlab拟合出来的
 					if (-1 == right_black[jh])
                     {
-                        tem_val = (int16)(33.82 + 0.977*abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718*jh);
-                        middleline[jh] = ( (tem_val > CAMERA_W) ? (CAMERA_W - 1) : tem_val);
+                        tem_val = left_black[jh] + (int16)(33.82 + 0.977*abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
+                        middleline[jh] = ( (tem_val >= CAMERA_W) ? (CAMERA_W - 1) : tem_val);
                     } 
 					else
                     {
-                        tem_val = (int16)(33.82 - 0.977*abs(right_black[jh] - right_black[LINE_NUM - 1]) + 0.7718*jh);
+                        tem_val = right_black[jh] - (int16)(33.82 + 0.977*abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
                         middleline[jh] = ( (tem_val < 0) ? (0) : tem_val);
                     } 
 				}
@@ -124,10 +129,11 @@ void Get_middle_line(){
 				middleline[jh] = (left_black[jh] + right_black[jh]) / 2;
 			}
 		}
+        if (left_black[jh] == -2 || right_black[jh] != -2)
+        {
+            middleline[jh] = -2;
+        }        
 		jh--;
 	}
-	if (left_black[jh] == -2 || right_black[jh] != -2)
-	{
-		middleline[jh] = -2;
-	}
+
 }

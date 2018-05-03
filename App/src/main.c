@@ -103,8 +103,11 @@ void  main(void)
 		else Open_UI();
 
 		Update_Motor();
-
-		if (UI_MODE == lcd_mode)
+		if(road_mark == rest){
+			ftm_pwm_duty(FTM0, FTM_CH5, 0);
+			ftm_pwm_duty(FTM0, FTM_CH6, 380); 
+		}
+		else if (UI_MODE == lcd_mode)
 		{
 			if (1 == ((int)motor_go) % 2 && total_distance < 1000) ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);
 			else ftm_pwm_duty(FTM0, FTM_CH5, 0);

@@ -462,7 +462,8 @@ void Search_line()
 	}
 	else
 	{
-		nomal_middle();
+		Get_middle_line();
+		//nomal_middle();
 	}
 	
 
@@ -488,7 +489,7 @@ void Search_line()
 	/*
 		1.用中心点算出偏差度
 	*/
-	for (i = LINE_NUM - 1; i >= 20; i--)
+	for (i = LINE_NUM - 1; i >= 10; i--)
 	{
 		if (-2 == middleline[i])
 			break;
