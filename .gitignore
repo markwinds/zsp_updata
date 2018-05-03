@@ -77,3 +77,7 @@ Lib
 *.eww
 *.wspos
 *.json
+*.sqlite
+.vs/zsp_updata/v15/.suo
+.vs/zsp_updata/v15/Browse.VC.db
+.vs/zsp_updata/v15/ipch/AutoPCH/8925f34eea088234/INCLUDE.ipch
