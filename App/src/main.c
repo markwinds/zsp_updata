@@ -21,6 +21,7 @@ Screen_Data screen_data[] = {
 
 	{"flash", &(flash_in), 1, -1},
 	{"de_pic", &(delete_picture),1,0},
+	{"se_pic", &(read_all_picture),1,0},
 
 	{"end", &(temp_s[9]), 1202, 0}};
 
@@ -78,7 +79,6 @@ void main(void)
 				LCD_numf(tem_site_str[5], (float)state_line[2], GREEN, BLUE);
 				LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
 				LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
-				//LCD_Img_Binary_Z(site, size, imgbuff1, imgsize);
 			}
 			/*彩色显示边线*/
 			if (is_show_line == 1 || is_show_line == 3) //网格

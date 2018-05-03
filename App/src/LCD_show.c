@@ -376,6 +376,10 @@ Lcd_State *go_Picture(Lcd_State *pThis)
 	flash_picture[1] = 0;
 	flash_picture[0] = SECTOR_NUM - 1;
 	please_clear=1;
+	if(1==read_all_picture)
+	{
+		picture_choose=11;
+	}
 	return &read_picture;
 }
 

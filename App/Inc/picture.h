@@ -10,6 +10,7 @@ extern int picture_choose; //读取图片时的按键选择
 extern int picture_count;  //当前读取的图片的序号
 extern float delete_picture;
 extern int picture_choose_before;
+extern float read_all_picture;
 
 extern void flash_Picture();
 extern void save_Picture();
