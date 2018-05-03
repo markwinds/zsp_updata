@@ -348,7 +348,7 @@ Lcd_State *open_va(Lcd_State *pThis)
 {
 	is_show_va = !is_show_va;
 	if (!is_show_va)
-		LCD_clear(WHITE);
+		please_clear=1;
 	return pThis;
 }
 Lcd_State *show_line(Lcd_State *pThis)
@@ -375,7 +375,7 @@ Lcd_State *go_Picture(Lcd_State *pThis)
 	lcd_mode = PICTURE_MODE;
 	flash_picture[1] = 0;
 	flash_picture[0] = SECTOR_NUM - 1;
-	LCD_clear(WHITE);
+	please_clear=1;
 	return &read_picture;
 }
 
@@ -393,6 +393,7 @@ Lcd_State *go_Back(Lcd_State *pThis)
 	picture_count = 1;
 	flash_picture[1] = 0;
 	flash_picture[0] = SECTOR_NUM - 1;
+	please_clear=1;
 	return &imgbuff_show;
 }
 

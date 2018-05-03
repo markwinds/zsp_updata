@@ -174,12 +174,12 @@ void read_Picture_Array()
 
 	if (1 == picture_choose)
 	{
-		picture_choose = 10;
+		//picture_choose = 10;
 		picture_count = before_Write_Location();
 	}
 	else if (3 == picture_choose)
 	{
-		picture_choose = 10;
+		//picture_choose = 10;
 		picture_count = next_Write_Location(1);
 	}
 	else if (2 == picture_choose)

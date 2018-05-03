@@ -56,6 +56,11 @@ void main(void)
 
 	while (1)
 	{
+		if (please_clear)
+		{
+			LCD_clear(WHITE);
+			please_clear = 0;
+		}
 		if (IMG_MODE == lcd_mode)
 		{
 			camera_get_img();						//相机获取图像
@@ -65,12 +70,7 @@ void main(void)
 			Negation();
 			img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 			LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
-
-			if (please_clear)
-			{
-				LCD_clear(WHITE);
-				please_clear = 0;
-			}
+			
 			if (is_show_va) //是能够在IMG_MODE模式下显示数据
 			{
 				LCD_numf(tem_site_str[3], 0, GREEN, BLUE);

@@ -135,5 +135,8 @@ void Get_middle_line(){
         }        
 		jh--;
 	}
-
+    if (left_black[jh] == -2 || right_black[jh] != -2)
+    {
+        middleline[jh] = -2;
+    }  
 }
