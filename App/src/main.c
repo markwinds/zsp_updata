@@ -20,6 +20,7 @@ Screen_Data screen_data[] = {
 	{"length", &(total_distance), 500, 0},
 
 	{"flash", &(flash_in), 1, -1},
+	{"de_pic", &(delete_picture),1,0},
 
 	{"end", &(temp_s[9]), 1202, 0}};
 
@@ -52,10 +53,14 @@ void main(void)
 	Quad_Init();										 //编码器中断
 	flash_init();
 	flash_Out();
-	delete_Picture();
 
 	while (1)
 	{
+		if (please_clear)
+		{
+			LCD_clear(WHITE);
+			please_clear = 0;
+		}
 		if (IMG_MODE == lcd_mode)
 		{
 			camera_get_img();						//相机获取图像
@@ -65,12 +70,7 @@ void main(void)
 			Negation();
 			img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 			LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
-
-			if (please_clear)
-			{
-				LCD_clear(WHITE);
-				please_clear = 0;
-			}
+			
 			if (is_show_va) //是能够在IMG_MODE模式下显示数据
 			{
 				Judge_body();
@@ -118,13 +118,15 @@ void main(void)
 		else
 			Open_UI();
 
+		enable_irq(PORTD_IRQn);
+		if((delete_picture-0.3)>0.5)
+		{
+			delete_Picture();
+			delete_picture=0;
+		}
 		/*-----------速度和距离的一些更新---------*/
 		Update_Motor();
-		enable_irq(PORTD_IRQn);
-		// LCD_numf(tem_site_str[3], temp_s[3], GREEN, BLUE);
-		// LCD_numf(tem_site_str[4], temp_s[4], GREEN, BLUE);
-		// LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
-
+		
 		if (UI_MODE == lcd_mode)
 		{
 			if (1 == ((int)motor_go) % 2 && total_distance < 1000)

@@ -138,6 +138,7 @@ void Get_middle_line()
         if (left_black[jh] == -2 || right_black[jh] == -2)
         {
             middleline[jh] = -2;
+<<<<<<< HEAD
         }
 }
 
@@ -157,4 +158,5 @@ void Get_error_cal()
 			// if (middleline[i] < 0)middleline[i] = 0;
 		}
 	}
+=======
 }

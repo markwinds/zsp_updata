@@ -591,7 +591,7 @@ void nomal_middle()
 		}
 		jh--;
 	}
-	if (left_black[jh] == -2 || right_black[jh] != -2)
+	if (left_black[jh] == -2 || right_black[jh] == -2)
 	{
 		middleline[jh] = -2;
 	}
