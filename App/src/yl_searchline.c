@@ -141,15 +141,15 @@ void Get_middle_line()
         //}
         jh--;
 	}
-        if (left_black[jh] == -2 || right_black[jh] == -2)
-        {
-            middleline[jh] = -2;
-        }
+    if (left_black[jh] == -2 || right_black[jh] == -2)
+    {
+        middleline[jh] = -2;
+    }
 }
 
 void Get_error_cal()
 {
-         int i;
+    int i;
 	for (i = LINE_NUM - 1; i >= 10; i--)
 	{
 		if (-2 == middleline[i])

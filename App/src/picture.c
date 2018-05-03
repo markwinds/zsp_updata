@@ -8,6 +8,7 @@ int picture_choose = 0; //读取图片时的按键选择
 int picture_count = 1;  //当前读取的图片的序号
 float delete_picture=0;	//是否删除图片的变量
 int picture_choose_before=0;
+float read_all_picture=0;
 
 void save_Picture()
 {
@@ -174,12 +175,12 @@ void read_Picture_Array()
 
 	if (1 == picture_choose)
 	{
-		//picture_choose = 10;
+		picture_choose = 10;
 		picture_count = before_Write_Location();
 	}
 	else if (3 == picture_choose)
 	{
-		//picture_choose = 10;
+		picture_choose = 10;
 		picture_count = next_Write_Location(1);
 	}
 	else if (2 == picture_choose)
@@ -263,6 +264,28 @@ void read_Picture_Array()
 		flash_picture[1] -= 150;
 		picture_choose_before=10;
 		picture_choose=0;
+	}
+	else if(11==picture_choose)
+	{
+		picture_count=1;
+		picture_choose=10;
+		read_Picture_Array();
+		picture_choose=4;
+		read_Picture_Array();
+		printf("\n\n\n---------------------------------------------------------------------------------------------\n\n\n");
+		while(next_Write_Location(1)!=1)
+		{
+			picture_count++;
+			picture_choose=10;
+			read_Picture_Array();
+			picture_choose=4;
+			read_Picture_Array();
+			printf("\n\n\n---------------------------------------------------------------------------------------------\n\n\n");
+		}
+		picture_count=1;
+		picture_choose=0;
+		flash_picture[1] = 0;
+		flash_picture[0] = SECTOR_NUM - 1;
 	}
 }
 
