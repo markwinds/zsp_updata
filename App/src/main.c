@@ -73,7 +73,11 @@ void main(void)
 			}
 			if (is_show_va) //是能够在IMG_MODE模式下显示数据
 			{
-				LCD_numf(tem_site_str[3], 0, GREEN, BLUE);
+				Judge_body();
+				LCD_numf(tem_site_str[4], (float)state_line[0], GREEN, BLUE);
+				LCD_numf(tem_site_str[5], (float)state_line[2], GREEN, BLUE);
+				LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
+				LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
 				//LCD_Img_Binary_Z(site, size, imgbuff1, imgsize);
 			}
 			/*彩色显示边线*/
