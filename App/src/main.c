@@ -36,14 +36,15 @@ void main(void)
 	//size.W = LCD_W;
 	//size.H = LCD_H/2;
 	//size.W = LCD_W/2;
-	 size.H = 60;
-	 size.W = 80;
+	size.H = 60;
+	size.W = 80;
 
 	LCD_init();
 	camera_init(imgbuff);
 	ftm_pwm_init(FTM0, FTM_CH5, 300, 0);
 	ftm_pwm_init(FTM0, FTM_CH6, 300, 43);
 	UI_INIT();
+	led_init (LED0);
 
 	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler); //设置 PORTA 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);   //设置 DMA0 的中断服务函数为 PORTA_IRQHandler
@@ -57,34 +58,30 @@ void main(void)
 	{
 		if (IMG_MODE == lcd_mode)
 		{
-			camera_get_img();							//相机获取图像
-			img_extract(img, imgbuff, CAMERA_SIZE); 	//解压图像
+			camera_get_img();						//相机获取图像
+			img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 			//temp_s[6] = Find_slope();
-			Search_line(); 								//找线
+			Search_line(); //找线
 			Negation();
 			img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
+			LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
 
-			
-			//LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
-
-			if (please_clear)  
+			if (please_clear)
 			{
 				LCD_clear(WHITE);
 				please_clear = 0;
 			}
-			if (is_show_va) 							//是能够在IMG_MODE模式下显示数据
+			if (is_show_va) //是能够在IMG_MODE模式下显示数据
 			{
-				LCD_numf(tem_site_str[3], temp_s[4], GREEN, BLUE);
-				LCD_numf(tem_site_str[4], temp_s[3], GREEN, BLUE);
-				read_Picture();
-				LCD_Img_Binary_Z(site, size, imgbuff1, imgsize);
+				LCD_numf(tem_site_str[3], 0, GREEN, BLUE);
+				//LCD_Img_Binary_Z(site, size, imgbuff1, imgsize);
 			}
 			/*彩色显示边线*/
-			if (is_show_line == 1 || is_show_line == 3)	//网格
+			if (is_show_line == 1 || is_show_line == 3) //网格
 			{
 				LCD_grid();
 			}
-			if (is_show_line == 2 || is_show_line == 3)	//边线
+			if (is_show_line == 2 || is_show_line == 3) //边线
 			{
 				int i;
 				for (i = 0; i < 60; i++)
@@ -109,11 +106,20 @@ void main(void)
 
 			save_Picture(); //检测是否需要将图片写入flash
 		}
+		else if (PICTURE_MODE == lcd_mode)
+		{
+			read_Picture_Array();
+			LCD_num(tem_site_data[3], picture_count, GREEN, BLUE);
+		}
 		else
 			Open_UI();
 
 		/*-----------速度和距离的一些更新---------*/
 		Update_Motor();
+		enable_irq(PORTD_IRQn);
+		// LCD_numf(tem_site_str[3], temp_s[3], GREEN, BLUE);
+		// LCD_numf(tem_site_str[4], temp_s[4], GREEN, BLUE);
+		// LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
 
 		if (UI_MODE == lcd_mode)
 		{
@@ -122,6 +128,11 @@ void main(void)
 			else
 				ftm_pwm_duty(FTM0, FTM_CH5, 0);
 			ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
+		}
+		else if (PICTURE_MODE == lcd_mode)
+		{
+			ftm_pwm_duty(FTM0, FTM_CH5, 0);
+			ftm_pwm_duty(FTM0, FTM_CH6, 380);
 		}
 		else
 		{

@@ -8,15 +8,13 @@
 #include "include.h"
 #include <string.h>
 
-
-
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
 uint8 is_show_va = 0;
 uint8 is_show_line = 0;
 uint8 please_clear = 0;
-float motor_go = 0;							//在显示状态下控制电机是否转动的变量
-int colour[MAX_OPTION]; 					//0元素也保存有有效数据
+float motor_go = 0;		//在显示状态下控制电机是否转动的变量
+int colour[MAX_OPTION]; //0元素也保存有有效数据
 Site_t tem_site_str[] = {0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100};
 Site_t tem_site_data[] = {60, 0, 60, 20, 60, 40, 60, 60, 60, 80, 60, 100};
 
@@ -25,40 +23,53 @@ int current_row = 0; //当前所在行
 float flash_in = 0;  //是否写入flash
 
 /*----------各种状态下对应的5个建的操作--------*/
-Lcd_State wait_middle = {
-	quit_Lcd,       //中 退出lcd,显示图像
-	goto_End,      	//上
-	goto_Begin,     //下
-	ignore_Oprate,  //左
-	ignore_Oprate   //右
+Lcd_State wait_middle =
+	{
+		quit_Lcd,	  //中 退出lcd,显示图像
+		goto_End,	  //上
+		goto_Begin,	//下
+		ignore_Oprate, //左
+		ignore_Oprate  //右
 };
-Lcd_State wait_begin = {
-	goto_Set, 		//中
-	goto_Wait, 		//上
-	goto_next, 		//下
-	data_Down, 		//左
-	data_Up			//右
+Lcd_State wait_begin =
+	{
+		goto_Set,  //中
+		goto_Wait, //上
+		goto_next, //下
+		data_Down, //左
+		data_Up	//右
 };
-Lcd_State wait_end = {
-	goto_Set,	//中
-	goto_Before, //上
-	goto_Wait,   //下
-	data_Down,   //左
-	data_Up		 //右
+Lcd_State wait_end =
+	{
+		goto_Set,	//中
+		goto_Before, //上
+		goto_Wait,   //下
+		data_Down,   //左
+		data_Up		 //右
 };
-Lcd_State normal_page = {
-	goto_Set,	//中
-	goto_Before, //上
-	goto_next,   //下
-	data_Down,   //左
-	data_Up		 //右
+Lcd_State normal_page =
+	{
+		goto_Set,	//中
+		goto_Before, //上
+		goto_next,   //下
+		data_Down,   //左
+		data_Up		 //右
 };
-Lcd_State imgbuff_show = {
-	quit_show, //中
-	open_va,   //上
-	close_va,  //下
-	show_line, //左
-	ushow_line //右
+Lcd_State imgbuff_show =
+	{
+		quit_show,  //中
+		open_va,	//上
+		go_Picture, //下
+		show_line,  //左
+		ushow_line  //右
+};
+Lcd_State read_picture =
+	{
+		read_Picture, //中
+		go_Back,	  //上
+		read_Array,   //下
+		read_Before,  //左
+		read_After	//右
 };
 
 Lcd_State *p_current_state = &imgbuff_show;
@@ -67,14 +78,14 @@ void PORTD_IRQHandler()
 {
 	uint32 flag;
 
-	while (!PORTD_ISFR);
+	while (!PORTD_ISFR)
+		;
 	flag = PORTD_ISFR;
 	PORTD_ISFR = ~0; //清中断标志位
 
-    DELAY_MS(20);
+	DELAY_MS(20);
 
-	if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13))   //中键按下
-
+	if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13)) //中键按下
 	{
 		onpress_M();
 	}
@@ -97,7 +108,6 @@ void PORTD_IRQHandler()
 	else if ((gpio_get(KEY_PTxn[4]) == KEY_DOWN && flag & (1 << 7)) && IMG_MODE == lcd_mode) //如果是flash按键按下,且是在图像模式下
 	{
 		save_picture = 1; //如果flash写入图像信息的键按下，标志位置1
-		temp_s[4]++;
 	}
 	key_on = 1;				 //记录有按键按下
 	disable_irq(PORTD_IRQn); //消抖
@@ -141,7 +151,7 @@ void Open_UI()
 			}
 		}
 		key_on = 0;
-		DELAY_MS(200);//消抖
+		DELAY_MS(200); //消抖
 		enable_irq(PORTD_IRQn);
 	}
 }
@@ -186,10 +196,12 @@ Lcd_State *goto_Begin(Lcd_State *pThis) //从等待模式进入本页第一行
 //new
 Lcd_State *goto_End(Lcd_State *pThis) //从等待模式进入本页第一行
 {
-	if (1 == page){
+	if (1 == page)
+	{
 		current_row = 6;
-	} 
-	else{
+	}
+	else
+	{
 		current_row = 1;
 	}
 	colour[6 * (page - 1) + current_row - 1] = GREEN; //选中的行变成绿色
@@ -295,7 +307,8 @@ Lcd_State *data_Down(Lcd_State *pThis)
 			flash_In();
 		}
 	}
-	else{
+	else
+	{
 		colour[6 * (page - 1) + current_row - 1] = WHITE;
 		current_row = 0;
 		return &wait_middle;
@@ -313,7 +326,8 @@ Lcd_State *data_Up(Lcd_State *pThis)
 			flash_In();
 		}
 	}
-	else{
+	else
+	{
 		colour[6 * (page - 1) + current_row - 1] = WHITE;
 		current_row = 0;
 		return &wait_middle;
@@ -330,16 +344,11 @@ Lcd_State *quit_show(Lcd_State *pThis)
 	return &wait_middle;
 }
 
-Lcd_State *close_va(Lcd_State *pThis)
-{
-	please_clear = 1;
-	is_show_va = 0;
-	return pThis;
-}
-
 Lcd_State *open_va(Lcd_State *pThis)
 {
-	is_show_va = 1;
+	is_show_va = !is_show_va;
+	if (!is_show_va)
+		LCD_clear(WHITE);
 	return pThis;
 }
 Lcd_State *show_line(Lcd_State *pThis)
@@ -358,6 +367,53 @@ Lcd_State *ushow_line(Lcd_State *pThis)
 }
 Lcd_State *do_nothing(Lcd_State *pThis)
 {
+	return pThis;
+}
+
+Lcd_State *go_Picture(Lcd_State *pThis)
+{
+	lcd_mode = PICTURE_MODE;
+	flash_picture[1] = 0;
+	flash_picture[0] = SECTOR_NUM - 1;
+	LCD_clear(WHITE);
+	return &read_picture;
+}
+
+Lcd_State *read_Picture(Lcd_State *pThis)
+{
+	picture_choose = 2;
+	return pThis;
+}
+
+Lcd_State *go_Back(Lcd_State *pThis)
+{
+	lcd_mode = IMG_MODE;
+	picture_choose = 2;
+	picture_count = 1;
+	flash_picture[1] = 0;
+	flash_picture[0] = SECTOR_NUM - 1;
+	return &imgbuff_show;
+}
+
+Lcd_State *read_Array(Lcd_State *pThis) //读数组
+{
+	if (picture_choose < 4)
+		picture_choose = 4;
+	else
+		picture_choose++;
+	return pThis;
+}
+
+Lcd_State *read_Before(Lcd_State *pThis) //前一幅图片
+{
+	picture_choose = 1;
+	printf("press\n");
+	return pThis;
+}
+
+Lcd_State *read_After(Lcd_State *pThis)
+{
+	picture_choose = 3;
 	return pThis;
 }
 
