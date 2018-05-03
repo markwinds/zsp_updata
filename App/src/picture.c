@@ -4,9 +4,10 @@
 int flash_picture[] = {SECTOR_NUM - 1, 0}; //从倒数第二个扇区开始写图片
 uint8 save_picture = 0;					   //判断是否要写入图片的标志
 uint8 imgbuff1[CAMERA_SIZE];
-int picture_choose = 2; //读取图片时的按键选择
+int picture_choose = 0; //读取图片时的按键选择
 int picture_count = 1;  //当前读取的图片的序号
 float delete_picture=0;	//是否删除图片的变量
+int picture_choose_before=0;
 
 void save_Picture()
 {
@@ -68,7 +69,7 @@ void flash_Picture() //将图片的信息写入flash
 	}
 	next_Write_Location(0);
 	led_turn (LED0);
-	DELAY_MS(500);
+	DELAY_MS(200);
 	led_turn (LED0);
 }
 
@@ -173,19 +174,23 @@ void read_Picture_Array()
 
 	if (1 == picture_choose)
 	{
-		picture_choose = 2;
+		picture_choose = 10;
 		picture_count = before_Write_Location();
 	}
 	else if (3 == picture_choose)
 	{
-		picture_choose = 2;
+		picture_choose = 10;
 		picture_count = next_Write_Location(1);
 	}
 	else if (2 == picture_choose)
 	{
-		if (813 == flash_read(flash_picture[0], flash_picture[1] * 4, uint32))
+		if (flash_picture[1] >= 0 && flash_picture[1] < 250)
 		{
-			flash_picture[1]++; //跳过标志位
+			flash_picture[1] = 1;
+		}
+		else
+		{
+			flash_picture[1] = 251;
 		}
 		for (i = 0; i < 150; i++) //图片数据
 		{
@@ -199,8 +204,10 @@ void read_Picture_Array()
 		vcan_sendimg(imgbuff1, CAMERA_SIZE);
 		LCD_Img_Binary_Z(site, size, imgbuff1, imgsize);
 		flash_picture[1] -= 150;
+		picture_choose_before=2;
+		picture_choose=0;
 	}
-	else if (picture_choose >= 4)
+	else if (4==picture_choose)
 	{
 		if (flash_picture[1] >= 0 && flash_picture[1] < 250)
 		{
@@ -230,41 +237,62 @@ void read_Picture_Array()
 			flash_picture[1]++;
 		}
 		flash_picture[1] -= 45;
-		while (picture_choose >= 4)
+		picture_choose=0;
+	}
+	else if (10==picture_choose)
+	{
+		if (flash_picture[1] >= 0 && flash_picture[1] < 250)
 		{
-			enable_irq(PORTD_IRQn);
-			if (picture_choose > 4)
-			{
-				if (flash_picture[1] >= 0 && flash_picture[1] < 250)
-				{
-					flash_picture[1] = 151;
-				}
-				else
-				{
-					flash_picture[1] = 401;
-				}
-				for (i = 0; i < 45; i++) //图片数据
-				{
-					if (0 == (i % 3) && i != 0)
-						printf("\n");
-					if (0 == (i % 15) && i != 0)
-						printf("\n");
-					if (0 == i)
-					{
-						printf("\n\n\n\n\n");
-						printf("                                   Picture:%d\n",picture_count);
-					}
-						
-					data = flash_read(flash_picture[0], flash_picture[1] * 4, uint32);
-					printf("%5d ", data >> 24);
-					printf("%5d ", (data & 0x00ff0000) >> 16);
-					printf("%5d ", (data & 0x0000ff00) >> 8);
-					printf("%5d ", data & 0x000000ff);
-					flash_picture[1]++;
-				}
-				flash_picture[1] -= 45;
-				picture_choose--;
-			}
+			flash_picture[1] = 1;
 		}
+		else
+		{
+			flash_picture[1] = 251;
+		}
+		for (i = 0; i < 150; i++) //图片数据
+		{
+			data = flash_read(flash_picture[0], flash_picture[1] * 4, uint32);
+			imgbuff1[4 * i] = data >> 24;
+			imgbuff1[4 * i + 1] = (data & 0x00ff0000) >> 16;
+			imgbuff1[4 * i + 2] = (data & 0x0000ff00) >> 8;
+			imgbuff1[4 * i + 3] = data & 0x000000ff;
+			flash_picture[1]++;
+		}
+		send_Picture10();
+		LCD_Img_Binary_Z(site, size, imgbuff1, imgsize);
+		flash_picture[1] -= 150;
+		picture_choose_before=10;
+		picture_choose=0;
+	}
+}
+
+
+void send_Picture10()
+{
+	int i=0;
+	int j=0;
+
+	img_extract(img, imgbuff1, CAMERA_SIZE); //解压图像
+
+	printf("\n\n                                   Picture:%d\n",picture_count);
+	for(i=0;i<60;i++)
+	{
+		for(j=0;j<80;j++)
+		{
+			printf("%d",img[i][j]);
+		}
+		printf("\n");
+	}
+
+	printf("\n\n                                   Picture:%d\n",picture_count);
+	for(i=0;i<60;i++)
+	{
+		for(j=0;j<80;j++)
+		{
+			printf("%d",img[i][j]);
+			if(0==((j+1)%20)) printf(" ");
+		}
+		printf("\n");
+		if(0==((i+1)%10)) printf("\n");
 	}
 }
