@@ -6,6 +6,7 @@ uint8 save_picture = 0;					   //判断是否要写入图片的标志
 uint8 imgbuff1[CAMERA_SIZE];
 int picture_choose = 2; //读取图片时的按键选择
 int picture_count = 1;  //当前读取的图片的序号
+float delete_picture=0;	//是否删除图片的变量
 
 void save_Picture()
 {

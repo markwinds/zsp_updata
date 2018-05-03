@@ -20,6 +20,7 @@ Screen_Data screen_data[] = {
 	{"length", &(total_distance), 500, 0},
 
 	{"flash", &(flash_in), 1, -1},
+	{"de_pic", &(delete_picture),1,0},
 
 	{"end", &(temp_s[9]), 1202, 0}};
 
@@ -52,7 +53,6 @@ void main(void)
 	Quad_Init();										 //编码器中断
 	flash_init();
 	flash_Out();
-	delete_Picture();
 
 	while (1)
 	{
@@ -114,13 +114,15 @@ void main(void)
 		else
 			Open_UI();
 
+		enable_irq(PORTD_IRQn);
+		if((delete_picture-0.3)>0.5)
+		{
+			delete_Picture();
+			delete_picture=0;
+		}
 		/*-----------速度和距离的一些更新---------*/
 		Update_Motor();
-		enable_irq(PORTD_IRQn);
-		// LCD_numf(tem_site_str[3], temp_s[3], GREEN, BLUE);
-		// LCD_numf(tem_site_str[4], temp_s[4], GREEN, BLUE);
-		// LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
-
+		
 		if (UI_MODE == lcd_mode)
 		{
 			if (1 == ((int)motor_go) % 2 && total_distance < 1000)

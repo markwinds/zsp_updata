@@ -8,6 +8,7 @@ extern uint8 save_picture;  //是否写入图片的标志位
 extern uint8 imgbuff1[CAMERA_SIZE];
 extern int picture_choose; //读取图片时的按键选择
 extern int picture_count;  //当前读取的图片的序号
+extern float delete_picture;
 
 extern void flash_Picture();
 extern void save_Picture();
