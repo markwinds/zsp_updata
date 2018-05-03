@@ -116,18 +116,12 @@ void main(void)
 
 		/*-----------速度和距离的一些更新---------*/
 		Update_Motor();
-		if(road_mark == rest){
-			ftm_pwm_duty(FTM0, FTM_CH5, 0);
-			ftm_pwm_duty(FTM0, FTM_CH6, 380); 
-		}
-		else if (UI_MODE == lcd_mode)
 		enable_irq(PORTD_IRQn);
 		// LCD_numf(tem_site_str[3], temp_s[3], GREEN, BLUE);
 		// LCD_numf(tem_site_str[4], temp_s[4], GREEN, BLUE);
 		// LCD_numf(tem_site_str[5], temp_s[5], GREEN, BLUE);
 
 		if (UI_MODE == lcd_mode)
->>>>>>> zy
 		{
 			if (1 == ((int)motor_go) % 2 && total_distance < 1000)
 				ftm_pwm_duty(FTM0, FTM_CH5, (int)motor_speed);

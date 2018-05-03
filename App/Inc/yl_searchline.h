@@ -8,7 +8,7 @@ enum road_condition{
     straightaway,
     bend,
     circular,
-    cross，
+    cross,
     rest
 };
 

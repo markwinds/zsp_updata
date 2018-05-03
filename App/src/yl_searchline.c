@@ -3,7 +3,7 @@
 #include "include.h"
 
 int8 state_line[5];
-enum road_condition road_mark = cross;
+enum road_condition road_mark = rest;
 
 //这个暂时还没用到
 void Judge_body()
