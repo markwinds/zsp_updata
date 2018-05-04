@@ -231,10 +231,10 @@ void read_Picture_Array()
 			}
 				
 			data = flash_read(flash_picture[0], flash_picture[1] * 4, uint32);
-			printf("%5d ", data >> 24);
-			printf("%5d ", (data & 0x00ff0000) >> 16);
-			printf("%5d ", (data & 0x0000ff00) >> 8);
-			printf("%5d ", data & 0x000000ff);
+			printf("%5d ", (int8)((data >> 24)));
+			printf("%5d ", (int8)((data & 0x00ff0000) >> 16));
+			printf("%5d ", (int8)((data & 0x0000ff00) >> 8));
+			printf("%5d ", (int8)(data & 0x000000ff));
 			flash_picture[1]++;
 		}
 		flash_picture[1] -= 45;

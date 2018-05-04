@@ -74,11 +74,12 @@ void main(void)
 			
 			if (is_show_va) //是能够在IMG_MODE模式下显示数据
 			{
-				Judge_body();
+				// if(state_line[0] == 0)Judge_circul();
 				LCD_numf(tem_site_str[4], (float)state_line[0], GREEN, BLUE);
-				LCD_numf(tem_site_str[5], (float)state_line[2], GREEN, BLUE);
-				LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
-				LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
+				// if(state_line[0] == 3) Goin_circul();
+				// LCD_numf(tem_site_str[5], (float)state_line[2], GREEN, BLUE);
+				// LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
+				// LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
 			}
 			/*彩色显示边线*/
 			if (is_show_line == 1 || is_show_line == 3) //网格

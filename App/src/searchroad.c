@@ -459,7 +459,9 @@ void Search_line()
 	}
 	else
 	{
-		Get_middle_line();
+		if(state_line[0] == 0) Judge_circul();
+    	if(state_line[0] == 3) Goin_circul();
+		Get_middle_line();		
 		//nomal_middle();
 	}
 	
@@ -469,21 +471,21 @@ void Search_line()
 	/*
 		1.用中心点算出偏差度
 	*/
-	for (i = LINE_NUM - 1; i >= 10; i--)
-	{
-		if (-2 == middleline[i])
-			break;
-		else if (-1 == middleline[i]) {}
-		else
-		{
-			offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
-			count++;
-			if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
-			if (middleline[i] < 0)middleline[i] = 0;
-			img[i][middleline[i]] = !img[i][middleline[i]];
-		}
-	}
-
+	// for (i = LINE_NUM - 1; i >= 1; i--)
+	// {
+	// 	if (-2 == middleline[i])
+	// 		break;
+	// 	else if (-1 == middleline[i]) {}
+	// 	else
+	// 	{
+	// 		offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
+	// 		count++;
+	// 		if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
+	// 		if (middleline[i] < 0)middleline[i] = 0;
+	// 		img[i][middleline[i]] = !img[i][middleline[i]];
+	// 	}
+	// }
+ 	Get_error_cal(&offset, &count);
 
 
 	/*---------------更新偏差度队列---------------------*/

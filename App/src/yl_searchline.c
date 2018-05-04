@@ -123,13 +123,13 @@ void Get_middle_line()
                     } 
 					else
                     {
-                        if(right_black[LINE_NUM] < 0)
+                        if(right_black[LINE_NUM - 1] < 0)
                         {
-                            tem_val = right_black[jh] - (int16)(33.82 + 0.977*abs(right_black[jh] - CAMERA_W + 1) - 0.7718*(LINE_NUM - jh));
+                            tem_val = right_black[jh] - (int16)(36.82 + 0.977*abs(right_black[jh] - CAMERA_W + 1) - 0.7718*(LINE_NUM - jh));
                         }
                         else
                         {
-                            tem_val = right_black[jh] - (int16)(33.82 + 0.977*abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
+                            tem_val = right_black[jh] - (int16)(36.82 + 0.977*abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
                         }
                         middleline[jh] = ( (tem_val < 0) ? (0) : tem_val);
                     } 
@@ -153,20 +153,100 @@ void Get_middle_line()
     }
 }
 
-void Get_error_cal()
+
+
+void Judge_circul()
+{
+    int8 jh;
+    int8 t_jh;
+    if(left_black[25] > 0 && right_black[25] < 0)
+    {
+        for(jh = 25; jh >= 10; jh--)
+        {
+            if(right_black[jh] > 0 || left_black[jh] < 0)
+            {
+                break;
+            }
+        }
+        for(t_jh = 25; t_jh <= 35; t_jh++)
+        {
+            if(right_black[t_jh] > 0 || left_black[t_jh] < 0)
+            {
+                break;
+            }
+        }
+        if(t_jh - jh >= 10 && right_black[jh - 4] > 40 && right_black[jh - 4] < 60 &&
+            abs(right_black[jh - 6] - right_black[jh - 2]) < 3 &&
+            abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)// && img[jh - 4][CAMERA_W - 1] == 0)
+        {
+                state_line[0] = 3;
+                //
+        }
+    }
+}
+
+void Goin_circul()
+{
+    int8 jh;
+    for(jh = 35; jh > 10; jh --)
+    {
+        if(right_black[jh] < 0 && right_black[jh - 1] > 40)
+        {
+            break;
+        }
+    }
+    if(jh == 10)
+    {
+        state_line[0] = 1;
+    }
+    else
+    {
+        jh -= 2;
+        left_black[jh] = right_black[jh - 1] - 2;
+        state_line[1] = left_black[jh];
+        for(; jh < LINE_NUM - 1; jh++)
+        {
+            if(left_black[jh] - 2 < 0 || left_black[jh] - 2 < left_black[jh + 1])
+            {
+                state_line[2] = left_black[jh];
+                break;
+            }
+            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?1:2);
+        }
+    }    
+}
+
+int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
+{
+    for(; start < end; end += extent){
+        if(img[jh][end] == 0)
+        {
+            break;
+        }
+    }
+    return end - start + 1;
+}
+
+
+void Get_error_cal(float *offset, int *count)
 {
     int i;
-	for (i = LINE_NUM - 1; i >= 10; i--)
+    if(state_line[0] == 3){
+        *offset += ((float)(state_line[1] - state_line[2]));
+    }
+    else
+	for (i = LINE_NUM - 1; i >= 1; i--)
 	{
 		if (-2 == middleline[i])
 			break;
 		else if (-1 == middleline[i]) {}
 		else
 		{
-			//offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
-			//count++;
-			// if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
-			// if (middleline[i] < 0)middleline[i] = 0;
+			*offset = *offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
+			(*count)++;
+			if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
+			if (middleline[i] < 0)middleline[i] = 0;
+			img[i][middleline[i]] = !img[i][middleline[i]];
 		}
 	}
 }
