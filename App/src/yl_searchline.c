@@ -159,22 +159,22 @@ void Judge_circul()
 {
     int8 jh;
     int8 t_jh;
-    if(left_black[25] > 0 && right_black[25] < 0)
+    if(left_black[25] > 0 && right_black[25] < 0) //从25行开始搜丟线宽度
     {
-        for(jh = 25; jh >= 10; jh--)
+        for(jh = 25; jh >= 10; jh--) //上面找
         {
             if(right_black[jh] > 0 || left_black[jh] < 0)
             {
                 break;
             }
         }
-        for(t_jh = 25; t_jh <= 35; t_jh++)
+        for(t_jh = 25; t_jh <= 35; t_jh++) //下面找
         {
             if(right_black[t_jh] > 0 || left_black[t_jh] < 0)
             {
                 break;
             }
-        }
+        }//
         if(t_jh - jh >= 10 && right_black[jh - 4] > 40 && right_black[jh - 4] < 60 &&
             abs(right_black[jh - 6] - right_black[jh - 2]) < 3 &&
             abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)// && img[jh - 4][CAMERA_W - 1] == 0)
@@ -201,17 +201,17 @@ void Goin_circul()
     }
     else
     {
-        jh -= 2;
+        jh -= 4;
         left_black[jh] = right_black[jh - 1] - 2;
         state_line[1] = left_black[jh];
         for(; jh < LINE_NUM - 1; jh++)
         {
-            if(left_black[jh] - 2 < 0 || left_black[jh] - 2 < left_black[jh + 1])
+            if(left_black[jh] - 3 < 0 || left_black[jh] - 3 < left_black[jh + 1])
             {
                 state_line[2] = left_black[jh];
                 break;
             }
-            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?1:2);
+            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?2:3);
         }
     }    
 }
