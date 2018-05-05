@@ -34,15 +34,14 @@ if (i == 22)
     else
       ;
 
-    //这边进圆环了
     //第一段丢线0.5秒后 第一段标志和内圆标志清零
-    //左边丟线
+    //左边丟线，这个丟线意义不明
     if (cur_R_ready_time_flag > 200 || Left_Add_Flag[i] || Left_Add_Flag[i + 2]) /*此处时间需要调试*/
     {
       cur_R_ready_delay_flag = 0; //第一段丢线标志清零
       cur_R_ready_rest_flag = 0;  //内圆标志清零
     }
-    //这里表示进了圆环找到弯道了
+
     //第一段丢线0.5秒内  找到第二段丢线  内圆和第一段标志清零
     else if (cur_R_ready_rest_flag && Right_Add_Flag[i] && Right_Add_Flag[i + 2] && !Left_Add_Flag[i] && !Left_Add_Flag[i + 2] && street_len > 40)
     {
@@ -67,6 +66,7 @@ if (cur_R_real_flag || cur_R_real_delay_flag) //第二段标志下
   cur_R_real_flag = 0;       //第二段标志清零
   cur_R_real_delay_flag = 1; //重新置 "1" 第二段标志
   led(LED1, LED_ON);
+  //这里应该转弯了，即刚进圆环，所以本来前面的直道变成丟线了
   if (i == 32 && cur_R_real_time_flag > 80 && (Left_Add_Flag[i + 2] && !Right_Add_Flag[i + 2])) //在第二段丢线0.5秒后 且左边22 24丢线
   {
     cur_R_real_rest_flag = 1; //复位标志
