@@ -112,7 +112,14 @@ void Get_middle_line()
 		{
 			if (-1 == left_black[jh] || -1 == right_black[jh])
 			{
-				if (-1 == left_black[jh] && -1 == right_black[jh]) middleline[jh] = CAMERA_W / 2;
+				if (-1 == left_black[jh] && -1 == right_black[jh])
+                { 
+                    if(state_line[0] == 1){
+                        middleline[jh] == -2;
+                    }
+                    else
+                    middleline[jh] = CAMERA_W / 2;
+                }
 				else
 				{
                     //这里用的公式是matlab拟合出来的
@@ -154,65 +161,107 @@ void Get_middle_line()
 }
 
 
-/*判断是否是圆环的函数*/
+
 void Judge_circul()
 {
     int8 jh;
     int8 t_jh;
-    if(left_black[25] > 0 && right_black[25] < 0)    //第25行左边不丢线右边丢线
+    if(state_line[0] == 0)
     {
-        for(jh = 25; jh >= 10; jh--)    //jh记录上界
+        if(left_black[25] > 0 && right_black[25] < 0) //从25行开始搜丟线宽度
         {
-            if(right_black[jh] > 0 || left_black[jh] < 0)
+            for(jh = 25; jh >= 10; jh--) //上面找
             {
-                break;
+                if(right_black[jh] > 0 || left_black[jh] < 0)
+                {
+                    break;
+                }
+            }
+            for(t_jh = 25; t_jh <= 35; t_jh++) //下面找
+            {
+                if(right_black[t_jh] > 0 || left_black[t_jh] < 0)
+                {
+                    break;
+                }
+            }//
+            if(t_jh - jh >= 10 && right_black[jh - 4] > 40 && right_black[jh - 4] < 60 &&
+                abs(right_black[jh - 6] - right_black[jh - 2]) < 3 &&
+                abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)// && img[jh - 4][CAMERA_W - 1] == 0)
+            {
+                    state_line[0] = 3;
+                    //
             }
         }
-        for(t_jh = 25; t_jh <= 35; t_jh++)  //t_jh记录上界
-        {
-            if(right_black[t_jh] > 0 || left_black[t_jh] < 0)
-            {
-                break;
-            }
+    }
+    else if(state_line[0] == 1)
+    {
+        //int8 tem_i;
+        if(right_black[40] > left_black[40] && left_black[40] >0 && right_black[40] - left_black[40] < 55 &&
+            right_black[30] > left_black[30] && left_black[30] >0 && right_black[30] - left_black[30] < 45 &&
+           right_black[20] > left_black[20] && left_black[20] >0 && right_black[20] - left_black[20] < 35 ){
+            state_line[0] = 0;
+            return ;
         }
-        if(t_jh - jh >= 10 && right_black[jh - 4] > 40 && right_black[jh - 4] < 60 &&
-            abs(right_black[jh - 6] - right_black[jh - 2]) < 3 &&
-            abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)// && img[jh - 4][CAMERA_W - 1] == 0)
+        //tem_i = 30;
+        if(left_black[30] < 0 && right_black[30] < 0)
         {
-                state_line[0] = 3;
-                //
+            for(t_jh = 30; t_jh <= 55; t_jh++) //下面找
+            {
+                if(left_black[t_jh] > 0 && left_black[t_jh - 1] < 0)
+                {
+                    break;
+                }
+            }
+            if(t_jh != 56)
+            {
+                for(;left_black[t_jh + 1] - left_black[t_jh] >= 0 && t_jh < LINE_NUM - 1; t_jh++);
+                for(;left_black[t_jh] + 2 < CAMERA_W - 1 && t_jh > 0; t_jh --)
+                {
+                    left_black[t_jh - 1] = left_black[t_jh] + 2;
+                }
+            }
         }
     }
 }
 
-//进入圆环的函数
 void Goin_circul()
 {
     int8 jh;
-    for(jh = 35; jh > 10; jh --)
-    {
+    for(jh = 55; jh > 35; jh --)
+    {  
+        if(right_black[jh] < 0 && left_black[jh] < 0){
+            state_line[1] = 30;
+            state_line[2] = 59;
+            left_black[30] = 20;
+            left_black[59] = 1;
+            return ;
+        }
+    }    
+    for(; jh > 10; jh --)
+    {  
         if(right_black[jh] < 0 && right_black[jh - 1] > 40)
         {
             break;
         }
     }
-    if(jh == 10)    //这里是判断失败吗
+
+    if(jh == 10)
     {
         state_line[0] = 1;
     }
     else
     {
-        jh -= 2;
+        jh -= 4;
         left_black[jh] = right_black[jh - 1] - 2;
-        state_line[1] = left_black[jh];     //这一步有什么用暂时没看懂
+        state_line[1] = jh;
         for(; jh < LINE_NUM - 1; jh++)
         {
-            if(left_black[jh] - 2 < 0 || left_black[jh] - 2 < left_black[jh + 1])   //碰到左边直道的时候退出补线
+            if(left_black[jh] - 3 < 0 || left_black[jh] - 3 < left_black[jh + 1])
             {
-                state_line[2] = left_black[jh];
+                state_line[2] = jh;
                 break;
             }
-            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?1:2);  //画直线
+            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?2:3);
         }
     }    
 }
@@ -233,21 +282,21 @@ void Get_error_cal(float *offset, int *count)
 {
     int i;
     if(state_line[0] == 3){
-        *offset += ((float)(state_line[1] - state_line[2]));
+        *offset += ((float)(left_black[state_line[1]] - left_black[state_line[2]])*(state_line[2] - state_line[1])/(LINE_NUM - state_line[1]));
     }
     else
-        for (i = LINE_NUM - 1; i >= 1; i--)
-        {
-            if (-2 == middleline[i])
-                break;
-            else if (-1 == middleline[i]) {}
-            else
-            {
-                *offset = *offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
-                (*count)++;
-                if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
-                if (middleline[i] < 0)middleline[i] = 0;
-                img[i][middleline[i]] = !img[i][middleline[i]];
-            }
-        }
+	for (i = LINE_NUM - 1; i >= 1; i--)
+	{
+		if (-2 == middleline[i])
+			break;
+		else if (-1 == middleline[i]) {}
+		else if(state_line[0] != 1 || i >= 35)
+		{
+			*offset = *offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
+			(*count)++;
+			if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
+			if (middleline[i] < 0)middleline[i] = 0;
+			img[i][middleline[i]] = !img[i][middleline[i]];
+		}
+	}
 }
