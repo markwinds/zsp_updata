@@ -459,7 +459,7 @@ void Search_line()
 	}
 	else
 	{
-		if(state_line[0] == 0) Judge_circul();
+		if(state_line[0] == 0 || state_line[0] == 1) Judge_circul();
     	if(state_line[0] == 3) Goin_circul();
 		Get_middle_line();		
 		//nomal_middle();

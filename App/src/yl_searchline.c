@@ -154,21 +154,21 @@ void Get_middle_line()
 }
 
 
-
+/*判断是否是圆环的函数*/
 void Judge_circul()
 {
     int8 jh;
     int8 t_jh;
-    if(left_black[25] > 0 && right_black[25] < 0)
+    if(left_black[25] > 0 && right_black[25] < 0)    //第25行左边不丢线右边丢线
     {
-        for(jh = 25; jh >= 10; jh--)
+        for(jh = 25; jh >= 10; jh--)    //jh记录上界
         {
             if(right_black[jh] > 0 || left_black[jh] < 0)
             {
                 break;
             }
         }
-        for(t_jh = 25; t_jh <= 35; t_jh++)
+        for(t_jh = 25; t_jh <= 35; t_jh++)  //t_jh记录上界
         {
             if(right_black[t_jh] > 0 || left_black[t_jh] < 0)
             {
@@ -185,6 +185,7 @@ void Judge_circul()
     }
 }
 
+//进入圆环的函数
 void Goin_circul()
 {
     int8 jh;
@@ -195,7 +196,7 @@ void Goin_circul()
             break;
         }
     }
-    if(jh == 10)
+    if(jh == 10)    //这里是判断失败吗
     {
         state_line[0] = 1;
     }
@@ -203,15 +204,15 @@ void Goin_circul()
     {
         jh -= 2;
         left_black[jh] = right_black[jh - 1] - 2;
-        state_line[1] = left_black[jh];
+        state_line[1] = left_black[jh];     //这一步有什么用暂时没看懂
         for(; jh < LINE_NUM - 1; jh++)
         {
-            if(left_black[jh] - 2 < 0 || left_black[jh] - 2 < left_black[jh + 1])
+            if(left_black[jh] - 2 < 0 || left_black[jh] - 2 < left_black[jh + 1])   //碰到左边直道的时候退出补线
             {
                 state_line[2] = left_black[jh];
                 break;
             }
-            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?1:2);
+            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?1:2);  //画直线
         }
     }    
 }
