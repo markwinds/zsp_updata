@@ -166,7 +166,7 @@ void Judge_circul()
 {
     int8 jh;
     int8 t_jh;
-    if(state_line[0] == 0)
+    if(state_line[0] == 0)  //未找到圆环
     {
         if(left_black[25] > 0 && right_black[25] < 0) //从25行开始搜丟线宽度
         {
@@ -197,7 +197,7 @@ void Judge_circul()
     {
         //int8 tem_i;
         if(right_black[40] > left_black[40] && left_black[40] >0 && right_black[40] - left_black[40] < 55 &&
-            right_black[30] > left_black[30] && left_black[30] >0 && right_black[30] - left_black[30] < 45 &&
+           right_black[30] > left_black[30] && left_black[30] >0 && right_black[30] - left_black[30] < 45 &&
            right_black[20] > left_black[20] && left_black[20] >0 && right_black[20] - left_black[20] < 35 ){
             state_line[0] = 0;
             return ;

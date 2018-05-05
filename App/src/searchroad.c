@@ -117,50 +117,6 @@ void Search_line()
 		//左侧丢线扫描
 		if ((0 == jw_left) && (0 == left_find_flag))          //左边找到最后一个像素任然未找到符合黑线条件的像素，则认为第一个为黑线
 		{
-			if (jh < 50 && left_black[jh + 1] != -1 )  //补扫，判断是否是圆环 如果前一行有线
-			{
-				if (left_black[jh + 1] - 2 >= 0 && left_black[jh + 1] + 3 <= CAMERA_W - 1)  //防止下面的img[jh + 1][left_black[jh + 1] - 2]数组越界
-				{
-					if (1 == img[jh + 1][left_black[jh + 1] - 2] && 1 == img[jh + 1][left_black[jh + 1] + 3])  //如果下面一行的突出尖符合条件
-					{
-						for (i = 2; i < 3; i++)  //向下扫到第5行看是否符合条件
-						{
-							j = left_black[jh + i] - 1; //用j记录下面第i行的边线列序号
-							while (j > 0 && img[jh + i][j] != 1) //向左找0到1的跳变，赛道是1黑线是0
-							{
-								j--;
-							}
-							if (j <= 0) break; //只要下面的i行有一行不符合要求就直接跳出，这样的话i就不可能等于5，就不会增加标记
-							if (right_black[jh + i] > CAMERA_W - 1 - 12 || -1 == right_black[jh + i] ||
-								right_black[jh + i] - left_black[jh + i] < 20 || 
-								right_black[jh + i] - left_black[jh + i] > 65) break;//右边不是直道就退出
-						}
-						if (3 == i)
-						{
-							judge_island();
-						}
-					}
-				}
-				else
-				{
-					for (i = 2; i < 3; i++)
-					{
-						j = left_black[jh + i] - 1;
-						while (j > 0 && img[jh + i][j] != 1)
-						{
-							j--;
-						}
-						if (j <= 0) break;
-						if (right_black[jh + i] > CAMERA_W - 1 - 12 || -1 == right_black[jh + i] ||
-							right_black[jh + i] - left_black[jh + i] < 20 ||
-							right_black[jh + i] - left_black[jh + i] > 65) break;//右边不是直道就退出
-					}
-					if (3 == i)
-					{
-						judge_island();
-					}
-				}
-			}
 			left_find_flag = 1;
 			left_black[jh] = -1;                              //-1代表扫描到边线时还没找到黑线
 			left_black_before = jw_left + OFF_CENTER;  
@@ -211,50 +167,6 @@ void Search_line()
 		//右侧丢线扫描
 		if (jw_right == (CAMERA_W - 1) && (0 == right_find_flag))            //右边黑点未找到
 		{
-			if (jh < 50 && right_black[jh + 1] != -1)                        //补扫，判断是否是圆环
-			{
-				if (right_black[jh + 1] + 2 <= CAMERA_W - 1 && right_black[jh + 1] - 3 > 0)
-				{
-					if (1 == img[jh + 1][right_black[jh + 1] + 2] && 1 == img[jh + 1][right_black[jh + 1] - 3])
-					{
-						for (i = 2; i < 3; i++)
-						{
-							j = right_black[jh + i] + 1;
-							while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //这里要比左边多出一个判断，因为当right_black[jh + i]值为-1时
-							{
-								j++;
-							}
-							if (j >= (CAMERA_W - 1) || j <= 0) break;
-							if (left_black[jh + i] < 0 + 12 ||
-								right_black[jh + i] - left_black[jh + i] < 20 ||
-								right_black[jh + i] - left_black[jh + i] > 65) break;
-						}
-						if (3 == i)
-						{
-							judge_island();
-						}
-					}	
-				}
-				else
-				{
-					for (i = 2; i < 3; i++)
-					{
-						j = right_black[jh + i] + 1;
-						while (j > 0 && j < CAMERA_W - 1 && img[jh + i][j] != 1)  //这里要比左边多出一个判断，因为当right_black[jh + i]值为-1时
-						{
-							j++;
-						}
-						if (j >= (CAMERA_W - 1) || j <= 0) break;
-						if (left_black[jh + i] < 0 + 12 ||
-							right_black[jh + i] - left_black[jh + i] < 20 ||
-							right_black[jh + i] - left_black[jh + i] > 65) break;
-					}
-					if (3 == i)
-					{
-						judge_island();
-					}
-				}
-			}
 			right_find_flag = 1;
 			right_black[jh] = -1;
 			right_black_before = jw_right - OFF_CENTER;
@@ -270,7 +182,7 @@ void Search_line()
 			jh--;
 		}
 	} //while
-
+	
 
 
 
@@ -296,10 +208,6 @@ void Search_line()
 			if (left_black[jh + 0] - left_black[jh + 4] > 6 && left_black[jh + 0] - left_black[jh - 4] > 6)//突出点够尖锐
 			{
 				isisland_flag++;
-				//temp_s[0] = left_black[jh];
-				//temp_s[1] = left_black[jh + 4];
-				//temp_s[2] = left_black[jh - 4];
-				//LCD_numf(tem_site_str[2], jh, GREEN, BLUE);
 			}
 		}
 
@@ -345,7 +253,8 @@ void Search_line()
 		}
 		jh--;
 	}
-
+	if(state_line[0] == 0 || state_line[0] == 1) Judge_circul();
+    if(state_line[0] == 3) Goin_circul();
 
 
 
@@ -457,10 +366,12 @@ void Search_line()
 			}
 		}
 	}
+	else if(3==state_line[0])
+	{
+		Get_middle_line();
+	}
 	else
 	{
-		if(state_line[0] == 0 || state_line[0] == 1) Judge_circul();
-    	if(state_line[0] == 3) Goin_circul();
 		Get_middle_line();		
 		//nomal_middle();
 	}
@@ -471,20 +382,6 @@ void Search_line()
 	/*
 		1.用中心点算出偏差度
 	*/
-	// for (i = LINE_NUM - 1; i >= 1; i--)
-	// {
-	// 	if (-2 == middleline[i])
-	// 		break;
-	// 	else if (-1 == middleline[i]) {}
-	// 	else
-	// 	{
-	// 		offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
-	// 		count++;
-	// 		if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
-	// 		if (middleline[i] < 0)middleline[i] = 0;
-	// 		img[i][middleline[i]] = !img[i][middleline[i]];
-	// 	}
-	// }
  	Get_error_cal(&offset, &count);
 
 

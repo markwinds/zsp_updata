@@ -18,9 +18,13 @@
 //#define STEER_KI     3.0
 //#define STEER_KD     3.0
 
+extern int speed_add;
 extern float STEER_KP;
 extern float STEER_KI;
 extern float STEER_KD;
+extern float MOTOR_KP;
+extern float MOTOR_KI;
+extern float MOTOR_KD;
 
 
 typedef enum Speed_mode
@@ -40,6 +44,7 @@ extern float motor_speed;                //电机转速
 
 extern void Steer_Pid();
 void Control_core();
+void motor_Pid();
 
 
 

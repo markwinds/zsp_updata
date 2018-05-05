@@ -8,6 +8,9 @@ int quad_temp = 0;
 float total_distance = 0;
 int cross_distance_count = 0;
 int land_distance_count1 = 0;
+float target_speed = 0;		//目标速度
+int target_pulse = 0;		//目标脉冲数
+int pulse_error[3] = {0};
 
 
 
@@ -22,6 +25,8 @@ void Update_Motor()
 	int i = 0;
 	int distance_temp = 0;
 
+	target_pulse=(int)((double)target_speed*132.0/100.0);	//根据目标速度更新目标脉冲
+
 	/*--------------移动速度队列------------------*/
 	for (i = 2; i > 0; i--)
 	{
@@ -29,11 +34,10 @@ void Update_Motor()
 	}
 	quad_value[1] = quad_value[0];
 
-
 	/*------------获取编码器的值并更新速度--------------*/
 	quad_value[0] = quad_val;                          //得到编码器的值，其值为一出发开始的累加值
 	quad_speed[0] = quad_value[0] - quad_value[1];     //这次累加值减去上次的累加值就是这段时间的速度
-	quad_temp += (quad_value[0] - quad_value[1]);      
+	quad_temp += (quad_value[0] - quad_value[1]);  
 
 
 	/*------------各种距离上的控制----------------*/

@@ -22,10 +22,17 @@ void Quad_Init(void)
  *  @brief      PIT0中断服务函数
  *  @since      v5.0
  */
-void PIT0_IRQHandler(void)
+void PIT0_IRQHandler(void)  //10ms更新一次速度值
 {
+    int i=0;
+
     PIT_Flag_Clear(PIT0);       //清中断标志位
     quad_val -= ftm_quad_get(FTM1);   //获取FTM正交解码的脉冲数(负数表示反方向)
     ftm_quad_clean(FTM1);
+    for(i=2;i>0;i--)
+	{
+		pulse_error[i]=pulse_error[i-1];
+	}
+    pulse_error[0] =  target_pulse - quad_val;
 }
 

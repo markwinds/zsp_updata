@@ -72,26 +72,22 @@ if (cur_R_real_flag || cur_R_real_delay_flag) //第二段标志下
     cur_R_real_rest_flag = 1; //复位标志
     xx = 1;
   }
-  else
-    ;
+
   if (cur_R_real_rest_flag)
   {
     cur_R_real_time_flag1++;
   }
-  else
-    ;
+
   if (cur_R_real_time_flag1 > 200)
   {
     cur_R_real_time_flag1 = 200;
   }
-  else
-    ;
+
   if (i == 22 && cur_R_real_time_flag1 > 60 && !Left_Add_Flag[i] && !Left_Add_Flag[i + 2] && !Right_Add_Flag[i] && !Right_Add_Flag[i + 2])
   {
     cur_R_real_delay_flag = 0; //清零第二段丢线标志   （此时赋值为第二段丢线标志）
   }
-  else
-    ;
+
 }
 else
 {
