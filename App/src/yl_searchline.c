@@ -154,21 +154,21 @@ void Get_middle_line()
 }
 
 
-
+/*判断是否是圆环的函数*/
 void Judge_circul()
 {
     int8 jh;
     int8 t_jh;
-    if(left_black[25] > 0 && right_black[25] < 0)
+    if(left_black[25] > 0 && right_black[25] < 0)    //第25行左边不丢线右边丢线
     {
-        for(jh = 25; jh >= 10; jh--)
+        for(jh = 25; jh >= 10; jh--)    //jh记录上界
         {
             if(right_black[jh] > 0 || left_black[jh] < 0)
             {
                 break;
             }
         }
-        for(t_jh = 25; t_jh <= 35; t_jh++)
+        for(t_jh = 25; t_jh <= 35; t_jh++)  //t_jh记录上界
         {
             if(right_black[t_jh] > 0 || left_black[t_jh] < 0)
             {
@@ -185,6 +185,7 @@ void Judge_circul()
     }
 }
 
+//进入圆环的函数
 void Goin_circul()
 {
     int8 jh;
@@ -195,7 +196,7 @@ void Goin_circul()
             break;
         }
     }
-    if(jh == 10)
+    if(jh == 10)    //这里是判断失败吗
     {
         state_line[0] = 1;
     }
@@ -203,15 +204,15 @@ void Goin_circul()
     {
         jh -= 2;
         left_black[jh] = right_black[jh - 1] - 2;
-        state_line[1] = left_black[jh];
+        state_line[1] = left_black[jh];     //这一步有什么用暂时没看懂
         for(; jh < LINE_NUM - 1; jh++)
         {
-            if(left_black[jh] - 2 < 0 || left_black[jh] - 2 < left_black[jh + 1])
+            if(left_black[jh] - 2 < 0 || left_black[jh] - 2 < left_black[jh + 1])   //碰到左边直道的时候退出补线
             {
                 state_line[2] = left_black[jh];
                 break;
             }
-            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?1:2);
+            left_black[jh + 1] = left_black[jh] - ((left_black[jh] < 40)?1:2);  //画直线
         }
     }    
 }
@@ -235,18 +236,18 @@ void Get_error_cal(float *offset, int *count)
         *offset += ((float)(state_line[1] - state_line[2]));
     }
     else
-	for (i = LINE_NUM - 1; i >= 1; i--)
-	{
-		if (-2 == middleline[i])
-			break;
-		else if (-1 == middleline[i]) {}
-		else
-		{
-			*offset = *offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
-			(*count)++;
-			if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
-			if (middleline[i] < 0)middleline[i] = 0;
-			img[i][middleline[i]] = !img[i][middleline[i]];
-		}
-	}
+        for (i = LINE_NUM - 1; i >= 1; i--)
+        {
+            if (-2 == middleline[i])
+                break;
+            else if (-1 == middleline[i]) {}
+            else
+            {
+                *offset = *offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
+                (*count)++;
+                if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
+                if (middleline[i] < 0)middleline[i] = 0;
+                img[i][middleline[i]] = !img[i][middleline[i]];
+            }
+        }
 }
