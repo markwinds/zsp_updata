@@ -180,7 +180,6 @@ void Judge_circul()
             abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)// && img[jh - 4][CAMERA_W - 1] == 0)
         {
                 state_line[0] = 3;
-                //
         }
     }
 }
@@ -236,6 +235,7 @@ void Get_error_cal(float *offset, int *count)
         *offset += ((float)(state_line[1] - state_line[2]));
     }
     else
+    {
         for (i = LINE_NUM - 1; i >= 1; i--)
         {
             if (-2 == middleline[i])
@@ -250,4 +250,5 @@ void Get_error_cal(float *offset, int *count)
                 img[i][middleline[i]] = !img[i][middleline[i]];
             }
         }
+    }      
 }
