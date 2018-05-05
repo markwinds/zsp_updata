@@ -83,3 +83,5 @@ Lib
 .vs/zsp_updata/v15/ipch/AutoPCH/8925f34eea088234/INCLUDE.ipch
 *.opendb
 *.ipch
+.vs
+.vscode
