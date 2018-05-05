@@ -14,6 +14,7 @@ enum road_condition{
 
 extern enum road_condition road_mark;
 extern int8 state_line[5];
+extern int8 isiscircul_flag;
 
 int8 Judge_block(int16 *jh, uint8 *s_num);
 void Judge_body();

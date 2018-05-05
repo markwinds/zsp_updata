@@ -459,8 +459,9 @@ void Search_line()
 	}
 	else
 	{
-		if(state_line[0] == 0 || state_line[0] == 1) Judge_circul();
-    	if(state_line[0] == 3) Goin_circul();
+		if(isiscircul_flag == 0 || isiscircul_flag == 2) Judge_circul();//如果没有找到圆，看看有没有圆;如果在里面了，看看出去了没有
+    	if(isiscircul_flag == 1) Goin_circul();//找到圆了，准备进去了
+		//普通中线获得的适配版
 		Get_middle_line();		
 		//nomal_middle();
 	}
@@ -485,6 +486,7 @@ void Search_line()
 	// 		img[i][middleline[i]] = !img[i][middleline[i]];
 	// 	}
 	// }
+	//为了补线重新加了函数
  	Get_error_cal(&offset, &count);
 
 
