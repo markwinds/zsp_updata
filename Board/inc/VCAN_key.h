@@ -63,7 +63,7 @@ typedef struct
     KEY_STATUS_e    status;     //按键状态
 } KEY_MSG_t;
 
-
+extern PTXn_e KEY_PTxn[KEY_MAX];
 extern void            key_init(KEY_e key);            // KEY初始化函数(key 小于 KEY_MAX 时初始化 对应端口，否则初始化全部端口)
 extern KEY_STATUS_e    key_get(KEY_e key);             //检测key状态（不带延时消抖）
 extern KEY_STATUS_e    key_check(KEY_e key);           //检测key状态（带延时消抖）

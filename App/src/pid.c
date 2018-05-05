@@ -1,3 +1,11 @@
+/****************************************************************
+ * 	
+ *                          更改记录
+ * <2018.5.1><yl>:        
+ * 		我根据了资料修改了pid，按我的理解统哥使用的pid思路是电机的，舵机应该
+ * 只有p和d来控制，而且p就是单纯的偏差值,听说还有一个基值。               
+****************************************************************/
+
 #include "pid.h"
 #include "include.h"
 #include "common.h"
@@ -27,7 +35,7 @@ void Control_core()
 		steer_engine_degree = average_offset[0];
 		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
 		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
-		//motor_speed = 100;
+		//motor_speed = 0;
 	}	
 
 	else if (OTHER == car_mode)//其他模式
@@ -54,9 +62,8 @@ void Steer_Pid()
 	float offset_i = 0;
 	float offset_d = 0;
 
-	offset_p = average_offset[1] - average_offset[2];
-	offset_i = average_offset[1];
-	offset_d = average_offset[1] - 2 * average_offset[2] + average_offset[3];
+	offset_p = average_offset[1];
+	offset_d = average_offset[1] - average_offset[2];
 	//for (i = 1; i < 6; i++)
 	//{
 	//	offset_d += average_offset[i];
@@ -65,14 +72,14 @@ void Steer_Pid()
 	//{
 	//	offset_d -= average_offset[i];
 	//}
-	if (average_offset[0] < 4)
-	{
-		average_offset[0] = STEER_KP * offset_p + 3 * offset_i + STEER_KD * offset_d;
-	}
-	else
-	{
-		average_offset[0] = STEER_KP * offset_p + STEER_KI * offset_i + STEER_KD * offset_d;
-	}
-	
+	// if (average_offset[0] < 4)
+	// {
+	// 	average_offset[0] = STEER_KP * offset_p + 3 * offset_i + STEER_KD * offset_d;
+	// }
+	// else
+	// {
+	// 	average_offset[0] = STEER_KP * offset_p + STEER_KI * offset_i + STEER_KD * offset_d;
+	// }
+	average_offset[0] = STEER_KP * offset_p + STEER_KD * offset_d;
 }
 

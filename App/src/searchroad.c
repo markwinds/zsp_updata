@@ -1,6 +1,11 @@
-/*
-赛道为1，黑线为0
-*/
+/****************************************************************
+ *	
+ *				      赛道为1，黑线为0                                 
+ *                            更改记录
+ *<2018.4.30><yl>:
+ *	把左右线数组和中线数组设置全局变量，避免每次函数重新开辟空间以节省时间，同时更改了函数以适配
+ *
+****************************************************************/
 #include "searchroad.h"
 #include "common.h"
 #include "include.h"
@@ -9,6 +14,9 @@
 float average_offset[11] = { 0,0,0,0,0,0,0,0,0,0,0 };                 //偏差度，为平均偏差度
 uint8 imgbuff[CAMERA_SIZE];                                         //定义存储接收图像的数组
 uint8 img[CAMERA_H][CAMERA_W];
+int8 left_black[CAMERA_H];                          //左边黑线数组
+int8 right_black[CAMERA_H];                         //右边黑线数组
+int8 middleline[CAMERA_H] = { 0 };                  //存储中线位置的数组
 
 int iscross_flag = 0;            //判断是否是十字道的标志 0表示没有进入1表示初步判断并开始计数距离
 int iscross_count = 0;           //十字道距离计数
@@ -29,24 +37,21 @@ void Search_line_init()
 	//motorcontrol_int();
 
 }
-
-
 void Search_line()
 {
-	int left_black[CAMERA_H];                          //左边黑线数组
+
 	int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
 	int left_next_line = 0;                            //判断扫描是否进入了新的一行
 	int left_find_flag = 0;                            //左边是否找到黑线标志												                
 	int jw_left;                                       //向左搜索的当前列
 
-	int right_black[CAMERA_H];                         //右边黑线数组
+
 	int right_black_before = CAMERA_W / 2;
 	int right_next_line = 0;
 	int right_find_flag = 0;
 	int jw_right;
 
 	int jh;                                            //行参数
-	int middleline[CAMERA_H] = { 0 };                  //存储中线位置的数组
 	float offset = 0;                                   //偏差度，为整体偏差度
 													   //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
 	int count = 0;
@@ -77,7 +82,7 @@ void Search_line()
 		//左侧正常扫描
 		if (jw_left > 0 && (0 == left_find_flag))              //如果扫描还没有到边缘且之前的扫描未找到黑点
 		{
-			if ((img[jh][jw_left]) < 1)                 //扫描到黑点
+			if ((img[jh][jw_left]) < 1)                 //==0,扫描到黑点
 			{
 				if (left_black_before == jw_left && jh < 30)       //如果第一次扫描就扫到黑点且当前行在屏幕的上半部分
 				{
@@ -269,9 +274,6 @@ void Search_line()
 
 
 
-
-
-
 	/*----------------根据图像判断路况--------------------*/
 	/*
 		1.判断弯道圆环 用isisland_flag 第二个位置
@@ -457,49 +459,33 @@ void Search_line()
 	}
 	else
 	{
-		nomal_middle(left_black, right_black, middleline);
+		if(state_line[0] == 0 || state_line[0] == 1) Judge_circul();
+    	if(state_line[0] == 3) Goin_circul();
+		Get_middle_line();		
+		//nomal_middle();
 	}
 	
-
-
-
-
-
-
-	/*--------------------------各种路况下的预备处理-------------------------*/
-	//if (iscross_flag != 0)
-	//{
-
-	//}
-	//else if (isisland_flag != 0)
-	//{
-
-	//}
-
-
 
 
     /*------------------------偏差度计算及中线展现-----------------------------*/
 	/*
 		1.用中心点算出偏差度
 	*/
-	for (i = LINE_NUM - 1; i >= 0; i--)
-	{
-		if (-2 == middleline[i])
-			break;
-		else if (-1 == middleline[i]) {}
-		else
-		{
-			offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
-			count++;
-			if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
-			if (middleline[i] < 0)middleline[i] = 0;
-			img[i][middleline[i]] = !img[i][middleline[i]];
-		}
-	}
-
-
-
+	// for (i = LINE_NUM - 1; i >= 1; i--)
+	// {
+	// 	if (-2 == middleline[i])
+	// 		break;
+	// 	else if (-1 == middleline[i]) {}
+	// 	else
+	// 	{
+	// 		offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
+	// 		count++;
+	// 		if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
+	// 		if (middleline[i] < 0)middleline[i] = 0;
+	// 		img[i][middleline[i]] = !img[i][middleline[i]];
+	// 	}
+	// }
+ 	Get_error_cal(&offset, &count);
 
 
 	/*---------------更新偏差度队列---------------------*/
@@ -507,7 +493,7 @@ void Search_line()
 	{
 		average_offset[i] = average_offset[i - 1];
 	}
-	average_offset[1] = ((float)offset / (float)count);
+	average_offset[1] = ((float)offset / (float)(count+1));
 	average_offset[1] -= CAMERA_HARDWARE_ERROR;
 }
 
@@ -553,7 +539,7 @@ void Negation()
 }
 
 
-void nomal_middle(int left_black[],int right_black[],int middleline[])
+void nomal_middle()
 {
 	int jh;
 
@@ -585,7 +571,7 @@ void nomal_middle(int left_black[],int right_black[],int middleline[])
 		}
 		jh--;
 	}
-	if (left_black[jh] == -2 || right_black[jh] != -2)
+	if (left_black[jh] == -2 || right_black[jh] == -2)
 	{
 		middleline[jh] = -2;
 	}

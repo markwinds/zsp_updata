@@ -49,5 +49,8 @@
 #include "pid.h"
 #include "quad.h"
 #include "motor.h"
+#include "picture.h"
+
+#include "yl_searchline.h"
 
 #endif  //__INCLUDE_H__
