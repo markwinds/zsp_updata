@@ -33,6 +33,8 @@ void main(void)
 	Site_t site = {0, 0};
 	Size_t size;
 	Size_t imgsize = {CAMERA_W, CAMERA_H};
+	uint32 mis=0;
+        int i=0;
 
 	//size.H = LCD_H;
 	//size.W = LCD_W;
@@ -57,6 +59,13 @@ void main(void)
 
 	while (1)
 	{
+		mis++;
+		if(1000<_temp)
+		{
+			printf("%d***%d\n",mis,_temp);
+			_temp=0;
+			mis=0;
+		}
 		if (please_clear)
 		{
 			LCD_clear(WHITE);
@@ -64,10 +73,11 @@ void main(void)
 		}
 		if (IMG_MODE == lcd_mode)
 		{
-			camera_get_img();						//相机获取图像
+			//camera_get_img();						//相机获取图像
 			img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 			//temp_s[6] = Find_slope();
 			Search_line(); //找线
+			//for(i=0;i<1000;i++)
 			Negation();
 			img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 			LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
@@ -109,7 +119,7 @@ void main(void)
 			if (1 == key_on)
 				enable_irq(PORTD_IRQn); //激活按键中断
 
-			save_Picture(); //检测是否需要将图片写入flash
+			//save_Picture(); //检测是否需要将图片写入flash
 		}
 		else if (PICTURE_MODE == lcd_mode)
 		{
@@ -125,6 +135,8 @@ void main(void)
 			delete_Picture();
 			delete_picture=0;
 		}
+		LCD_numf(tem_site_str[5], motor_speed, GREEN, BLUE);
+		LCD_num(tem_site_str[4], speed_add, GREEN, BLUE);
 		/*-----------速度和距离的一些更新---------*/
 		Update_Motor();
 		
@@ -163,9 +175,7 @@ void PORTA_IRQHandler()
 {
 	uint8 n; //引脚号
 	uint32 flag;
-	_temp++;
-	while (!PORTA_ISFR)
-		;
+	while (!PORTA_ISFR);
 	flag = PORTA_ISFR;
 	PORTA_ISFR = ~0; //清中断标志位
 

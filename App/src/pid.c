@@ -28,7 +28,7 @@ void Control_core()
 	if (LOW_SPEED == car_mode)//低速模式
 	{
 		steer_engine_degree = average_offset[1]*4.5;
-		motor_Pid();		
+		//motor_Pid();		
 		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
 		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
 		motor_speed = 100;
@@ -37,11 +37,12 @@ void Control_core()
 	else if (CHECH == car_mode)//调试模式
 	{
 		Steer_Pid();
-		motor_Pid();
+		//motor_Pid();
 		steer_engine_degree = average_offset[0];
+		//motor_speed +=speed_add;
 		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
 		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
-		motor_speed +=speed_add;
+		if(motor_speed<0) motor_speed=0;
 	}	
 
 	else if (OTHER == car_mode)//其他模式
@@ -92,9 +93,5 @@ void Steer_Pid()
 
 void motor_Pid()
 {
-	float offset_p = 0;
-	float offset_i = 0;
-	float offset_d = 0;
-
 	speed_add=MOTOR_KP*((double)(pulse_error[0]-pulse_error[1])*0.1)+MOTOR_KI*((double)(pulse_error[0])*0.1)+MOTOR_KD*((double)(pulse_error[0]+pulse_error[2]-2*pulse_error[1])*0.1);
 }
