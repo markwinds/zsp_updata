@@ -120,6 +120,7 @@ extern void LCD_Img_gray_Z     (Site_t site, Size_t size, uint8 *img, Size_t img
 #define BINARY_COLOR    BLACK       //定义二值化图像前景颜色
 extern void LCD_Img_Binary     (Site_t site, Size_t size, uint8 *img);                   //显示二值化图像
 extern void LCD_Img_Binary_Z   (Site_t site, Size_t size, uint8 *img, Size_t imgsize);   //显示二值化图像(可缩放)
+extern void LCD_Img_Binary_G(Site_t,  Size_t,uint8 img[][80]);
 
 extern void LCD_wave(Site_t site,Size_t size,uint8 *img,uint8 maxval,uint16 Color ,uint16 bkColor); //波形显示，带背景颜色（maxval 最大值表示超过此值的数都当作最大值处理）
 extern void LCD_wave_display(Site_t site,Size_t size,uint8 *img,uint8 maxval,uint16 Color);        //波形显示，不带背景颜色

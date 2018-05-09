@@ -57,7 +57,7 @@ extern  void    ov7725_eagle_get_img(void);
 
 extern  void    ov7725_eagle_vsync(void);
 extern  void    ov7725_eagle_dma(void);
-
+extern volatile IMG_STATUS_e      ov7725_eagle_img_flag;   //图像状态，此时为图像采集完毕
 
 #endif  //_VCAN_OV7725_EAGLE_H_
 

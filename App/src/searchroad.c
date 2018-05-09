@@ -372,6 +372,9 @@ void Search_line()
 	}
 	else
 	{
+		if(isiscircul_flag == 0 || isiscircul_flag == 2) Judge_circul();//如果没有找到圆，看看有没有圆;如果在里面了，看看出去了没有
+    	if(isiscircul_flag == 1) Goin_circul();//找到圆了，准备进去了
+		//普通中线获得的适配版
 		Get_middle_line();		
 		//nomal_middle();
 	}
@@ -382,6 +385,21 @@ void Search_line()
 	/*
 		1.用中心点算出偏差度
 	*/
+	// for (i = LINE_NUM - 1; i >= 1; i--)
+	// {
+	// 	if (-2 == middleline[i])
+	// 		break;
+	// 	else if (-1 == middleline[i]) {}
+	// 	else
+	// 	{
+	// 		offset = offset + ((float)(middleline[i] - CAMERA_W / 2)*(1 + (60 - i)*TRAPEZOID_CORRECT / 40));          //offset是补偿，用来描述整体赛道的偏向,<0偏左
+	// 		count++;
+	// 		if (middleline[i] > CAMERA_W - 1)middleline[i] = CAMERA_W - 1;
+	// 		if (middleline[i] < 0)middleline[i] = 0;
+	// 		img[i][middleline[i]] = !img[i][middleline[i]];
+	// 	}
+	// }
+	//为了补线重新加了函数
  	Get_error_cal(&offset, &count);
 
 
