@@ -581,7 +581,22 @@ void LCD_Img_gray_Z(Site_t site, Size_t size, uint8 *img, Size_t imgsize)
 }
 
 
+void LCD_Img_Binary_G(Site_t site,  Size_t size,uint8 img[][80])
+{
+    uint8 i, j;
 
+    LCD_PTLON(site, size);                      //����
+
+    LCD_RAMWR();                                //д�ڴ�
+
+    for(i = 0; i < 60; i++)
+    {
+        for(j = 0; j < 80; j++)
+        {
+            LCD_WR_DATA( img[i][j]?BINARY_COLOR:BINARY_BGCOLOR  );
+        }
+    }
+}
 void LCD_Img_Binary(Site_t site, Size_t size, uint8 *img)
 {
     uint32     total = (size.H * size.W) / 8;

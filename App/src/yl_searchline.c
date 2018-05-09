@@ -3,7 +3,7 @@
 #include "include.h"
 
 int8 state_line[5];
-int8 isiscircul_flag = 0; // 0表示未检测到，1表示准备进圆，2表示已经进原
+int8 isiscircul_flag = 0; // 0表示未检测到，1表示准备进圆，2表示已经进圆
 enum road_condition road_mark = straightaway;
 
 
@@ -42,7 +42,7 @@ void Get_middle_line()
                     //这里用的公式是matlab拟合出来的
 					if (-1 == right_black[jh])
                     {
-                        tem_val = left_black[jh] + (int16)(33.82 + 0.977*abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
+                        tem_val = left_black[jh] + (int16)(36.82 + 0.977*abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718*(LINE_NUM - jh));
                         middleline[jh] = ( (tem_val >= CAMERA_W) ? (CAMERA_W - 1) : tem_val);
                     } 
 					else
