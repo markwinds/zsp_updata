@@ -52,5 +52,9 @@
 #include "picture.h"
 
 #include "yl_searchline.h"
+#include "public.h"
+#include "O_B.h"
+#include "B_P.h"
+
 
 #endif  //__INCLUDE_H__

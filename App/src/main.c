@@ -33,8 +33,6 @@ void main(void)
 	Site_t site = {0, 0};
 	Size_t size;
 	Size_t imgsize = {CAMERA_W, CAMERA_H};
-	uint32 mis=0;
-        int i=0;
 
 	//size.H = LCD_H;
 	//size.W = LCD_W;
