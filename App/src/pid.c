@@ -17,6 +17,12 @@ float motor_speed = 100;
 float STEER_KP = 4;
 float STEER_KI = 4;
 float STEER_KD = 4;
+float MOTOR_KP = 1;
+float MOTOR_KI = 1;
+float MOTOR_KD = 1;
+int32 iError; //当前误差
+int32 LastError; //当前误差
+int32 PrevError;
 
 void Control_core()
 {
@@ -83,3 +89,17 @@ void Steer_Pid()
 	average_offset[0] = STEER_KP * offset_p + STEER_KD * offset_d;
 }
 
+//增量式PID 电机 控制
+int32 PID_Realize(int32 ActualSpeed, int32 SetSpeed)
+{
+	//当前误差，定义为寄存器变量，只能用于整型和字符型变量，提高运算速度
+	int32 Increase; //最后得出的实际增量
+
+	iError = SetSpeed - ActualSpeed; //计算当前误差
+	//加速度 ********************强制装换数据类型 防止数据出错*********************
+	Increase = (int)(MOTOR_KP * (iError - LastError) + MOTOR_KI * iError + MOTOR_KD * (iError - 2 * LastError + PrevError));
+	PrevError = LastError; //更新前次误差
+	LastError = iError;		   //更新上次误差
+
+	return Increase;
+}

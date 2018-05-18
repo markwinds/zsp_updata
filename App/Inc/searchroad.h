@@ -34,6 +34,8 @@ extern int isisland_flag;     //是否是环岛的判断 0表示没有进入
 extern int isisland_flag1;
 extern int isisland_count;    //环岛距离计数
 
+extern int8 add_mark;
+
 extern float temp_s[10];
 
 //extern int rode_wide[CAMERA_H];
