@@ -4,8 +4,8 @@
 
 #include "include.h"
 
-#define P_row 128
-#define P_col 178
+#define P_row 70
+#define P_col 168
 
 extern Point OP_rivise[P_row][P_col];
 extern char img_P[P_row][P_col];
