@@ -17,12 +17,12 @@ float motor_speed = 100;
 float STEER_KP = 4;
 float STEER_KI = 4;
 float STEER_KD = 4;
-float MOTOR_KP = 1;
-float MOTOR_KI = 1;
-float MOTOR_KD = 1;
-int32 iError; //当前误差
-int32 LastError; //当前误差
-int32 PrevError;
+float MOTOR_KP = 3;
+float MOTOR_KI = 0;
+float MOTOR_KD = 0;
+int32 iError = 0; //当前误差
+int32 LastError = 0; //当前误差
+int32 PrevError = 0;
 
 void Control_core()
 {

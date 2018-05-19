@@ -5,6 +5,7 @@
 int quad_speed[3] = { 0,0,0 };
 long quad_value[2] = { 0,0 };
 int quad_temp = 0;
+long temp_velocity = 0;
 float total_distance = 0;
 int cross_distance_count = 0;
 int land_distance_count1 = 0;
@@ -37,12 +38,11 @@ void Update_Motor()
 
 
 	/*------------各种距离上的控制----------------*/
-	while(quad_temp >= 132)//已经行驶的1cm
-	{
-		quad_temp -= 132;
-		distance_temp++;
-	}
+	//已经行驶的1cm
+	distance_temp += quad_temp / 132;
+	quad_temp %= 132;
 	total_distance += distance_temp;
+	temp_velocity += distance_temp;
 
 	/*----十字----*/
 	if (1 == iscross_flag || 2 == iscross_flag)                    //初步判断是十字或者已经判断十字后开始累积距离
@@ -74,5 +74,28 @@ void Update_Motor()
 	{
 		isisland_flag1 = 0;
 		land_distance_count1 = 0;
+	}
+}
+
+void Con_Motor(int duty)
+{
+	if(duty > 200)
+	{
+		ftm_pwm_duty(FTM2, FTM_CH0, 200);
+		ftm_pwm_duty(FTM2, FTM_CH1, 0);
+	}
+	else if(duty > 0)
+	{
+		ftm_pwm_duty(FTM2, FTM_CH0, duty);
+		ftm_pwm_duty(FTM2, FTM_CH1, 0);
+	}
+	else if(duty < -200)
+	{
+		ftm_pwm_duty(FTM2, FTM_CH0, 0);
+		ftm_pwm_duty(FTM2, FTM_CH1, 200);
+	}
+	else{
+		ftm_pwm_duty(FTM2, FTM_CH0, 0);
+		ftm_pwm_duty(FTM2, FTM_CH1, -duty);
 	}
 }

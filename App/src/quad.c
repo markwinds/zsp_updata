@@ -3,7 +3,7 @@
 
 
 long quad_val=0;
-
+uint8 quad_time = 0;
 
 /*!
  *  @brief      main函数
@@ -26,6 +26,7 @@ void PIT0_IRQHandler(void)
 {
     PIT_Flag_Clear(PIT0);       //清中断标志位
     quad_val -= ftm_quad_get(FTM1);   //获取FTM正交解码的脉冲数(负数表示反方向)
+    quad_time ++;
     ftm_quad_clean(FTM1);
 }
 

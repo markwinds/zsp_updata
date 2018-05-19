@@ -26,17 +26,17 @@ float flash_in = 0;  //是否写入flash
 Lcd_State wait_middle =
 	{
 		quit_Lcd,	  //中 退出lcd,显示图像
-		goto_End,	  //上
-		goto_Begin,	//下
+		goto_End,	  //上 去最下面
+		goto_Begin,	//下 去最上面
 		ignore_Oprate, //左
 		ignore_Oprate  //右
 };
 Lcd_State wait_begin =
 	{
-		goto_Set,  //中
-		goto_Wait, //上
-		goto_next, //下
-		data_Down, //左
+		goto_Set,  //中 选中
+		goto_Wait, //上 放选
+		goto_next, //下 下一个
+		data_Down, //左 
 		data_Up	//右
 };
 Lcd_State wait_end =
@@ -91,19 +91,19 @@ void PORTD_IRQHandler()
 	}
 	else if (gpio_get(KEY_PTxn[0]) == KEY_DOWN && flag & (1 << 10))
 	{
-		onpress_U();
+		onpress_L();
 	}
 	else if (gpio_get(KEY_PTxn[1]) == KEY_DOWN && flag & (1 << 14))
 	{
-		onpress_D();
+		onpress_R();
 	}
 	else if (gpio_get(KEY_PTxn[2]) == KEY_DOWN && flag & (1 << 11))
 	{
-		onpress_L();
+		onpress_D();
 	}
 	else if (gpio_get(KEY_PTxn[3]) == KEY_DOWN && flag & (1 << 12))
 	{
-		onpress_R();
+		onpress_U();
 	}
 	else if ((gpio_get(KEY_PTxn[4]) == KEY_DOWN && flag & (1 << 7)) && IMG_MODE == lcd_mode) //如果是flash按键按下,且是在图像模式下
 	{
