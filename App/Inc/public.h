@@ -19,4 +19,12 @@ typedef struct Point_4
 
 
 
+extern Site_t line_site;
+
+extern void PORTA_IRQHandler();
+extern void DMA0_IRQHandler();
+extern void init_Sys();
+extern void do_Sys();
+
+
 #endif
