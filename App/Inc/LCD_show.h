@@ -72,6 +72,8 @@ Lcd_State *goto_next(Lcd_State *pThis);
 Lcd_State *data_Down(Lcd_State *pThis);
 Lcd_State *data_Up(Lcd_State *pThis);
 Lcd_State *goto_Before(Lcd_State *pThis);
+Lcd_State *turn_Front(Lcd_State *pThis);
+Lcd_State *turn_Back(Lcd_State *pThis);
 
 Lcd_State *quit_show(Lcd_State *pThis);
 Lcd_State *open_va(Lcd_State *pThis);

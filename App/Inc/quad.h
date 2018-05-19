@@ -4,6 +4,6 @@
 
 
 extern long quad_val;
-extern uint8 quad_time;
+extern long quad_last;
 extern void Quad_Init(void);
 extern void PIT0_IRQHandler(void);

@@ -5,7 +5,6 @@
 int quad_speed[3] = { 0,0,0 };
 long quad_value[2] = { 0,0 };
 int quad_temp = 0;
-long temp_velocity = 0;
 float total_distance = 0;
 int cross_distance_count = 0;
 int land_distance_count1 = 0;
@@ -42,7 +41,6 @@ void Update_Motor()
 	distance_temp += quad_temp / 132;
 	quad_temp %= 132;
 	total_distance += distance_temp;
-	temp_velocity += distance_temp;
 
 	/*----十字----*/
 	if (1 == iscross_flag || 2 == iscross_flag)                    //初步判断是十字或者已经判断十字后开始累积距离

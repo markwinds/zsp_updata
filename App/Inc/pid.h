@@ -39,12 +39,21 @@ typedef enum Speed_mode
 	OTHER
 }Speed_mode;
 
+typedef struct PID
+{
+	float P;
+	float I;
+	float D;
+}PID;
+
 extern Speed_mode car_mode;
 extern float steer_engine_degree;        //舵机转动的角度
 extern float motor_speed;                //电机转速
+extern PID *cmotor, *csteer;
+extern PID motor_pid,steer_pid;
 
-
-extern void Steer_Pid();
+int Steer_Pid(PID*);
+void PID_Realize(PID*,int32, int32);
 void Control_core();
 
 

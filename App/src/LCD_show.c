@@ -28,8 +28,8 @@ Lcd_State wait_middle =
 		quit_Lcd,	  //中 退出lcd,显示图像
 		goto_End,	  //上 去最下面
 		goto_Begin,	//下 去最上面
-		ignore_Oprate, //左
-		ignore_Oprate  //右
+		turn_Front, //左
+		turn_Back  //右
 };
 Lcd_State wait_begin =
 	{
@@ -121,11 +121,9 @@ void Open_UI()
 	int m = 0;
 	int n = 0;
 
-	for (n = 0;; n++)
+	for (n = 0; n < 201; n++)
 	{
 		if (0 == strcmp(screen_data[n].data_name, "end"))
-			break;
-		if (n > 200)
 			break;
 	}
 	colour[MAX_OPTION - 1] = 300 * n; //记录要处理的数据个数
@@ -195,18 +193,34 @@ Lcd_State *goto_Begin(Lcd_State *pThis) //从等待模式进入本页第一行
 }
 
 //new
-Lcd_State *goto_End(Lcd_State *pThis) //从等待模式进入本页第一行
+Lcd_State *goto_End(Lcd_State *pThis) //从等待模式进入本页最后一行
 {
-	if (1 == page)
+	if ((colour[MAX_OPTION - 1] / 300) < (page*6))
 	{
-		current_row = 6;
+		current_row = (colour[MAX_OPTION - 1] / 300)  % 6;
 	}
 	else
 	{
-		current_row = 1;
+		current_row = 6;
 	}
 	colour[6 * (page - 1) + current_row - 1] = GREEN; //选中的行变成绿色
 	return &normal_page;
+}
+
+Lcd_State *turn_Front(Lcd_State *pThis)
+{
+	if(page > 1){
+		page -- ;
+	}
+	return pThis;
+}
+
+Lcd_State *turn_Back(Lcd_State *pThis)
+{
+	if(page*6 < (colour[MAX_OPTION - 1] / 300)){
+		page ++ ;
+	}
+	return pThis;
 }
 
 Lcd_State *ignore_Oprate(Lcd_State *pThis)
@@ -241,7 +255,8 @@ Lcd_State *goto_next(Lcd_State *pThis)
 	if (GREEN == colour[6 * (page - 1) + current_row - 1])
 	{
 		colour[6 * (page - 1) + current_row - 1] = WHITE;
-		if (1 == colour[MAX_OPTION - 1] / 300 || 6 * (page - 1) + current_row - 1 == ((colour[MAX_OPTION - 1] / 300) - 1)) //如果只有一个数据要处理或者当前页面只有一行
+		if (1 == colour[MAX_OPTION - 1] / 300 || 
+		6 * (page - 1) + current_row - 1 == ((colour[MAX_OPTION - 1] / 300) - 1)) //如果只有一个数据要处理或者当前页面只有一行
 		{
 			return &wait_middle;
 		}

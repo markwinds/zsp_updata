@@ -7,31 +7,32 @@ void PORTA_IRQHandler();
 void DMA0_IRQHandler();
 void DcdMode();
 void Controll();
-
+//变量声明
 int _temp = 0;
 Site_t line_site;
 float velocity = 0;
 int16 motor_velocity = 0;
 Screen_Data screen_data[] = {
-
-	{"P", &(STEER_KP), 0.1, 1},
-	{"D", &(STEER_KD), 0.1, 3},
-
+	
+	{"M_KP", &(motor_pid.P), 0.1, 1},
+	{"M_KI", &(motor_pid.I), 0.1, 2},
+	{"M_KD", &(motor_pid.D), 0.1, 3},
+	
 	{"enM", &(motor_go), 99, 0}, //使能电机
 	{"speed", &(motor_speed), 10, 4},
 
 	{"length", &(total_distance), 500, 0},
 
-	{"Aspeed", &(velocity), 0, 0},	
+//	{"Aspeed", &(velocity), 0, 0},	
 
 	{"flash", &(flash_in), 1, -1},
 	{"de_pic", &(delete_picture), 1, 0},
 	{"se_pic", &(read_all_picture), 1, 0},
-	{"M_KP", &(MOTOR_KP), 0.1, 3},
-	{"M_KI", &(MOTOR_KI), 0.1, 0},
-	{"M_KD", &(MOTOR_KD), 0.1, 0},
 
-	{"end", &(temp_s[9]), 1202, 0}};
+
+	{"end", &(temp_s[9]), 1202, 0}
+	
+};
 
 /*
 图像不压缩直接显示
@@ -48,57 +49,75 @@ void main(void)
 	//size.W = LCD_W/2;
 	size.H = 60;
 	size.W = 80;
+
 	LCD_init();
 	camera_init(imgbuff);
+	UI_INIT();		  
+	led_init(LED0);
+	Quad_Init();	  //编码器中断
+	flash_init();
+	flash_Out();	  //读取数据	
+
 	ftm_pwm_init(FTM2, FTM_CH0, 300, 0);
 	ftm_pwm_init(FTM2, FTM_CH1, 300, 0);
 	ftm_pwm_init(FTM0, FTM_CH6, 300, 43);
-	UI_INIT();
-	led_init(LED0);
 
 	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler); //设置 PORTA 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);   //设置 DMA0 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(PORTD_VECTORn, PORTD_IRQHandler); //ui所需中断的初始化
-	Quad_Init();										 //编码器中断
-	flash_init();
-	flash_Out();	  //读取数据
+
 	camera_get_img(); //相机获取第一帧图像
 
 	while (1)
 	{
+		/*----------使能赛道采集,再去处理图像---------*/
 		ov7725_eagle_img_flag = IMG_START; //开始采集图像
 		PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
 		enable_irq(PORTA_IRQn);			   //允许PTA的中断
 
-		//清屏专用
+		/*-----------清屏---------*/
 		if (please_clear)
 		{
 			LCD_clear(WHITE);
 			please_clear = 0;
 		}
-		
-		if (IMG_MODE == lcd_mode)
+
+		/*-----------根据模式进行处理----------*/
+		if (lcd_mode == IMG_MODE)
 		{
 			DcdMode(); //显示模式下，显示赛道
 		}
-		else if (PICTURE_MODE == lcd_mode)
+		else if (lcd_mode == PICTURE_MODE)
 		{
 			read_Picture_Array(); //falsh!
 			LCD_num(tem_site_data[3], picture_count, GREEN, BLUE);
 		}
-		else
+		else if (lcd_mode == UI_MODE)
+		{
 			Open_UI(); //ui界面用于调控参数
+		}
 
-		enable_irq(PORTD_IRQn); //使能按键中断
-
+		/*-----------处理琐事---------*/
 		if ((delete_picture - 0.3) > 0.5)
 		{
 			delete_Picture(); //flash!
 			delete_picture = 0;
 		}
+		enable_irq(PORTD_IRQn); //使能按键中断
 
 		/*-----------速度和距离的一些更新---------*/
 		Controll();
+
+		/*---------图像处理结束,检验采集结束---------*/
+		while (ov7725_eagle_img_flag != IMG_FINISH) //等待下一帧图像采集完毕
+		{
+			if (ov7725_eagle_img_flag == IMG_FAIL) //假如图像采集错误，则重新开始采集
+			{
+				ov7725_eagle_img_flag = IMG_START; //开始采集图像
+				PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然会导致一开中断就马上触发中断)
+				enable_irq(PORTA_IRQn);			   //允许PTA的中断
+			}
+		}
 
 	} //while
 }
@@ -140,6 +159,10 @@ void DMA0_IRQHandler()
 	camera_dma();
 }
 
+/***
+ * @brief		显示模式下处理图像和搜线
+ * 
+***/
 void DcdMode()
 {
 	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
@@ -150,7 +173,8 @@ void DcdMode()
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
 	LCD_Img_Binary_G(site, size, img);
 
-	if (is_show_va) //是能够在IMG_MODE模式下显示数据
+	/*------------在图像下面显示数据-----------*/
+	if (is_show_va)
 	{
 		// if(state_line[0] == 0)Judge_circul();
 		LCD_numf(tem_site_str[4], (float)is_leftcircul_flag, GREEN, BLUE);
@@ -159,7 +183,8 @@ void DcdMode()
 		// LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
 		// LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
 	}
-	/*彩色显示边线*/
+
+	/*----------彩色显示边线,还有显示网格-----------*/
 	if (is_show_line == 1 || is_show_line == 3) //网格
 	{
 		LCD_grid();
@@ -186,7 +211,8 @@ void DcdMode()
 				LCD_point(line_site, BLUE);
 		}
 	}
-	Control_core();
+
+	Control_core(); //控制舵机
 
 	if (1 == key_on)
 		enable_irq(PORTD_IRQn); //激活按键中断
@@ -194,47 +220,42 @@ void DcdMode()
 	save_Picture(); //检测是否需要将图片写入flash
 }
 
+/***
+ * @brief		不同模式下控制电机和舵机的方案选择
+ * 
+***/
 void Controll()
 {
 	Update_Motor();
-	if(quad_time >= 25){
-		quad_time = 0;
-		velocity = (temp_velocity << 2);
-		temp_velocity = 0;
-		motor_velocity = (int)motor_speed;
-	}
 
-	if (UI_MODE == lcd_mode)
+	if (lcd_mode == UI_MODE)
 	{
-		if (1 == ((int)motor_go) % 2 && total_distance < 1000)
-			Con_Motor(motor_velocity);
+		if (((int)motor_go)&1 && total_distance < 1000)
+			cmotor = &motor_pid;
 		else
+		{
+			cmotor = NULL;
 			Con_Motor(0);
+		}
 		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
 	}
-	else if (PICTURE_MODE == lcd_mode)
+	else if (lcd_mode == PICTURE_MODE)
 	{
+		cmotor = NULL;
 		Con_Motor(0);
 		ftm_pwm_duty(FTM0, FTM_CH6, 380);
 	}
-	else
+	else if(lcd_mode == IMG_MODE)
 	{
 		if (total_distance < 1000)
 		{
-			Con_Motor(motor_velocity); //电机
+			cmotor = &motor_pid; //电机
 		}
 		else
-			Con_Motor(0);
-
-		ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
-	}
-	while (ov7725_eagle_img_flag != IMG_FINISH) //等待下一帧图像采集完毕
-	{
-		if (ov7725_eagle_img_flag == IMG_FAIL) //假如图像采集错误，则重新开始采集
 		{
-			ov7725_eagle_img_flag = IMG_START; //开始采集图像
-			PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然会导致一开中断就马上触发中断)
-			enable_irq(PORTA_IRQn);			   //允许PTA的中断
+			cmotor = NULL;
+			Con_Motor(0);
 		}
+		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
 	}
 }

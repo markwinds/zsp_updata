@@ -231,7 +231,7 @@ void Judge_circul()
             {
                 if (right_black[t_jh] < 0 && left_black[t_jh] < 0)
                 {
-                    right_black[t_jh] = t_jh >> 1 + 30;
+                    right_black[t_jh] = t_jh >> 1;
                 }
             }
         if (left_black[30] < 0 && right_black[30] < 0)
