@@ -81,7 +81,7 @@ void main(void)
 				// if(state_line[0] == 0)Judge_circul();
 				LCD_numf(tem_site_str[4], (float)is_leftcircul_flag, GREEN, BLUE);
 				// if(state_line[0] == 3) Goin_circul();
-				 LCD_numf(tem_site_str[5], (float)add_mark, GREEN, BLUE);
+				 LCD_numf(tem_site_str[5], (float)is_rightcircul_flag, GREEN, BLUE);
 				// LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
 				// LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
 			}
@@ -97,7 +97,7 @@ void main(void)
 				{
 					line_site.x = left_black[i];
 					line_site.y = i;
-					if (left_black[i] == -2) break;
+					if (left_black[i] == -3) break;
 					if (left_black[i] >= 0)
 						LCD_point(line_site, RED);
 				}
@@ -105,7 +105,7 @@ void main(void)
 				{
 					line_site.x = right_black[i];
 					line_site.y = i;
-					if (right_black[i] == -2) break;
+					if (right_black[i] == -3) break;
 					if (right_black[i] >= 0)
 						LCD_point(line_site, BLUE);
 				}

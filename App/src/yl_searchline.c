@@ -227,8 +227,6 @@ void Judge_circul()
         }
         //tem_i = 30;
         //出圆时会遇见两边丢线的情况，所以这里补线
-        if (left_black[30] < 0 && right_black[30] < 0)
-        {
             for (t_jh = 30; t_jh <= 55; t_jh++) //下面找
             {
                 if (right_black[t_jh] < 0 && left_black[t_jh] < 0)
@@ -236,6 +234,9 @@ void Judge_circul()
                     right_black[t_jh] = t_jh >> 1 + 30;
                 }
             }
+        if (left_black[30] < 0 && right_black[30] < 0)
+        {
+
             // //这里在寻找补线用的突出角，具体可以看图像
             // if (t_jh != 56)
             // {

@@ -4,7 +4,9 @@
  *                            更改记录
  *<2018.4.30><yl>:
  *	把左右线数组和中线数组设置全局变量，避免每次函数重新开辟空间以节省时间，同时更改了函数以适配
- *
+ *<2018.5.19><yl>:
+ *	加入了弯道因为圆环跑偏的补线。
+ * 
 ****************************************************************/
 #include "searchroad.h"
 #include "common.h"
@@ -269,16 +271,16 @@ void Search_line()
 
 		if ((1 == left_find_flag) && (1 == right_find_flag)) //参数回归
 		{
-			// if (add_mark == -1 && jh < 50 && jh > 20 && left_black[jh] - left_black[jh + 1] < 0 &&
-			//  left_black[jh + 2] - left_black[jh + 3] > 0)
-			// {
-			// 	add_mark = 1;
-			// }
-			// else if(add_mark == 1 && (right_black[jh]<0?CAMERA_W:right_black[jh]) - left_black[jh] > jh + 15)
-			// {
-			// 	left_black[jh] = right_black[jh]<0?CAMERA_W:right_black[jh] - jh - 5;
-			// 	left_black_before = right_black[jh]<0?CAMERA_W:right_black[jh] - 5;
-			// }
+			if (add_mark == -1 && jh < 50 && jh > 20 && left_black[jh] - left_black[jh + 1] < 0 &&
+			 left_black[jh + 2] - left_black[jh + 3] > 0)
+			{
+				add_mark = 1;
+			}
+			else if(add_mark == 1 && (right_black[jh]<0?CAMERA_W:right_black[jh]) - left_black[jh] > jh + 15)
+			{
+				left_black[jh] = right_black[jh]<0?CAMERA_W:right_black[jh] - jh - 5;
+				left_black_before = right_black[jh]<0?CAMERA_W:right_black[jh] - 10;
+			}
 			left_next_line = 0;
 			right_next_line = 0;
 			left_find_flag = 0;
@@ -534,6 +536,7 @@ float Find_slope() //找到梯形的斜率
 	return (float)(abs(h[1] - h[2])) / 40.0;
 }
 
+//中线翻转显示函数
 void Negation()
 {
 	int i = 0;
