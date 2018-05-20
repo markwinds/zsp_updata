@@ -13,7 +13,7 @@ uint8 key_on = 0;
 uint8 is_show_va = 0;
 uint8 is_show_line = 0;
 uint8 please_clear = 0;
-float motor_go = 0;		//在显示状态下控制电机是否转动的变量
+float motor_go = 10;		//在显示状态下控制电机是否转动的变量
 int colour[MAX_OPTION]; //0元素也保存有有效数据
 Site_t tem_site_str[] = {0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100};
 Site_t tem_site_data[] = {60, 0, 60, 20, 60, 40, 60, 60, 60, 80, 60, 100};
@@ -140,7 +140,7 @@ void Open_UI()
 			if (99 == screen_data[m + i].icrement)
 			{
 				LCD_str(tem_site_str[i], screen_data[m + i].data_name, BLACK, colour[m + i]); //记得回来改颜色
-				LCD_str(tem_site_data[i], (((int)(*(screen_data[m + i].data_value))) % 2) ? "ON" : "OFF", BLACK, WHITE);
+				LCD_str(tem_site_data[i], (*(screen_data[m + i].data_value) < 0) ? "ON" : "OFF", BLACK, WHITE);
 			}
 			else
 			{
@@ -317,7 +317,15 @@ Lcd_State *data_Down(Lcd_State *pThis)
 {
 	if (RED == colour[6 * (page - 1) + current_row - 1])
 	{
-		*(screen_data[6 * (page - 1) + current_row - 1].data_value) -= screen_data[6 * (page - 1) + current_row - 1].icrement;
+		if(screen_data[6 * (page - 1) + current_row - 1].icrement == 99)
+		{
+			*(screen_data[6 * (page - 1) + current_row - 1].data_value) *= -1;
+		}
+		else
+		{
+			*(screen_data[6 * (page - 1) + current_row - 1].data_value) -= screen_data[6 * (page - 1) + current_row - 1].icrement;
+		}
+
 		if (screen_data[6 * (page - 1) + current_row - 1].ip == -1) //写flash操作
 		{
 			flash_In();
@@ -336,7 +344,14 @@ Lcd_State *data_Up(Lcd_State *pThis)
 {
 	if (RED == colour[6 * (page - 1) + current_row - 1])
 	{
-		*(screen_data[6 * (page - 1) + current_row - 1].data_value) += screen_data[6 * (page - 1) + current_row - 1].icrement;
+		if(screen_data[6 * (page - 1) + current_row - 1].icrement == 99)
+		{
+			*(screen_data[6 * (page - 1) + current_row - 1].data_value) *= -1;
+		}
+		else
+		{
+			*(screen_data[6 * (page - 1) + current_row - 1].data_value) += screen_data[6 * (page - 1) + current_row - 1].icrement;
+		}
 		if (screen_data[6 * (page - 1) + current_row - 1].ip == -1) //写flash操作
 		{
 			flash_In();

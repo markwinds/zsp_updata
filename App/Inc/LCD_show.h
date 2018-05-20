@@ -13,6 +13,7 @@
 #define UI_MODE 2
 #define ITEM_NUM 3
 #define PICTURE_MODE 4
+#define RUN_MODE 5
 
 #define MAX_OPTION 30					  //lcd能使用的最大的参数个数
 #define SECTOR_NUM (FLASH_SECTOR_NUM - 1) //最后一个扇区

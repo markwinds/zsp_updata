@@ -313,12 +313,20 @@ void LCD_numf(Site_t site, double num, uint16 Color, uint16 bkColor) //这个是
         site.x += 8;        
     }
     site.x += LCD_num(site, (uint32)(0.05+num), Color, bkColor)*8;
-    LCD_char(site, '.', Color, bkColor);
-    site.x += 8;  
-    num += 0.005;
-    LCD_num(site, ((uint32)(num*10))%10,Color, bkColor);
-    site.x += 8;      
-    LCD_num(site, ((uint32)(num*100))%10,Color, bkColor);
+    num += 0.005; 
+    num*=10;
+    if(((uint32)(num))%10)  
+    {
+        LCD_char(site, '.', Color, bkColor);
+        site.x += 8;      
+        LCD_num(site, ((uint32)(num))%10,Color, bkColor);
+        site.x += 8;
+        num*=10;
+        if(((uint32)(num))%10)      
+            LCD_num(site, ((uint32)(num))%10,Color, bkColor);  
+        site.x += 8;
+    }
+    LCD_char(site, ' ', WHITE, WHITE);
     //LCD_num_BC(site, ((uint32)(num*100))%100, uint8 max_num_bit, Color, bkColor)
   /*
 	int i = 0;

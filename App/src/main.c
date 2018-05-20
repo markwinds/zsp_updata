@@ -7,6 +7,7 @@ void PORTA_IRQHandler();
 void DMA0_IRQHandler();
 void DcdMode();
 void Controll();
+void RunMode();
 //变量声明
 int _temp = 0;
 Site_t line_site;
@@ -94,6 +95,10 @@ void main(void)
 		else if (lcd_mode == UI_MODE)
 		{
 			Open_UI(); //ui界面用于调控参数
+		}
+		else if (lcd_mode == RUN_MODE)
+		{
+			RunMode();
 		}
 
 		/*-----------处理琐事---------*/
@@ -229,11 +234,12 @@ void Controll()
 
 	if (lcd_mode == UI_MODE)
 	{
-		if (((int)motor_go)&1 && total_distance < 1000)
+		if (motor_go < 0 && total_distance < 1000)
 			cmotor = &motor_pid;
 		else
 		{
 			cmotor = NULL;
+			Increase = 0;
 			Con_Motor(0);
 		}
 		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
@@ -241,6 +247,7 @@ void Controll()
 	else if (lcd_mode == PICTURE_MODE)
 	{
 		cmotor = NULL;
+		Increase = 0;
 		Con_Motor(0);
 		ftm_pwm_duty(FTM0, FTM_CH6, 380);
 	}
@@ -253,8 +260,18 @@ void Controll()
 		else
 		{
 			cmotor = NULL;
+			Increase = 0;
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
 	}
+}
+
+/***
+ * @brief		全速前进
+ * 
+***/
+void RunMode()
+{
+
 }
