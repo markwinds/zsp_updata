@@ -20,6 +20,8 @@ Screen_Data screen_data[] = {
 	{"de_pic", &(delete_picture), 1, 0},
 	{"se_pic", &(read_all_picture), 1, 0},
 
+	{"S_KP", &(steer_pid.P), 0.1, 5},
+	{"S_KD", &(steer_pid.D), 0.1, 6},
 
 	{"end", &(temp_s[9]), 1202, 0}
 	
@@ -27,7 +29,6 @@ Screen_Data screen_data[] = {
 
 void main(void)
 {
-
 	init_Sys();
 	
 	while (1)

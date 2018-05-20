@@ -49,6 +49,9 @@ extern float Find_slope();
 extern void Negation();
 extern void nomal_middle();
 extern void judge_island();
+extern int8 real_L(int8 left);  //用来把左数组的-1变成0
+extern int8 real_R(int8 right); //用来把右数组的-1变成79
+
 extern int8 left_black[CAMERA_H];                          //左边黑线数组
 extern int8 right_black[CAMERA_H];                          //左边黑线数组
 extern int8 middleline[CAMERA_H];  

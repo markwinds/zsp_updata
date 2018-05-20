@@ -271,16 +271,22 @@ void Search_line()
 
 		if ((1 == left_find_flag) && (1 == right_find_flag)) //参数回归
 		{
-			if (add_mark == -1 && jh < 50 && jh > 20 && left_black[jh] - left_black[jh + 1] < 0 &&
-			 left_black[jh + 2] - left_black[jh + 3] > 0)
+			if(0==img[jh][(real_L(left_black[jh])+real_R(right_black[jh]))>>1])	//中点为黑线
 			{
-				add_mark = 1;
+				left_black[jh]=-2;
+				right_black[jh]=-2;
+				break;
 			}
-			else if(add_mark == 1 && (right_black[jh]<0?CAMERA_W:right_black[jh]) - left_black[jh] > jh + 15)
-			{
-				left_black[jh] = right_black[jh]<0?CAMERA_W:right_black[jh] - jh - 5;
-				left_black_before = right_black[jh]<0?CAMERA_W:right_black[jh] - 10;
-			}
+			// else if (add_mark == -1 && jh < 50 && jh > 20 && left_black[jh] - left_black[jh + 1] < 0 &&
+			//  left_black[jh + 2] - left_black[jh + 3] > 0)
+			// {
+			// 	add_mark = 1;
+			// }
+			// else if(add_mark == 1 && (right_black[jh]<0?CAMERA_W:right_black[jh]) - left_black[jh] > jh + 15)
+			// {
+			// 	left_black[jh] = right_black[jh]<0?CAMERA_W:right_black[jh] - jh - 5;
+			// 	left_black_before = right_black[jh]<0?CAMERA_W:right_black[jh] - 10;
+			// }
 			left_next_line = 0;
 			right_next_line = 0;
 			left_find_flag = 0;
@@ -470,12 +476,12 @@ void Search_line()
 	else
 	{
 		//如果没有找到圆，看看有没有圆;如果在里面了，看看出去了没有
-		if ((!is_rightcircul_flag && !is_leftcircul_flag) || is_rightcircul_flag == 2 || is_leftcircul_flag == 2)
-			Judge_circul(); //找到圆了，准备进去了
-		if (is_rightcircul_flag == 1)
-			Goin_rightcircul();
-		if (is_leftcircul_flag == 1)
-			Goin_leftcircul();
+		// if ((!is_rightcircul_flag && !is_leftcircul_flag) || is_rightcircul_flag == 2 || is_leftcircul_flag == 2)
+		// 	Judge_circul(); //找到圆了，准备进去了
+		// if (is_rightcircul_flag == 1)
+		// 	Goin_rightcircul();
+		// if (is_leftcircul_flag == 1)
+		// 	Goin_leftcircul();
 		//普通中线获得的适配版
 		Get_middle_line();
 		//nomal_middle();
@@ -606,4 +612,22 @@ void judge_island()
 	{
 		isisland_flag1 = 0;
 	}
+}
+
+int8 real_L(int8 left)
+{
+	if(-1==left)
+	{
+		return 0; 
+	}
+	else return left;
+}
+
+int8 real_R(int8 right)
+{
+	if(-1==right)
+	{
+		return LINE_NUM - 1; 
+	}
+	else return right;
 }
