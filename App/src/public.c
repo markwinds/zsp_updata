@@ -45,7 +45,10 @@ void DMA0_IRQHandler()
 }
 
 
-/*在while循环里面每次都要执行的非核心操作*/
+/***
+ * @brief	  在while循环里面每次都要执行的非核心操作
+ * 
+ ***/
 void do_Sys()
 {
     /*-----------清屏---------*/
@@ -65,7 +68,10 @@ void do_Sys()
 }
 
 
-/*初始化系统的函数，为了使main函数整洁*/
+/***
+ * @brief	  初始化系统的函数，为了使main函数整洁
+ * 
+ ***/
 void init_Sys()
 {
 	LCD_init();
@@ -92,7 +98,7 @@ void init_Sys()
 /***
  * @brief		显示模式下处理图像和搜线
  * 
-***/
+ ***/
 void DcdMode()
 {
 	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
@@ -149,7 +155,7 @@ void DcdMode()
 /***
  * @brief		不同模式下控制电机和舵机的方案选择
  * 
-***/
+ ***/
 void Controll()
 {
 	Update_Motor();
@@ -162,7 +168,7 @@ void Controll()
 		{
 			cmotor = NULL;
 			Increase = 0;
-			Con_Motor(0);
+			Con_Motor(-100);
 		}
 		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
 	}

@@ -85,7 +85,7 @@ void Judge_circul()
 {
     int8 jh;
     int8 t_jh;
-    if (is_rightcircul_flag == 0)
+    if (is_rightcircul_flag == 0  && abs(left_black[50] + left_black[20] - (left_black[35] << 1)) < 3)
     {
         //找一找右圆环在不在
         if (left_black[25] > 0 && right_black[25] < 0) //从25行开始搜丟线宽度
@@ -114,7 +114,7 @@ void Judge_circul()
                     is_rightcircul_flag = 1;
                     //找到了
             }*/
-            if (t_jh - jh >= 10 && right_black[t_jh + 1] > 0 && abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)
+            if (t_jh - jh >= 10 && right_black[t_jh + 1] > 0)
             {
                 int8 i;
                 for (i = 3; i < 7; i++)
@@ -167,7 +167,7 @@ void Judge_circul()
         }
     }
 
-    if (is_leftcircul_flag == 0)
+    if (is_leftcircul_flag == 0  && abs(right_black[50] + right_black[20] - (right_black[35] << 1)) < 3)
     {
         //找一找左圆环在不在
         if (left_black[25] < 0 && right_black[25] > 0) //从25行开始搜丟线宽度
@@ -196,7 +196,7 @@ void Judge_circul()
                     is_rightcircul_flag = 1;
                     //找到了
             }*/
-            if (t_jh - jh >= 10 && left_black[t_jh + 1] > 0 && abs(right_black[50] + right_black[30] - (right_black[40] << 1)) < 3)
+            if (t_jh - jh >= 10 && left_black[t_jh + 1] > 0)
             {
                 int8 i;
                 for (i = 3; i < 7; i++)
@@ -520,7 +520,7 @@ void yl_Search_line()
 	int jw_right;
 
 	int jh;                                            //行参数
-	float offset = 0;                                   //偏差度，为整体偏差度
+	float offset = 0;                                  //偏差度，为整体偏差度
 													   //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
 	int count = 0;
 	int i = 0;
@@ -561,18 +561,18 @@ void yl_Search_line()
         }
 
         if(jw_left >= 0 && jw_right < CAMERA_W && jw_right - jw_left > 55)
-        {
+        {   //正确扫描到赛道
             left_black[jh] = jw_left;
             right_black[jh] = jw_right;
             middleline[jh] = (jw_left + jw_right)>>1;
         }
         else if(jw_left == -1 && jw_right == CAMERA_W)
-        {
+        {   //两边丟线
             Ma_Mark = 0;
             return 0;
         }
         else if(jw_right - jw_left > 55)
-        {
+        {   //单边丟线
             if(jw_left < 0)
             {
                 Ma_Mark = 6;
@@ -582,7 +582,8 @@ void yl_Search_line()
                 Ma_Mark = 9;
             }
         }
-        else{
+        else
+        {   //扫不到
             Ma_Mark = 0;
             return 0;           
         }
@@ -591,7 +592,7 @@ void yl_Search_line()
     for(; jh>=0; jh --)
     {
         if(!img[jh][middleline[jh + 1]])
-        {
+        {   
             End_s = jh; //停止搜索
             break;
         }
@@ -618,7 +619,6 @@ void yl_Search_line()
         }
         else if(jw_left == -1 && jh > 10)
         {
-            if()
             Curve = jh - 1;
         }
         else if(jw_right == CAMERA_W && jh > 10)
@@ -665,4 +665,5 @@ void Search_line_left()
 
 
 }
+
 #endif
