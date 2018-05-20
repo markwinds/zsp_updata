@@ -170,6 +170,7 @@ void Controll()
 			Increase = 0;
 			Con_Motor(-100);
 		}
+		csteer = NULL;
 		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
 	}
 	else if (lcd_mode == PICTURE_MODE)
@@ -177,6 +178,7 @@ void Controll()
 		cmotor = NULL;
 		Increase = 0;
 		Con_Motor(0);
+		csteer = NULL;
 		ftm_pwm_duty(FTM0, FTM_CH6, 380);
 	}
 	else if(lcd_mode == IMG_MODE)
@@ -192,6 +194,7 @@ void Controll()
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
+		csteer = &steer_pid;
 	}
 }
 
