@@ -25,7 +25,7 @@ Screen_Data screen_data[] = {
 	{"Aspeed", &(velocity), 0, 0},	
 
 	{"flash", &(flash_in), 1, -1},
-	{"de_pic", &(delete_picture), 1, 0},
+	{"de_pic", &(delete_picture), 1, 0},	//
 	{"se_pic", &(read_all_picture), 1, 0},
 	{"M_KP", &(MOTOR_KP), 0.1, 3},
 	{"M_KI", &(MOTOR_KI), 0.1, 0},
