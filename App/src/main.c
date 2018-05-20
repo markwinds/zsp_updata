@@ -14,9 +14,9 @@ float velocity = 0;
 int16 motor_velocity = 0;
 Screen_Data screen_data[] = {
 	
-	{"M_KP", &(motor_pid.P), 0.1, 1},
-	{"M_KI", &(motor_pid.I), 0.1, 2},
-	{"M_KD", &(motor_pid.D), 0.1, 3},
+	{"M_KP", &(motor_pid.P), 0.01, 1},
+	{"M_KI", &(motor_pid.I), 0.01, 2},
+	{"M_KD", &(motor_pid.D), 0.01, 3},
 	
 	{"enM", &(motor_go), 99, 0}, //使能电机
 	{"speed", &(motor_speed), 10, 4},
@@ -57,7 +57,6 @@ void main(void)
 	Quad_Init();	  //编码器中断
 	flash_init();
 	flash_Out();	  //读取数据	
-
 	ftm_pwm_init(FTM2, FTM_CH0, 300, 0);
 	ftm_pwm_init(FTM2, FTM_CH1, 300, 0);
 	ftm_pwm_init(FTM0, FTM_CH6, 300, 43);
@@ -177,9 +176,9 @@ void DcdMode()
 	if (is_show_va)
 	{
 		// if(state_line[0] == 0)Judge_circul();
-		LCD_numf(tem_site_str[4], (float)is_leftcircul_flag, GREEN, BLUE);
+		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
-		LCD_numf(tem_site_str[5], (float)is_rightcircul_flag, GREEN, BLUE);
+		LCD_numf(tem_site_str[5], (double)Increase, GREEN, BLUE);
 		// LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
 		// LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
 	}

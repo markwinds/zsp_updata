@@ -19,7 +19,7 @@ PID motor_pid = {0, 0, 0};
 int32 iError = 0; //当前误差
 int32 LastError = 0; //当前误差
 int32 PrevError = 0;
-
+int Increase = 0;
 void Control_core()
 {
 
@@ -82,12 +82,12 @@ int Steer_Pid(PID* tem_P)
 //增量式PID 电机 控制
 void PID_Realize(PID* tem_P,int32 ActualSpeed, int32 SetSpeed)
 {
-	//当前误差，定义为寄存器变量，只能用于整型和字符型变量，提高运算速度
-	int32 Increase; //最后得出的实际增量
-
+	//当前误差，定义为寄存器变量，只能用于整型和字符型变量，提高运算速度 
+	//最后得出的实际增量
+	ac_quad = ActualSpeed;
 	iError = SetSpeed - ActualSpeed; //计算当前误差
 	//加速度 ********************强制装换数据类型 防止数据出错*********************
-	Increase = (int)(tem_P->P * (iError - LastError) + tem_P->I * iError + tem_P->D * (iError - 2 * LastError + PrevError));
+	Increase += (int)(tem_P->P * (iError - LastError) + tem_P->I * iError + tem_P->D * (iError - 2 * LastError + PrevError));
 	PrevError = LastError;	   //更新前次误差
 	LastError = iError;		   //更新上次误差
 

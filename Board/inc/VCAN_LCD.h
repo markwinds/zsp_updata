@@ -124,6 +124,6 @@ extern void LCD_Img_Binary_G(Site_t,  Size_t,uint8 img[][80]);
 
 extern void LCD_wave(Site_t site,Size_t size,uint8 *img,uint8 maxval,uint16 Color ,uint16 bkColor); //波形显示，带背景颜色（maxval 最大值表示超过此值的数都当作最大值处理）
 extern void LCD_wave_display(Site_t site,Size_t size,uint8 *img,uint8 maxval,uint16 Color);        //波形显示，不带背景颜色
-extern void LCD_numf(Site_t site, float num, uint16 Color, uint16 bkColor);
+extern void LCD_numf(Site_t site, double num, uint16 Color, uint16 bkColor);
 
 

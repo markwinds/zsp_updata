@@ -24,6 +24,7 @@ extern float STEER_KD;
 extern float MOTOR_KP;
 extern float MOTOR_KI;
 extern float MOTOR_KD;
+extern int Increase;
 extern int32 iError; //当前误差
 extern int32 LastError; //当前误差
 extern int32 PrevError;

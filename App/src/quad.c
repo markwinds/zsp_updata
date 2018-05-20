@@ -4,7 +4,7 @@
 
 long quad_val = 0;
 long quad_last = 0;
-
+long ac_quad = 0;
 /*!
  *  @brief      main函数
  *  @since      v5.0
