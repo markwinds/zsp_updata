@@ -52,5 +52,6 @@
 #include "picture.h"
 
 #include "yl_searchline.h"
+#include "public.h"
 
 #endif  //__INCLUDE_H__
