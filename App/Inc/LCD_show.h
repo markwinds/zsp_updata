@@ -9,6 +9,7 @@
 #include "include.h"
 
 /*------------------------------------------------define------------------------------------------------*/
+#define STOP_MODE 0
 #define IMG_MODE 1
 #define UI_MODE 2
 #define ITEM_NUM 3

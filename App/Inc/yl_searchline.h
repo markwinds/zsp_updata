@@ -27,3 +27,9 @@ void Goin_leftcircul();
 int8 Count_black(int16 jh, int8 start, int8 end, int8 extent);
 
 #endif
+
+/*
+偏差表
+关于丢点判弯补线
+k值随偏差变化
+*/

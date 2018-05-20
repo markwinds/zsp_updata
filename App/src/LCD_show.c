@@ -385,7 +385,7 @@ Lcd_State *open_va(Lcd_State *pThis)
 Lcd_State *show_line(Lcd_State *pThis)
 {
 	is_show_line++;
-	if (is_show_line > 3)
+	if (is_show_line > 4)
 	{
 		is_show_line = 0;
 	}

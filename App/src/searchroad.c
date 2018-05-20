@@ -27,6 +27,7 @@ int isisland_flag1 = 0;
 int isisland_count = 0; //环岛距离计数
 
 float temp_s[10] = {0};
+int8 vaild_mark = 0;
 int8 add_mark;
 
 void Search_line_init()
@@ -56,7 +57,7 @@ void Search_line()
 	int m = 0;
 
 	int cross_temp[2] = {-1, -1};
-	add_mark = -1;
+	vaild_mark = 0;
 
 	left_black_before = CAMERA_W / 2;
 	right_black_before = CAMERA_W / 2;
@@ -275,6 +276,11 @@ void Search_line()
 			{
 				left_black[jh]=-2;
 				right_black[jh]=-2;
+				if(jh > 50)
+				{
+					lcd_mode = STOP_MODE;
+				}
+				vaild_mark = jh;
 				break;
 			}
 			// else if (add_mark == -1 && jh < 50 && jh > 20 && left_black[jh] - left_black[jh + 1] < 0 &&
