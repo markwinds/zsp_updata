@@ -5,6 +5,9 @@ Site_t line_site={0,0};
 Site_t site = {0, 0};
 Size_t size = {80, 60};
 Size_t imgsize = {CAMERA_W, CAMERA_H};
+char stree_y[10000];
+char offset_y[10000];
+int count_x=0;
 
 
 
@@ -48,6 +51,8 @@ void DMA0_IRQHandler()
 /*在while循环里面每次都要执行的非核心操作*/
 void do_Sys()
 {
+	int i=0;
+
     /*-----------清屏---------*/
 	if (please_clear)
 	{
@@ -62,6 +67,24 @@ void do_Sys()
 		delete_picture = 0;
 	}
 	enable_irq(PORTD_IRQn); //使能按键中断
+
+	if(count<10000)
+	{
+		stree_y[count_x]=average_offset[0];
+		offset_y[count_x]=offset;
+		count_x++;
+	}
+	
+	if(out_xy>1)
+	{
+		i=count_x-1;
+		while(i>=0)
+		{
+			printf("%d",);
+			i--;
+		}
+		out_xy=0;
+	}
 }
 
 
