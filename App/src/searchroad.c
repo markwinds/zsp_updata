@@ -521,6 +521,8 @@ void Search_line()
 	}
 	average_offset[1] = ((float)offset / (float)(count + 1));
 	average_offset[1] -= CAMERA_HARDWARE_ERROR;
+	cor_sp = (double)average_offset[1]* ac_quad / 3000;
+	cor_sp *= cor_sp;
 }
 
 float Find_slope() //找到梯形的斜率

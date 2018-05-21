@@ -112,7 +112,7 @@ void DcdMode()
 		// if(state_line[0] == 3) Goin_circul();
 		LCD_numf(tem_site_str[5], (double)Increase, GREEN, BLUE);
 		LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
-		// LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
+		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
 	}
 
 	/*----------彩色显示边线,还有显示网格-----------*/
@@ -168,7 +168,7 @@ void Controll()
 		csteer = NULL;
 		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
 	}
-	else if (lcd_mode == PICTURE_MODE || lcd_mode == STOP_MODE)
+	else if (lcd_mode == PICTURE_MODE)
 	{
 		cmotor = NULL;
 		Increase = 0;
@@ -190,6 +190,10 @@ void Controll()
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
 		csteer = &steer_pid;
+	}
+	else if(lcd_mode == STOP_MODE)
+	{
+		motor_speed = 0;
 	}
 }
 

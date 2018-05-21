@@ -77,9 +77,9 @@ void Update_Motor()
 
 void Con_Motor(int duty)
 {
-	if(duty > 200)
+	if(duty > 300)
 	{
-		ftm_pwm_duty(FTM2, FTM_CH0, 200);
+		ftm_pwm_duty(FTM2, FTM_CH0, 300);
 		ftm_pwm_duty(FTM2, FTM_CH1, 0);
 	}
 	else if(duty > 0)
@@ -87,10 +87,10 @@ void Con_Motor(int duty)
 		ftm_pwm_duty(FTM2, FTM_CH0, duty);
 		ftm_pwm_duty(FTM2, FTM_CH1, 0);
 	}
-	else if(duty < -200)
+	else if(duty < -300)
 	{
 		ftm_pwm_duty(FTM2, FTM_CH0, 0);
-		ftm_pwm_duty(FTM2, FTM_CH1, 200);
+		ftm_pwm_duty(FTM2, FTM_CH1, 300);
 	}
 	else{
 		ftm_pwm_duty(FTM2, FTM_CH0, 0);

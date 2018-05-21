@@ -14,7 +14,7 @@ void Get_middle_line()
     int jh;
     int16 tem_val;
     jh = LINE_NUM - 1;
-    float voff = vaild_mark / 60;
+    float voff = 1.0*vaild_mark / 60 + 1.43;
     while (jh >= 0 && left_black[jh] != -2 && right_black[jh] != -2)
     {
         if (jh == (LINE_NUM - 1))
@@ -43,20 +43,20 @@ void Get_middle_line()
                     //这里用的公式是matlab拟合出来的
                     if (-1 == right_black[jh])
                     {
-                        tem_val = left_black[jh] + (int16)(voff * (36.82 + abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh)));
+                        tem_val = left_black[jh] + (int16) (36.82 + voff * abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh));
                         middleline[jh] = ((tem_val >= CAMERA_W) ? (CAMERA_W - 1) : tem_val);
                     }
                     else
                     {
                         if (right_black[LINE_NUM - 1] < 0)
                         {
-                            tem_val = right_black[jh] - (int16)(voff * 
-                            (36.82 + abs(right_black[jh] - CAMERA_W + 1) - 0.7718 * (LINE_NUM - jh)));
+                            tem_val = right_black[jh] - (int16)(
+                            (36.82 + voff * abs(right_black[jh] - CAMERA_W + 1) - 0.7718 * (LINE_NUM - jh)));
                         }
                         else
                         {
-                            tem_val = right_black[jh] - (int16)(voff * 
-                            (36.82 + abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh)));
+                            tem_val = right_black[jh] - (int16)(
+                            (36.82 + voff * abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh)));
                         }
                         middleline[jh] = ((tem_val < 0) ? (0) : tem_val);
                     }
@@ -382,7 +382,7 @@ void Get_error_cal(float *offset, int *count)
     else
         for (i = LINE_NUM - 1; i >= 1; i--)
         {
-            qoff += 0.015;
+            qoff += 0.035;
             if (-2 == middleline[i])
                 break;
             else if (-1 == middleline[i])
