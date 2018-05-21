@@ -276,10 +276,10 @@ void Search_line()
 			{
 				left_black[jh]=-2;
 				right_black[jh]=-2;
-				if(jh > 50)
-				{
-					lcd_mode = STOP_MODE;
-				}
+				// if(jh > 50)
+				// {
+				// 	lcd_mode = STOP_MODE;
+				// }
 				vaild_mark = jh;
 				break;
 			}
@@ -306,74 +306,74 @@ void Search_line()
 		1.判断弯道圆环 用isisland_flag 第二个位置
 		2.判断十字道 第一个位置
 	*/
-	jh = LINE_NUM - 6;
-	while (jh >= 5 && left_black[jh] != -2 && right_black[jh] != -2)
-	{
-		/*if (left_black[jh + 3] - left_black[jh + 4] > 0 &&           //判断是否是圆环
-			left_black[jh + 2] - left_black[jh + 3] > 0 &&
-			left_black[jh + 1] - left_black[jh + 2] > 0 &&
-			left_black[jh + 0] - left_black[jh + 1] > 0 &&
-			left_black[jh - 1] - left_black[jh - 0] < 0 &&
-			left_black[jh - 2] - left_black[jh - 1] < 0 &&
-			left_black[jh - 3] - left_black[jh - 2] < 0 &&
-			left_black[jh - 4] - left_black[jh - 3] < 0
-			)
-		{
+	// jh = LINE_NUM - 6;
+	// while (jh >= 5 && left_black[jh] != -2 && right_black[jh] != -2)
+	// {
+	// 	/*if (left_black[jh + 3] - left_black[jh + 4] > 0 &&           //判断是否是圆环
+	// 		left_black[jh + 2] - left_black[jh + 3] > 0 &&
+	// 		left_black[jh + 1] - left_black[jh + 2] > 0 &&
+	// 		left_black[jh + 0] - left_black[jh + 1] > 0 &&
+	// 		left_black[jh - 1] - left_black[jh - 0] < 0 &&
+	// 		left_black[jh - 2] - left_black[jh - 1] < 0 &&
+	// 		left_black[jh - 3] - left_black[jh - 2] < 0 &&
+	// 		left_black[jh - 4] - left_black[jh - 3] < 0
+	// 		)
+	// 	{
 			
-			if (left_black[jh + 0] - left_black[jh + 4] > 6 && left_black[jh + 0] - left_black[jh - 4] > 6)//突出点够尖锐
-			{
-				isisland_flag++;
-				//temp_s[0] = left_black[jh];
-				//temp_s[1] = left_black[jh + 4];
-				//temp_s[2] = left_black[jh - 4];
-				//LCD_numf(tem_site_str[2], jh, GREEN, BLUE);
-			}
-		}
-		*/
-		j = 0;
-		m = 0;
-		if (-1 == left_black[jh] && -1 == right_black[jh] && iscross_flag != 2) //判断是否是十字 iscross_flag为2时就不用识别了
-		{
-			for (i = 1; i < 20; i++)
-			{
-				if (jh + i > LINE_NUM - 1)
-					break;
-				if (left_black[jh + i] != -1)
-				{
-					if (left_black[jh + i] > 1)
-					{
-						j = 1;
-					}
-					break;
-				}
-			}
-			for (i = 1; i < 20; i++)
-			{
-				if (jh + i > LINE_NUM - 1)
-					break;
-				if (right_black[jh + i] != -1)
-				{
-					if (right_black[jh + i] < CAMERA_W - 2)
-					{
-						m = 1;
-					}
-					break;
-				}
-			}
-			if (1 == j && 1 == m)
-			{
-				if (0 == iscross_flag) //如果第一次扫描到符合条件就初判为1
-				{
-					iscross_flag = 1;
-				}
-				else if (1 == iscross_flag && cross_distance_count > 4 && cross_distance_count < 8) //如果已经初判成功是十字且在4到8厘米后的复判中成功判断是十字那就认为是十字
-				{
-					iscross_flag = 2;
-				}
-			}
-		}
-		jh--;
-	}
+	// 		if (left_black[jh + 0] - left_black[jh + 4] > 6 && left_black[jh + 0] - left_black[jh - 4] > 6)//突出点够尖锐
+	// 		{
+	// 			isisland_flag++;
+	// 			//temp_s[0] = left_black[jh];
+	// 			//temp_s[1] = left_black[jh + 4];
+	// 			//temp_s[2] = left_black[jh - 4];
+	// 			//LCD_numf(tem_site_str[2], jh, GREEN, BLUE);
+	// 		}
+	// 	}
+	// 	*/
+	// 	j = 0;
+	// 	m = 0;
+	// 	if (-1 == left_black[jh] && -1 == right_black[jh] && iscross_flag != 2) //判断是否是十字 iscross_flag为2时就不用识别了
+	// 	{
+	// 		for (i = 1; i < 20; i++)
+	// 		{
+	// 			if (jh + i > LINE_NUM - 1)
+	// 				break;
+	// 			if (left_black[jh + i] != -1)
+	// 			{
+	// 				if (left_black[jh + i] > 1)
+	// 				{
+	// 					j = 1;
+	// 				}
+	// 				break;
+	// 			}
+	// 		}
+	// 		for (i = 1; i < 20; i++)
+	// 		{
+	// 			if (jh + i > LINE_NUM - 1)
+	// 				break;
+	// 			if (right_black[jh + i] != -1)
+	// 			{
+	// 				if (right_black[jh + i] < CAMERA_W - 2)
+	// 				{
+	// 					m = 1;
+	// 				}
+	// 				break;
+	// 			}
+	// 		}
+	// 		if (1 == j && 1 == m)
+	// 		{
+	// 			if (0 == iscross_flag) //如果第一次扫描到符合条件就初判为1
+	// 			{
+	// 				iscross_flag = 1;
+	// 			}
+	// 			else if (1 == iscross_flag && cross_distance_count > 4 && cross_distance_count < 8) //如果已经初判成功是十字且在4到8厘米后的复判中成功判断是十字那就认为是十字
+	// 			{
+	// 				iscross_flag = 2;
+	// 			}
+	// 		}
+	// 	}
+	// 	jh--;
+	// }
 
 	/*---------------------中心点的计算------------------------*/
 	/*
@@ -521,7 +521,7 @@ void Search_line()
 	}
 	average_offset[1] = ((float)offset / (float)(count + 1));
 	average_offset[1] -= CAMERA_HARDWARE_ERROR;
-	cor_sp = (double)average_offset[1]* ac_quad / 3000;
+	cor_sp = (double)average_offset[1] / 10;
 	cor_sp *= cor_sp;
 }
 

@@ -505,52 +505,61 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
     }
     return end - start + 1;
 }
-
+endif
 int8 Ma_Mark;
 // 0:全丟线 1:直道 2:弯道 4:十字 6:左丟线 9:右丟线
 int8 As_Mark;
+// 0:正常状态 1:右丟线一判 2:左丟线一判 3:左圆环一判 4:做圆环二判 5:弯道初判
 int16 Co_Mark;
 void yl_Search_line()
-{
-	
-	int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
-	int left_next_line = 0;                            //判断扫描是否进入了新的一行
-	int left_find_flag = 0;                            //左边是否找到黑线标志												                
-	int jw_left;                                       //向左搜索的当前列
+{   
+    //数据初始化
+	{
+        int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
+        int left_next_line = 0;                            //判断扫描是否进入了新的一行
+        int left_find_flag = 0;                            //左边是否找到黑线标志												                
+        int jw_left;                                       //向左搜索的当前列
 
 
-	int right_black_before = CAMERA_W / 2;
-	int right_next_line = 0;
-	int right_find_flag = 0;
-	int jw_right;
+        int right_black_before = CAMERA_W / 2;
+        int right_next_line = 0;
+        int right_find_flag = 0;
+        int jw_right;
 
-	int jh;                                            //行参数
-	float offset = 0;                                   //偏差度，为整体偏差度
-													   //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
-	int count = 0;
-	int i = 0;
-	int j = 0;
-	int m = 0;
+        int jh;                                            //行参数
+        float offset = 0;                                   //偏差度，为整体偏差度
+                                                        //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
+        int count = 0;
+        int i = 0;
+        int j = 0;
+        int m = 0;
 
-	int cross_temp[2] = { -1,-1 };
+        int cross_temp[2] = { -1,-1 };
 
-    int8 Curve = 0; //弯道行
-    int8 End_s = 0; //搜索中止行
+        int8 Curve = 0; //弯道行
+        int8 End_s = 0; //搜索中止行
 
-	left_black_before = CAMERA_W / 2;
-	right_black_before = CAMERA_W / 2;
+        left_black_before = CAMERA_W / 2;
+        right_black_before = CAMERA_W / 2;
 
-    Ma_Mark = 1;
-    As_Mark = 1;
-    Co_Mark = 0;
+        Ma_Mark = 1;
+        As_Mark = 1;
+        Co_Mark = 0;
 
-	jh = LINE_NUM-1;
+        jh = LINE_NUM-1;
+    }
     //
 
 
     //先扫5行
     for(;jh > LINE_NUM - 6; jh--)
     {
+        if(!img[jh][40])
+        {   //出赛道,停下
+            lcd_mode = STOP_MODE;
+            return ;
+        }
+
         for(jw_left = 40; jw_left >= 0; jw_left--)
         {
             if(!img[jh][jw_left] && img[jh][jw_left + 1]){
@@ -593,14 +602,16 @@ void yl_Search_line()
         }
     }
 
+    //正常扫描
     for(; jh>=0; jh --)
     {
         if(!img[jh][middleline[jh + 1]])
         {
-            End_s = jh; //停止搜索
+            vaild_mark = jh; //停止搜索
             break;
         }
 
+        //搜左边
         for(jw_left = middleline[jh + 1]; jw_left >= 0; jw_left--)
         {
             if(!img[jh][jw_left] && img[jh][jw_left + 1])
@@ -609,6 +620,7 @@ void yl_Search_line()
             }
         }
 
+        //搜右边
         for(jw_right = middleline[jh + 1]; jw_right < CAMERA_W; jw_right++)
         {
             if(!img[jh][jw_right] && img[jh][jw_right - 1])
@@ -618,26 +630,26 @@ void yl_Search_line()
         }
 
         if(jw_left == -1 && jw_right == CAMERA_W)
-        {
+        {   //两行丟线
             Ma_Mark = 4;
         }
         else if(jw_left == -1 && jh > 10)
-        {
-            if()
-            Curve = jh - 1;
+        {   //左丟线
+            As_Mark = 1; //一判
         }
         else if(jw_right == CAMERA_W && jh > 10)
-        {
-            Curve = jh - 1;
+        {   //右丟线
+            As_Mark = 2; //一判
         }
         else if(jw_left >= 0 && jw_right < CAMERA_W )
-        {
+        {   //正常搜到
             left_black = jw_left; 
             right_black = jw_right;
+            middleline = (jw_left + jw_right) >> 1;
         }
         else
         {
-            End_s = jh; //停止搜索
+            vaild_mark = jh; //停止搜索
             break;           
         }
     }

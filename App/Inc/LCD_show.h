@@ -47,6 +47,7 @@ extern Screen_Data screen_data[]; //ui显示的参数
 
 extern float flash_in; //是否将参数写进flash的标志，改变一次写入一次
 extern float motor_go; //在显示状态下控制电机是否转动的变量
+extern float stop_save_motor;
 extern uint8 key_on;
 extern uint8 lcd_mode;
 extern uint8 is_show_va;
