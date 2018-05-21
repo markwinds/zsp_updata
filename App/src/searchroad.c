@@ -276,10 +276,10 @@ void Search_line()
 			{
 				left_black[jh]=-2;
 				right_black[jh]=-2;
-				// if(jh > 50)
-				// {
-				// 	lcd_mode = STOP_MODE;
-				// }
+				if(jh > 55)
+				{
+					lcd_mode = STOP_MODE;
+				}
 				vaild_mark = jh;
 				break;
 			}
@@ -482,12 +482,12 @@ void Search_line()
 	else
 	{
 		//如果没有找到圆，看看有没有圆;如果在里面了，看看出去了没有
-		// if ((!is_rightcircul_flag && !is_leftcircul_flag) || is_rightcircul_flag == 2 || is_leftcircul_flag == 2)
-		// 	Judge_circul(); //找到圆了，准备进去了
-		// if (is_rightcircul_flag == 1)
-		// 	Goin_rightcircul();
-		// if (is_leftcircul_flag == 1)
-		// 	Goin_leftcircul();
+		if ((!is_rightcircul_flag && !is_leftcircul_flag) || is_rightcircul_flag == 2 || is_leftcircul_flag == 2)
+			Judge_circul(); //找到圆了，准备进去了
+		if (is_rightcircul_flag == 1)
+			Goin_rightcircul();
+		if (is_leftcircul_flag == 1)
+			Goin_leftcircul();
 		//普通中线获得的适配版
 		Get_middle_line();
 		//nomal_middle();
@@ -521,7 +521,12 @@ void Search_line()
 	}
 	average_offset[1] = ((float)offset / (float)(count + 1));
 	average_offset[1] -= CAMERA_HARDWARE_ERROR;
-	cor_sp = (double)average_offset[1] / 10;
+	if(is_rightcircul_flag == 1)
+	{
+		cor_sp = (double)average_offset[1] / 5;
+	}
+	else
+		cor_sp = (double)average_offset[1] / 10;
 	cor_sp *= cor_sp;
 }
 
