@@ -80,7 +80,7 @@ void do_Sys()
 		i=count_x-1;
 		while(i>=0)
 		{
-			printf("%d",);
+			printf("%d",);//
 			i--;
 		}
 		out_xy=0;
