@@ -14,6 +14,7 @@ uint8 is_show_va = 0;
 uint8 is_show_line = 0;
 uint8 please_clear = 0;
 float motor_go = 10;		//在显示状态下控制电机是否转动的变量
+float stop_save_motor = 0;
 int colour[MAX_OPTION]; //0元素也保存有有效数据
 Site_t tem_site_str[] = {0, 0, 0, 20, 0, 40, 0, 60, 0, 80, 0, 100};
 Site_t tem_site_data[] = {60, 0, 60, 20, 60, 40, 60, 60, 60, 80, 60, 100};
@@ -368,10 +369,16 @@ Lcd_State *data_Up(Lcd_State *pThis)
 
 Lcd_State *quit_show(Lcd_State *pThis)
 {
+	
+	if(lcd_mode == STOP_MODE)
+	{
+		motor_speed = stop_save_motor;
+		stop_save_motor = 0;
+	}	
 	please_clear = 1;
 	page = 1;
 	current_row = 0;
-	lcd_mode = UI_MODE;
+	lcd_mode = UI_MODE;	
 	return &wait_middle;
 }
 
@@ -385,7 +392,7 @@ Lcd_State *open_va(Lcd_State *pThis)
 Lcd_State *show_line(Lcd_State *pThis)
 {
 	is_show_line++;
-	if (is_show_line > 3)
+	if (is_show_line > 4)
 	{
 		is_show_line = 0;
 	}

@@ -14,6 +14,7 @@ void Get_middle_line()
     int jh;
     int16 tem_val;
     jh = LINE_NUM - 1;
+    float voff = 1.0*vaild_mark / 60 + 1.43;
     while (jh >= 0 && left_black[jh] != -2 && right_black[jh] != -2)
     {
         if (jh == (LINE_NUM - 1))
@@ -42,18 +43,20 @@ void Get_middle_line()
                     //这里用的公式是matlab拟合出来的
                     if (-1 == right_black[jh])
                     {
-                        tem_val = left_black[jh] + (int16)(36.82 + abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh));
+                        tem_val = left_black[jh] + (int16) (36.82 + voff * abs(left_black[jh] - left_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh));
                         middleline[jh] = ((tem_val >= CAMERA_W) ? (CAMERA_W - 1) : tem_val);
                     }
                     else
                     {
                         if (right_black[LINE_NUM - 1] < 0)
                         {
-                            tem_val = right_black[jh] - (int16)(36.82 + abs(right_black[jh] - CAMERA_W + 1) - 0.7718 * (LINE_NUM - jh));
+                            tem_val = right_black[jh] - (int16)(
+                            (36.82 + voff * abs(right_black[jh] - CAMERA_W + 1) - 0.7718 * (LINE_NUM - jh)));
                         }
                         else
                         {
-                            tem_val = right_black[jh] - (int16)(36.82 + abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh));
+                            tem_val = right_black[jh] - (int16)(
+                            (36.82 + voff * abs(right_black[jh] - right_black[LINE_NUM - 1]) - 0.7718 * (LINE_NUM - jh)));
                         }
                         middleline[jh] = ((tem_val < 0) ? (0) : tem_val);
                     }
@@ -366,6 +369,7 @@ void Goin_leftcircul()
 void Get_error_cal(float *offset, int *count)
 {
     int i;
+    float qoff = 1;
     if (is_rightcircul_flag == 1)
     {
         //准备进圆，补线
@@ -378,14 +382,15 @@ void Get_error_cal(float *offset, int *count)
     else
         for (i = LINE_NUM - 1; i >= 1; i--)
         {
+            qoff += 0.035;
             if (-2 == middleline[i])
                 break;
             else if (-1 == middleline[i])
             {
             }
-            else if (is_rightcircul_flag != 2 || i >= 35)
+            else if (is_rightcircul_flag != 2 || i >= 20)
             {
-                *offset = *offset + ((float)(middleline[i] - CAMERA_W / 2) * (1 + (60 - i) * TRAPEZOID_CORRECT / 40)); //offset是补偿，用来描述整体赛道的偏向,<0偏左
+                *offset = *offset + qoff * (float)(middleline[i] - CAMERA_W / 2); //offset是补偿，用来描述整体赛道的偏向,<0偏左
                 (*count)++;
                 if (middleline[i] > CAMERA_W - 1)
                     middleline[i] = CAMERA_W - 1;
@@ -500,52 +505,61 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
     }
     return end - start + 1;
 }
-
+endif
 int8 Ma_Mark;
 // 0:全丟线 1:直道 2:弯道 4:十字 6:左丟线 9:右丟线
 int8 As_Mark;
+// 0:正常状态 1:右丟线一判 2:左丟线一判 3:左圆环一判 4:做圆环二判 5:弯道初判
 int16 Co_Mark;
 void yl_Search_line()
-{
-	
-	int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
-	int left_next_line = 0;                            //判断扫描是否进入了新的一行
-	int left_find_flag = 0;                            //左边是否找到黑线标志												                
-	int jw_left;                                       //向左搜索的当前列
+{   
+    //数据初始化
+	{
+        int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
+        int left_next_line = 0;                            //判断扫描是否进入了新的一行
+        int left_find_flag = 0;                            //左边是否找到黑线标志												                
+        int jw_left;                                       //向左搜索的当前列
 
 
-	int right_black_before = CAMERA_W / 2;
-	int right_next_line = 0;
-	int right_find_flag = 0;
-	int jw_right;
+        int right_black_before = CAMERA_W / 2;
+        int right_next_line = 0;
+        int right_find_flag = 0;
+        int jw_right;
 
-	int jh;                                            //行参数
-	float offset = 0;                                  //偏差度，为整体偏差度
-													   //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
-	int count = 0;
-	int i = 0;
-	int j = 0;
-	int m = 0;
+        int jh;                                            //行参数
+        float offset = 0;                                   //偏差度，为整体偏差度
+                                                        //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
+        int count = 0;
+        int i = 0;
+        int j = 0;
+        int m = 0;
 
-	int cross_temp[2] = { -1,-1 };
+        int cross_temp[2] = { -1,-1 };
 
-    int8 Curve = 0; //弯道行
-    int8 End_s = 0; //搜索中止行
+        int8 Curve = 0; //弯道行
+        int8 End_s = 0; //搜索中止行
 
-	left_black_before = CAMERA_W / 2;
-	right_black_before = CAMERA_W / 2;
+        left_black_before = CAMERA_W / 2;
+        right_black_before = CAMERA_W / 2;
 
-    Ma_Mark = 1;
-    As_Mark = 1;
-    Co_Mark = 0;
+        Ma_Mark = 1;
+        As_Mark = 1;
+        Co_Mark = 0;
 
-	jh = LINE_NUM-1;
+        jh = LINE_NUM-1;
+    }
     //
 
 
     //先扫5行
     for(;jh > LINE_NUM - 6; jh--)
     {
+        if(!img[jh][40])
+        {   //出赛道,停下
+            lcd_mode = STOP_MODE;
+            return ;
+        }
+
         for(jw_left = 40; jw_left >= 0; jw_left--)
         {
             if(!img[jh][jw_left] && img[jh][jw_left + 1]){
@@ -589,14 +603,16 @@ void yl_Search_line()
         }
     }
 
+    //正常扫描
     for(; jh>=0; jh --)
     {
         if(!img[jh][middleline[jh + 1]])
-        {   
-            End_s = jh; //停止搜索
+        {
+            vaild_mark = jh; //停止搜索
             break;
         }
 
+        //搜左边
         for(jw_left = middleline[jh + 1]; jw_left >= 0; jw_left--)
         {
             if(!img[jh][jw_left] && img[jh][jw_left + 1])
@@ -605,6 +621,7 @@ void yl_Search_line()
             }
         }
 
+        //搜右边
         for(jw_right = middleline[jh + 1]; jw_right < CAMERA_W; jw_right++)
         {
             if(!img[jh][jw_right] && img[jh][jw_right - 1])
@@ -614,25 +631,26 @@ void yl_Search_line()
         }
 
         if(jw_left == -1 && jw_right == CAMERA_W)
-        {
+        {   //两行丟线
             Ma_Mark = 4;
         }
         else if(jw_left == -1 && jh > 10)
-        {
-            Curve = jh - 1;
+        {   //左丟线
+            As_Mark = 1; //一判
         }
         else if(jw_right == CAMERA_W && jh > 10)
-        {
-            Curve = jh - 1;
+        {   //右丟线
+            As_Mark = 2; //一判
         }
         else if(jw_left >= 0 && jw_right < CAMERA_W )
-        {
+        {   //正常搜到
             left_black = jw_left; 
             right_black = jw_right;
+            middleline = (jw_left + jw_right) >> 1;
         }
         else
         {
-            End_s = jh; //停止搜索
+            vaild_mark = jh; //停止搜索
             break;           
         }
     }

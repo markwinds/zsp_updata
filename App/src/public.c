@@ -107,7 +107,8 @@ void DcdMode()
 	Negation();
 	// img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
-	LCD_Img_Binary_G(site, size, img);
+	if (is_show_line != 4)
+		LCD_Img_Binary_G(site, size, img);
 
 	/*------------在图像下面显示数据-----------*/
 	if (is_show_va)
@@ -116,8 +117,8 @@ void DcdMode()
 		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
 		LCD_numf(tem_site_str[5], (double)Increase, GREEN, BLUE);
-		// LCD_numf(tem_site_data[4], (float)state_line[1], GREEN, BLUE);
-		// LCD_numf(tem_site_data[5], (float)state_line[3], GREEN, BLUE);
+		LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
+		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
 	}
 
 	/*----------彩色显示边线,还有显示网格-----------*/
@@ -148,7 +149,7 @@ void DcdMode()
 		}
 	}
 
-	Control_core(); //控制舵机
+	//Control_core(); //控制舵机
 	save_Picture(); //检测是否需要将图片写入flash
 }
 
@@ -195,6 +196,10 @@ void Controll()
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
 		csteer = &steer_pid;
+	}
+	else if(lcd_mode == STOP_MODE)
+	{
+		motor_speed = 0;
 	}
 }
 

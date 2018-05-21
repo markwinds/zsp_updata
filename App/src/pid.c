@@ -10,6 +10,7 @@
 #include "include.h"
 #include "common.h"
 PID *cmotor = NULL, *csteer = NULL;
+double cor_sp = 1;
 
 Speed_mode car_mode = CHECH;
 float steer_engine_degree = 0;              //舵机的偏转角度，可正可负，正右负左
@@ -76,7 +77,10 @@ int Steer_Pid(PID* tem_P)
 	// {
 	// 	average_offset[0] = STEER_KP * offset_p + STEER_KI * offset_i + STEER_KD * offset_d;
 	// }
-	return (int)(average_offset[0] = tem_P->P * average_offset[1] + tem_P->D * (average_offset[1] - average_offset[2]));
+	average_offset[0] = cor_sp * tem_P->P * average_offset[1] + tem_P->D * (average_offset[1] - average_offset[2]);
+	if (average_offset[0] > DEGREE_MAX) average_offset[0] = DEGREE_MAX;
+	if (average_offset[0] < -DEGREE_MAX) average_offset[0] = -DEGREE_MAX;
+	return average_offset[0];
 }
 
 //增量式PID 电机 控制

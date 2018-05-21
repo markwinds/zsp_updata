@@ -50,6 +50,7 @@ typedef struct PID
 extern Speed_mode car_mode;
 extern float steer_engine_degree;        //舵机转动的角度
 extern float motor_speed;                //电机转速
+extern double cor_sp;
 extern PID *cmotor, *csteer;
 extern PID motor_pid,steer_pid;
 
