@@ -168,8 +168,8 @@ void Controll()
 		else
 		{
 			cmotor = NULL;
-			Increase = 0;
-			Con_Motor(-100);
+			ClearPid();
+			Con_Motor(0);
 		}
 		csteer = NULL;
 		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
@@ -177,7 +177,7 @@ void Controll()
 	else if (lcd_mode == PICTURE_MODE)
 	{
 		cmotor = NULL;
-		Increase = 0;
+		ClearPid();
 		Con_Motor(0);
 		csteer = NULL;
 		ftm_pwm_duty(FTM0, FTM_CH6, 380);
@@ -191,7 +191,7 @@ void Controll()
 		else
 		{
 			cmotor = NULL;
-			Increase = 0;
+			ClearPid();
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
@@ -199,10 +199,18 @@ void Controll()
 	}
 	else if(lcd_mode == STOP_MODE)
 	{
+		if(stop_save_motor < 7) stop_save_motor = motor_speed;
 		motor_speed = 0;
 	}
 }
 
+void ClearPid()
+{
+	Increase = 0;	
+	LastError = 0;
+	iError = 0;
+	PrevError = 0;
+}
 
 
 

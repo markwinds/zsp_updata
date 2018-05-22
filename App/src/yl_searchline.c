@@ -507,34 +507,34 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
 }
 endif
 int8 Ma_Mark;
-// 0:全丟线 1:直道 2:弯道 4:十字 6:左丟线 9:右丟线
+// 0:全丟线 1:直道 2:弯道 4:十字 6:左圆环 9:右圆环
 int8 As_Mark;
-// 0:正常状态 1:右丟线一判 2:左丟线一判 3:左圆环一判 4:做圆环二判 5:弯道初判
+// 0:正常状态 1:右丟线一判 2:左丟线一判 3:左圆环判 4: 5:弯道初判 6:全丢一判
 int16 Co_Mark;
 void yl_Search_line()
 {   
     //数据初始化
 	{
-        int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
-        int left_next_line = 0;                            //判断扫描是否进入了新的一行
-        int left_find_flag = 0;                            //左边是否找到黑线标志												                
-        int jw_left;                                       //向左搜索的当前列
+        int16 left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
+        int16 left_next_line = 0;                            //判断扫描是否进入了新的一行
+        int16 left_find_flag = 0;                            //左边是否找到黑线标志												                
+        int16 jw_left;                                       //向左搜索的当前列
 
 
-        int right_black_before = CAMERA_W / 2;
-        int right_next_line = 0;
-        int right_find_flag = 0;
-        int jw_right;
+        int16 right_black_before = CAMERA_W / 2;
+        int16 right_next_line = 0;
+        int16 right_find_flag = 0;
+        int16 jw_right;
 
-        int jh;                                            //行参数
+        int16 jh;                                            //行参数
         float offset = 0;                                   //偏差度，为整体偏差度
                                                         //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
-        int count = 0;
-        int i = 0;
-        int j = 0;
-        int m = 0;
+        int16 count = 0;
+        int16 i = 0;
+        int16 j = 0;
+        int16 m = 0;
 
-        int cross_temp[2] = { -1,-1 };
+        int16 cross_temp[2] = { -1,-1 };
 
         int8 Curve = 0; //弯道行
         int8 End_s = 0; //搜索中止行
@@ -552,7 +552,7 @@ void yl_Search_line()
 
 
     //先扫5行
-    for(;jh > LINE_NUM - 6; jh--)
+    for(;jh > LINE_NUM - 4; jh--)
     {
         if(!img[jh][40])
         {   //出赛道,停下
@@ -582,10 +582,13 @@ void yl_Search_line()
         }
         else if(jw_left == -1 && jw_right == CAMERA_W)
         {   //两边丟线
-            Ma_Mark = 0;
-            return 0;
+
         }
-        else if(jw_right - jw_left > 55)
+        else if(jw_right - jw_left > 70)
+        {
+            
+        }
+        else if(jw_right - jw_left > 35)
         {   //单边丟线
             if(jw_left < 0)
             {
@@ -632,15 +635,19 @@ void yl_Search_line()
 
         if(jw_left == -1 && jw_right == CAMERA_W)
         {   //两行丟线
-            Ma_Mark = 4;
+            if(Ma_Mark == 6 || Ma_Mask == 9)
+            {   //直接用上一场的数据
+                break;
+            }
+            As_Mark = 6;
         }
         else if(jw_left == -1 && jh > 10)
         {   //左丟线
-            As_Mark = 1; //一判
+            As_Mark = 2; //一判
         }
         else if(jw_right == CAMERA_W && jh > 10)
         {   //右丟线
-            As_Mark = 2; //一判
+            As_Mark = 1; //一判
         }
         else if(jw_left >= 0 && jw_right < CAMERA_W )
         {   //正常搜到
@@ -657,31 +664,31 @@ void yl_Search_line()
 
 }
 
-void Search_line_left()
-{
-    int8 before = Curve - 3;
+// void Search_line_left()
+// {
+//     int8 before = Curve - 3;
 
-    for(jh = 0; jh < right_black[Curve]; jh++ )
-    {
+//     for(jh = 0; jh < right_black[Curve]; jh++ )
+//     {
 
-        if(!img[before][jh])
-        {
-            return ;
-        }
+//         if(!img[before][jh])
+//         {
+//             return ;
+//         }
 
-        for(jw = before; jw >= 0; jw--)
-        {
-            if(!img[jw][jh] && img[jw + 1][jh]){
-                break;
-            }
-        }
+//         for(jw = before; jw >= 0; jw--)
+//         {
+//             if(!img[jw][jh] && img[jw + 1][jh]){
+//                 break;
+//             }
+//         }
 
-        if(jh > 3 && jw > right_black[jh - 2] + 1){
+//         if(jh > 3 && jw > right_black[jh - 2] + 1){
 
-        }
-    }
+//         }
+//     }
 
 
-}
+// }
 
 #endif

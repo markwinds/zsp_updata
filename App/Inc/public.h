@@ -15,5 +15,5 @@ extern void init_Sys();
 extern void do_Sys();
 void DcdMode();
 void Controll();
-
+void ClearPid();
 #endif

@@ -7,6 +7,7 @@
  *******************************************/
 #include "include.h"
 #include <string.h>
+//#define QINGLI 0
 
 uint8 lcd_mode = IMG_MODE;
 uint8 key_on = 0;
@@ -508,8 +509,12 @@ void flash_Out()
 	{
 		if (screen_data[i].ip > 0)
 		{
+			#ifdef QINGLI
+			data = 0;
+			#else
 			data = flash_read(SECTOR_NUM, screen_data[i].ip * 4, uint32);
 			*(screen_data[i].data_value) = (float)((double)data / 100.0);
+			#endif
 		}
 		i++;
 	}
