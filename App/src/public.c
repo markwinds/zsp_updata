@@ -5,9 +5,10 @@ Site_t line_site={0,0};
 Site_t site = {0, 0};
 Size_t size = {80, 60};
 Size_t imgsize = {CAMERA_W, CAMERA_H};
-char stree_y[10000];
-char offset_y[10000];
+int stree_y[1000];
+int offset_y[1000];
 int count_x=0;
+float out_xy=0;
 
 
 
@@ -68,10 +69,10 @@ void do_Sys()
 	}
 	enable_irq(PORTD_IRQn); //使能按键中断
 
-	if(count<10000)
+	if(count_x<1000 && lcd_mode == IMG_MODE)
 	{
 		stree_y[count_x]=average_offset[0];
-		offset_y[count_x]=offset;
+		offset_y[count_x]=average_offset[1];
 		count_x++;
 	}
 	
@@ -80,8 +81,17 @@ void do_Sys()
 		i=count_x-1;
 		while(i>=0)
 		{
-			printf("%d",);//
+			printf(" %d",stree_y[i]);
 			i--;
+			if(i>0) printf(",");
+		}
+		printf("\n");
+		i=count_x-1;
+		while(i>=0)
+		{
+			printf(" %d",offset_y[i]);
+			i--;
+			if(i>0) printf(",");
 		}
 		out_xy=0;
 	}

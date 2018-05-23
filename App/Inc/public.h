@@ -10,9 +10,10 @@ extern Size_t size;
 extern Size_t imgsize;
 //extern int _temp;
 extern Site_t line_site;
-extern char stree_y[10000];
-extern char offset_y[10000];
+extern int stree_y[1000];
+extern int offset_y[1000];
 extern int count_x;
+extern float out_xy;
 
 extern void init_Sys();
 extern void do_Sys();

@@ -22,6 +22,7 @@ Screen_Data screen_data[] = {
 
 	{"S_KP", &(steer_pid.P), 0.01, 5},
 	{"S_KD", &(steer_pid.D), 0.1, 6},
+	{"outxy",&(out_xy),2,0},
 
 	{"end", &(temp_s[9]), 1202, 0}
 	
