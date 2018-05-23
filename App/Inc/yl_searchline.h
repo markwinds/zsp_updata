@@ -26,6 +26,10 @@ void Goin_rightcircul();
 void Goin_leftcircul();
 int8 Count_black(int16 jh, int8 start, int8 end, int8 extent);
 
+void FullLine(Site_t, Site_t, int8 line[]);
+uint8 IsStraight(int8 line[]);
+void FullBend(int8, int8);
+
 #endif
 
 /*

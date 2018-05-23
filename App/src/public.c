@@ -129,7 +129,7 @@ void DcdMode()
 	if (is_show_line == 2 || is_show_line == 3) //边线
 	{
 		int i;
-		for (i = 0; i < 60; i++)
+		for (i = vaild_mark; i < 60; i++)
 		{
 			line_site.x = left_black[i];
 			line_site.y = i;
@@ -138,7 +138,7 @@ void DcdMode()
 			if (left_black[i] >= 0)
 				LCD_point(line_site, RED);
 		}
-		for (i = 0; i < 60; i++)
+		for (i = vaild_mark; i < 60; i++)
 		{
 			line_site.x = right_black[i];
 			line_site.y = i;
