@@ -5,10 +5,10 @@ Site_t line_site={0,0};
 Site_t site = {0, 0};
 Size_t size = {80, 60};
 Size_t imgsize = {CAMERA_W, CAMERA_H};
-int stree_y[1000];
-int offset_y[1000];
+char stree_y[10000];
+char offset_y[10000];
 int count_x=0;
-float out_xy=0;
+float out_xy=2;
 
 
 
@@ -72,31 +72,39 @@ void do_Sys()
 	}
 	enable_irq(PORTD_IRQn); //使能按键中断
 
-	if(count_x<1000 && lcd_mode == IMG_MODE)
+	if(count_x<10000 && lcd_mode == IMG_MODE)
 	{
 		stree_y[count_x]=average_offset[0];
 		offset_y[count_x]=average_offset[1];
 		count_x++;
 	}
 	
-	if(out_xy>1)
+
+	if(out_xy<1)
 	{
 		i=count_x-1;
+		printf("offset\n");
 		while(i>=0)
 		{
-			printf(" %d",stree_y[i]);
-			i--;
+			printf(" %d",offset_y[count_x-i-1]);	//输出道路的偏差度
 			if(i>0) printf(",");
+			i--;
 		}
 		printf("\n");
+		out_xy=2;
+	}
+	else if(out_xy>3)
+	{
 		i=count_x-1;
+		printf("stree\n");
 		while(i>=0)
 		{
-			printf(" %d",offset_y[i]);
-			i--;
+			printf(" %d",stree_y[count_x-i-1]);	//输出舵机的偏转角
 			if(i>0) printf(",");
+			i--;
 		}
-		out_xy=0;
+		printf("\n");
+		out_xy=2;
 	}
 }
 

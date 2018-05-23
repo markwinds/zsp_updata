@@ -489,8 +489,8 @@ void Search_line()
 		if (is_leftcircul_flag == 1)
 			Goin_leftcircul();
 		//普通中线获得的适配版
-		Get_middle_line();
-		//nomal_middle();
+		//Get_middle_line();
+		nomal_middle();
 	}
 
 	/*------------------------偏差度计算及中线展现-----------------------------*/
@@ -526,8 +526,10 @@ void Search_line()
 		cor_sp = (double)average_offset[1] / 5;
 	}
 	else
-		cor_sp = (double)average_offset[1] / 10;
-	cor_sp *= cor_sp;
+		cor_sp = (double)average_offset[1] / 50;
+	cor_sp *= (double)cor_sp;
+	cor_sp+=4;
+	if(abs(average_offset[1])<3) cor_sp=0;
 }
 
 float Find_slope() //找到梯形的斜率
