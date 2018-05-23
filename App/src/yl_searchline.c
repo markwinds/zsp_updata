@@ -88,7 +88,7 @@ void Judge_circul()
 {
     int8 jh;
     int8 t_jh;
-    if (is_rightcircul_flag == 0)
+    if (is_rightcircul_flag == 0  && abs(left_black[50] + left_black[20] - (left_black[35] << 1)) < 3)
     {
         //找一找右圆环在不在
         if (left_black[25] > 0 && right_black[25] < 0) //从25行开始搜丟线宽度
@@ -117,7 +117,7 @@ void Judge_circul()
                     is_rightcircul_flag = 1;
                     //找到了
             }*/
-            if (t_jh - jh >= 10 && right_black[t_jh + 1] > 0 && abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)
+            if (t_jh - jh >= 10 && right_black[t_jh + 1] > 0)
             {
                 int8 i;
                 for (i = 3; i < 7; i++)
@@ -170,88 +170,88 @@ void Judge_circul()
         }
     }
 
-    if (is_leftcircul_flag == 0)
-    {
-        //找一找左圆环在不在
-        if (left_black[25] < 0 && right_black[25] > 0) //从25行开始搜丟线宽度
-        {
-            for (jh = 25; jh >= 10; jh--) //上面找丢线宽度
-            {
-                if (right_black[jh] < 0 || left_black[jh] > 0)
-                {
-                    break;
-                }
-            }
-            for (t_jh = 25; t_jh <= 45; t_jh++) //下面找丢线宽度
-            {
-                if (right_black[t_jh] < 0 || left_black[t_jh] > 0)
-                {
-                    break;
-                }
-            }
-            //减一减得到单边丢线总宽度大于十
-            //追加判断突出角要在(40, 60)的范围里，且突出角形状较平(应该是一个 |_ 的形状这里判了 | 这个）
-            //然后左边应该是直道，这里取三点算斜率
-            /*if(t_jh - jh >= 10 && right_black[jh - 4] > 40 && right_black[jh - 4] < 60 &&
-                abs(right_black[jh - 6] - right_black[jh - 2]) < 3 &&
-                abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)// && img[jh - 4][CAMERA_W - 1] == 0)
-            {
-                    is_rightcircul_flag = 1;
-                    //找到了
-            }*/
-            if (t_jh - jh >= 10 && left_black[t_jh + 1] > 0 && abs(right_black[50] + right_black[30] - (right_black[40] << 1)) < 3)
-            {
-                int8 i;
-                for (i = 3; i < 7; i++)
-                {
-                    if (left_black[t_jh + i] < left_black[t_jh + i - 1] ||
-                        (left_black[t_jh + i] - left_black[t_jh + i - 1]) > (left_black[t_jh + i - 1] - left_black[t_jh + i - 2]))
-                    {
-                        break;
-                    }
-                }
-                if (i == 7)
-                    is_leftcircul_flag = 1;
-            }
-        }
-    }
-    //如果在圆里了，这里判出圆,这里补的是出圆的线,left
-    else if (is_leftcircul_flag == 2)
-    {
-        //int8 tem_i;
-        //如果两边都是直道了代表出圆成功，重置标志位于0
-        if (right_black[40] > left_black[40] && left_black[40] > 0 && right_black[40] - left_black[40] < 55 &&
-            right_black[30] > left_black[30] && left_black[30] > 0 && right_black[30] - left_black[30] < 45 &&
-            right_black[20] > left_black[20] && left_black[20] > 0 && right_black[20] - left_black[20] < 35)
-        {
-            //出圆了已经
-            is_leftcircul_flag = 0;
-            return;
-        }
-        //tem_i = 30;
-        //出圆时会遇见两边丢线的情况，所以这里补线
-            for (t_jh = 30; t_jh <= 55; t_jh++) //下面找
-            {
-                if (right_black[t_jh] < 0 && left_black[t_jh] < 0)
-                {
-                    right_black[t_jh] = t_jh >> 1;
-                }
-            }
-        if (left_black[30] < 0 && right_black[30] < 0)
-        {
+    // if (is_leftcircul_flag == 0  && abs(right_black[50] + right_black[20] - (right_black[35] << 1)) < 3)
+    // {
+    //     //找一找左圆环在不在
+    //     if (left_black[25] < 0 && right_black[25] > 0) //从25行开始搜丟线宽度
+    //     {
+    //         for (jh = 25; jh >= 10; jh--) //上面找丢线宽度
+    //         {
+    //             if (right_black[jh] < 0 || left_black[jh] > 0)
+    //             {
+    //                 break;
+    //             }
+    //         }
+    //         for (t_jh = 25; t_jh <= 45; t_jh++) //下面找丢线宽度
+    //         {
+    //             if (right_black[t_jh] < 0 || left_black[t_jh] > 0)
+    //             {
+    //                 break;
+    //             }
+    //         }
+    //         //减一减得到单边丢线总宽度大于十
+    //         //追加判断突出角要在(40, 60)的范围里，且突出角形状较平(应该是一个 |_ 的形状这里判了 | 这个）
+    //         //然后左边应该是直道，这里取三点算斜率
+    //         /*if(t_jh - jh >= 10 && right_black[jh - 4] > 40 && right_black[jh - 4] < 60 &&
+    //             abs(right_black[jh - 6] - right_black[jh - 2]) < 3 &&
+    //             abs(left_black[50] + left_black[30] - (left_black[40] << 1)) < 3)// && img[jh - 4][CAMERA_W - 1] == 0)
+    //         {
+    //                 is_rightcircul_flag = 1;
+    //                 //找到了
+    //         }*/
+    //         if (t_jh - jh >= 10 && left_black[t_jh + 1] > 0)
+    //         {
+    //             int8 i;
+    //             for (i = 3; i < 7; i++)
+    //             {
+    //                 if (left_black[t_jh + i] < left_black[t_jh + i - 1] ||
+    //                     (left_black[t_jh + i] - left_black[t_jh + i - 1]) > (left_black[t_jh + i - 1] - left_black[t_jh + i - 2]))
+    //                 {
+    //                     break;
+    //                 }
+    //             }
+    //             if (i == 7)
+    //                 is_leftcircul_flag = 1;
+    //         }
+    //     }
+    // }
+    // //如果在圆里了，这里判出圆,这里补的是出圆的线,left
+    // else if (is_leftcircul_flag == 2)
+    // {
+    //     //int8 tem_i;
+    //     //如果两边都是直道了代表出圆成功，重置标志位于0
+    //     if (right_black[40] > left_black[40] && left_black[40] > 0 && right_black[40] - left_black[40] < 55 &&
+    //         right_black[30] > left_black[30] && left_black[30] > 0 && right_black[30] - left_black[30] < 45 &&
+    //         right_black[20] > left_black[20] && left_black[20] > 0 && right_black[20] - left_black[20] < 35)
+    //     {
+    //         //出圆了已经
+    //         is_leftcircul_flag = 0;
+    //         return;
+    //     }
+    //     //tem_i = 30;
+    //     //出圆时会遇见两边丢线的情况，所以这里补线
+    //         for (t_jh = 30; t_jh <= 55; t_jh++) //下面找
+    //         {
+    //             if (right_black[t_jh] < 0 && left_black[t_jh] < 0)
+    //             {
+    //                 right_black[t_jh] = t_jh >> 1;
+    //             }
+    //         }
+    //     if (left_black[30] < 0 && right_black[30] < 0)
+    //     {
 
-            // //这里在寻找补线用的突出角，具体可以看图像
-            // if (t_jh != 56)
-            // {
-            //     for (; right_black[t_jh + 1] - right_black[t_jh] < 0 && t_jh < LINE_NUM - 1; t_jh++)
-            //         ;
-            //     for (; right_black[t_jh] - 2 >= 0 && img[t_jh][right_black[t_jh] - 2] && t_jh > 0; t_jh--)
-            //     {
-            //         right_black[t_jh - 1] = right_black[t_jh] - 2;
-            //     }
-            // }
-        }
-    }
+    //         // //这里在寻找补线用的突出角，具体可以看图像
+    //         // if (t_jh != 56)
+    //         // {
+    //         //     for (; right_black[t_jh + 1] - right_black[t_jh] < 0 && t_jh < LINE_NUM - 1; t_jh++)
+    //         //         ;
+    //         //     for (; right_black[t_jh] - 2 >= 0 && img[t_jh][right_black[t_jh] - 2] && t_jh > 0; t_jh--)
+    //         //     {
+    //         //         right_black[t_jh - 1] = right_black[t_jh] - 2;
+    //         //     }
+    //         // }
+    //     }
+    // }
 }
 
 //这个是进圆的函数
@@ -505,52 +505,61 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
     }
     return end - start + 1;
 }
-
+endif
 int8 Ma_Mark;
-// 0:全丟线 1:直道 2:弯道 4:十字 6:左丟线 9:右丟线
+// 0:全丟线 1:直道 2:弯道 4:十字 6:左圆环 9:右圆环
 int8 As_Mark;
+// 0:正常状态 1:右丟线一判 2:左丟线一判 3:左圆环判 4: 5:弯道初判 6:全丢一判
 int16 Co_Mark;
 void yl_Search_line()
-{
-	
-	int left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
-	int left_next_line = 0;                            //判断扫描是否进入了新的一行
-	int left_find_flag = 0;                            //左边是否找到黑线标志												                
-	int jw_left;                                       //向左搜索的当前列
+{   
+    //数据初始化
+	{
+        int16 left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
+        int16 left_next_line = 0;                            //判断扫描是否进入了新的一行
+        int16 left_find_flag = 0;                            //左边是否找到黑线标志												                
+        int16 jw_left;                                       //向左搜索的当前列
 
 
-	int right_black_before = CAMERA_W / 2;
-	int right_next_line = 0;
-	int right_find_flag = 0;
-	int jw_right;
+        int16 right_black_before = CAMERA_W / 2;
+        int16 right_next_line = 0;
+        int16 right_find_flag = 0;
+        int16 jw_right;
 
-	int jh;                                            //行参数
-	float offset = 0;                                   //偏差度，为整体偏差度
-													   //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
-	int count = 0;
-	int i = 0;
-	int j = 0;
-	int m = 0;
+        int16 jh;                                            //行参数
+        float offset = 0;                                   //偏差度，为整体偏差度
+                                                        //int slope[CAMERA_H] = { 0 };                       //存放每行间黑线斜度的数组
+        int16 count = 0;
+        int16 i = 0;
+        int16 j = 0;
+        int16 m = 0;
 
-	int cross_temp[2] = { -1,-1 };
+        int16 cross_temp[2] = { -1,-1 };
 
-    int8 Curve = 0; //弯道行
-    int8 End_s = 0; //搜索中止行
+        int8 Curve = 0; //弯道行
+        int8 End_s = 0; //搜索中止行
 
-	left_black_before = CAMERA_W / 2;
-	right_black_before = CAMERA_W / 2;
+        left_black_before = CAMERA_W / 2;
+        right_black_before = CAMERA_W / 2;
 
-    Ma_Mark = 1;
-    As_Mark = 1;
-    Co_Mark = 0;
+        Ma_Mark = 1;
+        As_Mark = 1;
+        Co_Mark = 0;
 
-	jh = LINE_NUM-1;
+        jh = LINE_NUM-1;
+    }
     //
 
 
     //先扫5行
-    for(;jh > LINE_NUM - 6; jh--)
+    for(;jh > LINE_NUM - 4; jh--)
     {
+        if(!img[jh][40])
+        {   //出赛道,停下
+            lcd_mode = STOP_MODE;
+            return ;
+        }
+
         for(jw_left = 40; jw_left >= 0; jw_left--)
         {
             if(!img[jh][jw_left] && img[jh][jw_left + 1]){
@@ -566,18 +575,21 @@ void yl_Search_line()
         }
 
         if(jw_left >= 0 && jw_right < CAMERA_W && jw_right - jw_left > 55)
-        {
+        {   //正确扫描到赛道
             left_black[jh] = jw_left;
             right_black[jh] = jw_right;
             middleline[jh] = (jw_left + jw_right)>>1;
         }
         else if(jw_left == -1 && jw_right == CAMERA_W)
-        {
-            Ma_Mark = 0;
-            return 0;
+        {   //两边丟线
+
         }
-        else if(jw_right - jw_left > 55)
+        else if(jw_right - jw_left > 70)
         {
+            
+        }
+        else if(jw_right - jw_left > 35)
+        {   //单边丟线
             if(jw_left < 0)
             {
                 Ma_Mark = 6;
@@ -587,20 +599,23 @@ void yl_Search_line()
                 Ma_Mark = 9;
             }
         }
-        else{
+        else
+        {   //扫不到
             Ma_Mark = 0;
             return 0;           
         }
     }
 
+    //正常扫描
     for(; jh>=0; jh --)
     {
         if(!img[jh][middleline[jh + 1]])
         {
-            End_s = jh; //停止搜索
+            vaild_mark = jh; //停止搜索
             break;
         }
 
+        //搜左边
         for(jw_left = middleline[jh + 1]; jw_left >= 0; jw_left--)
         {
             if(!img[jh][jw_left] && img[jh][jw_left + 1])
@@ -609,6 +624,7 @@ void yl_Search_line()
             }
         }
 
+        //搜右边
         for(jw_right = middleline[jh + 1]; jw_right < CAMERA_W; jw_right++)
         {
             if(!img[jh][jw_right] && img[jh][jw_right - 1])
@@ -618,56 +634,61 @@ void yl_Search_line()
         }
 
         if(jw_left == -1 && jw_right == CAMERA_W)
-        {
-            Ma_Mark = 4;
+        {   //两行丟线
+            if(Ma_Mark == 6 || Ma_Mask == 9)
+            {   //直接用上一场的数据
+                break;
+            }
+            As_Mark = 6;
         }
         else if(jw_left == -1 && jh > 10)
-        {
-            if()
-            Curve = jh - 1;
+        {   //左丟线
+            As_Mark = 2; //一判
         }
         else if(jw_right == CAMERA_W && jh > 10)
-        {
-            Curve = jh - 1;
+        {   //右丟线
+            As_Mark = 1; //一判
         }
         else if(jw_left >= 0 && jw_right < CAMERA_W )
-        {
+        {   //正常搜到
             left_black = jw_left; 
             right_black = jw_right;
+            middleline = (jw_left + jw_right) >> 1;
         }
         else
         {
-            End_s = jh; //停止搜索
+            vaild_mark = jh; //停止搜索
             break;           
         }
     }
 
 }
 
-void Search_line_left()
-{
-    int8 before = Curve - 3;
+// void Search_line_left()
+// {
+//     int8 before = Curve - 3;
 
-    for(jh = 0; jh < right_black[Curve]; jh++ )
-    {
+//     for(jh = 0; jh < right_black[Curve]; jh++ )
+//     {
 
-        if(!img[before][jh])
-        {
-            return ;
-        }
+//         if(!img[before][jh])
+//         {
+//             return ;
+//         }
 
-        for(jw = before; jw >= 0; jw--)
-        {
-            if(!img[jw][jh] && img[jw + 1][jh]){
-                break;
-            }
-        }
+//         for(jw = before; jw >= 0; jw--)
+//         {
+//             if(!img[jw][jh] && img[jw + 1][jh]){
+//                 break;
+//             }
+//         }
 
-        if(jh > 3 && jw > right_black[jh - 2] + 1){
+//         if(jh > 3 && jw > right_black[jh - 2] + 1){
 
-        }
-    }
+//         }
+//     }
 
 
-}
+// }
+
 #endif

@@ -49,7 +49,10 @@ void DMA0_IRQHandler()
 }
 
 
-/*在while循环里面每次都要执行的非核心操作*/
+/***
+ * @brief	  在while循环里面每次都要执行的非核心操作
+ * 
+ ***/
 void do_Sys()
 {
 	int i=0;
@@ -98,7 +101,10 @@ void do_Sys()
 }
 
 
-/*初始化系统的函数，为了使main函数整洁*/
+/***
+ * @brief	  初始化系统的函数，为了使main函数整洁
+ * 
+ ***/
 void init_Sys()
 {
 	LCD_init();
@@ -125,7 +131,7 @@ void init_Sys()
 /***
  * @brief		显示模式下处理图像和搜线
  * 
-***/
+ ***/
 void DcdMode()
 {
 	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
@@ -183,7 +189,7 @@ void DcdMode()
 /***
  * @brief		不同模式下控制电机和舵机的方案选择
  * 
-***/
+ ***/
 void Controll()
 {
 	Update_Motor();
@@ -195,7 +201,7 @@ void Controll()
 		else
 		{
 			cmotor = NULL;
-			Increase = 0;
+			ClearPid();
 			Con_Motor(0);
 		}
 		csteer = NULL;
@@ -204,7 +210,7 @@ void Controll()
 	else if (lcd_mode == PICTURE_MODE)
 	{
 		cmotor = NULL;
-		Increase = 0;
+		ClearPid();
 		Con_Motor(0);
 		csteer = NULL;
 		ftm_pwm_duty(FTM0, FTM_CH6, 380);
@@ -218,7 +224,7 @@ void Controll()
 		else
 		{
 			cmotor = NULL;
-			Increase = 0;
+			ClearPid();
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
@@ -226,10 +232,18 @@ void Controll()
 	}
 	else if(lcd_mode == STOP_MODE)
 	{
+		if(stop_save_motor < 7) stop_save_motor = motor_speed;
 		motor_speed = 0;
 	}
 }
 
+void ClearPid()
+{
+	Increase = 0;	
+	LastError = 0;
+	iError = 0;
+	PrevError = 0;
+}
 
 
 

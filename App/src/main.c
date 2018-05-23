@@ -2,11 +2,10 @@
 #include "common.h"
 #include "include.h"
 
-
 Screen_Data screen_data[] = {
 	
-	{"M_KP", &(motor_pid.P), 0.01, 1},
-	{"M_KI", &(motor_pid.I), 0.01, 2},
+	{"M_KP", &(motor_pid.P), 0.1, 1},
+	{"M_KI", &(motor_pid.I), 0.001, 2},
 	{"M_KD", &(motor_pid.D), 0.01, 3},
 	
 	{"enM", &(motor_go), 99, 0}, //使能电机
@@ -55,7 +54,6 @@ void main(void)
 		}
 		else if (lcd_mode == RUN_MODE)
 		{
-			motor_speed = 0;
 		}
 
 
@@ -75,3 +73,4 @@ void main(void)
 		do_Sys();
 	} //while
 }
+// 150 0.07 2 7.87
