@@ -515,9 +515,9 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
     }
     return end - start + 1;
 }
-endif
+#endif
 int8 Ma_Mark;
-// 0:全丟线 1:直道 2:弯道 4:十字 6:左圆环 9:右圆环
+// 0:全丟线 1:直道 2:左弯道 3.右弯道 4:十字 6:左圆环 9:右圆环
 int8 As_Mark;
 // 0:正常状态 1:直道 2:左丟线 3:右丟线 4:全丢 5:弯道初判 6:全丢一判
 int8 Bo_Mark;
@@ -639,8 +639,9 @@ void yl_Search_line()
     {
         if(!img[jh][middleline[jh + 1]])
         {   //从上一行的中点开始扫,如果是黑点,则扫完退出
-            if(jh > 30 && (As_Mark == 2 || As_Mark == 3) && Co_Mark > 5){
-                //提早较多扫完，且之前有一定宽度单边丟线,弯道补线
+            if(jh > 30 && (As_Mark == 2 || As_Mark == 3)){
+                //提早较多扫完，且之前单边丟线,弯道补线
+                Ma_Mark = As_Mark;
                 //FullBend(begin, (As_Mark == 2)? -1 : 1);
             }
             vaild_mark = jh; //停止搜索,记录终止行
@@ -688,45 +689,26 @@ void yl_Search_line()
         // }
         else
         {
-            //圆环判断,如果赛道一边为直线,另一边先变宽,后变窄,再变宽,初判成圆环.
-            /*
+            
+            
             if(jw_right - jw_left > right_black[jh + 2] - left_black[jh + 2])
-            {
+            {   //圆环判断,如果赛道一边为直线,另一边先丟线,后出现赛道变宽,再丟线,初判成圆环.
                 if(right_black[jh + 2] < jw_right)
                 {
-                    if(!right_land_flag)
+                    if(right_land_flag == 1 && IsStraight(left_black))
                     {
-                        right_land_flag = 1;
-                    }
-                    else if(right_land_flag == 2 && IsStraight(left_black))
-                    {
-                        right_land_flag = 3;
+                        right_land_flag = 2;
                     }
                 }
                 else if(left_black[jh + 2] > jw_left)
                 {
-                    if(!left_land_flag)
+                    if(left_land_flag == 1 && IsStraight(right_black))
                     {
-                        left_land_flag = 1;
-                    }
-                    else if(left_land_flag == 2 && IsStraight(right_black))
-                    {
-                        left_land_flag = 3;
+                        left_land_flag = 2;
                     }
                 }
             }
-            else if(jw_right - jw_left < right_black[jh + 2] - left_black[jh + 2])
-            {
-                if(right_land_flag == 1)
-                {
-                    right_land_flag =2;
-                }
-                if(left_land_flag == 1)
-                {
-                    left_land_flag = 2;
-                }
-            }
-            */
+            
 
             if(jw_left < 0)
             {   //左丢线,记录丟线宽度
@@ -735,8 +717,18 @@ void yl_Search_line()
                 else{
                     begin = jh;
                     As_Mark = 2;
-                    Co_Mark = 0;}
-                
+                    Co_Mark = 0;
+                    if(!left_land_flag)
+                    {
+                        left_land_flag = 1;
+                    }
+                    else if(left_land_flag == 2)
+                    {
+                        left_land_flag = 3;
+                    }
+                }
+
+
             }
             else if(jw_right == CMAERA_W)
             {   //右丟线,记录丟线宽度
@@ -745,7 +737,18 @@ void yl_Search_line()
                 else{
                     begin = jh;
                     As_Mark = 3;
-                    Co_Mark = 0;}
+                    Co_Mark = 0;
+                    if(!right_land_flag)
+                    {
+                        right_land_flag = 1;
+                    }      
+                    else if(right_land_flag == 2)
+                    {
+                        right_land_flag = 3;
+                    }              
+                }
+
+
             }
             else if(jw_left >=0 && jw_right < CAMERA_W)
             {   //直道
@@ -757,6 +760,7 @@ void yl_Search_line()
                 left_black[jh] = jw_left;
                 right_black[jh] = jw_right; 
             } 
+
             middleline[jh] = (jw_left + jw_right) >> 1;            
         }
     }
@@ -870,4 +874,4 @@ void FullBend(int8 jh_ma, int8 direction)
 
 
 // }
-#endif
+//#endif
