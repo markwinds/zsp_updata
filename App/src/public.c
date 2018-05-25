@@ -104,11 +104,15 @@ void DcdMode()
 	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 	//temp_s[6] = Find_slope();
 	yl_Search_line();//Search_line(); //找线
-	Negation();
+
 	// img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
 	if (is_show_line != 4)
-		LCD_Img_Binary_G(site, size, img);
+	{
+		Negation();		
+		LCD_Img_Binary_G(site, size, img);		
+	}
+
 
 	/*------------在图像下面显示数据-----------*/
 	if (is_show_va)
@@ -117,7 +121,7 @@ void DcdMode()
 		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
 		LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
-		LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
+		LCD_numf(tem_site_data[4], (float)vaild_mark, GREEN, BLUE);
 		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
 	}
 
@@ -135,7 +139,7 @@ void DcdMode()
 			line_site.y = i;
 			if (left_black[i] == -3)
 				break;
-			if (left_black[i] >= 0)
+			if (left_black[i] >= 0 && left_black[i] <= CAMERA_W - 1)
 				LCD_point(line_site, RED);
 		}
 		for (i = vaild_mark; i < 60; i++)
@@ -144,7 +148,7 @@ void DcdMode()
 			line_site.y = i;
 			if (right_black[i] == -3)
 				break;
-			if (right_black[i] >= 0)
+			if (right_black[i] >= 0 && left_black[i] <= CAMERA_W - 1)
 				LCD_point(line_site, BLUE);
 		}
 	}

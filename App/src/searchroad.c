@@ -15,9 +15,9 @@
 float average_offset[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //偏差度，为平均偏差度
 uint8 imgbuff[CAMERA_SIZE];									  //定义存储接收图像的数组
 uint8 img[CAMERA_H][CAMERA_W];
-int16 left_black[CAMERA_H];		 //左边黑线数组
-int16 right_black[CAMERA_H];		 //右边黑线数组
-int16 middleline[CAMERA_H] = {0}; //存储中线位置的数组
+int8 left_black[CAMERA_H];		 //左边黑线数组
+int8 right_black[CAMERA_H];		 //右边黑线数组
+int8 middleline[CAMERA_H] = {0}; //存储中线位置的数组
 
 int iscross_flag = 0;  //判断是否是十字道的标志 0表示没有进入1表示初步判断并开始计数距离
 int iscross_count = 0; //十字道距离计数
