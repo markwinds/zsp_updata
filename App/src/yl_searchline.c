@@ -517,8 +517,10 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
 }
 #endif
 int8 Ma_Mark;
+// 描述这场图像状态
 // 0:全丟线 1:直道 2:左弯道 3.右弯道 4:十字 6:左圆环 9:右圆环
 int8 As_Mark;
+// 描述扫描暂态
 // 0:正常状态 1:直道 2:左丟线 3:右丟线 4:全丢 5:弯道初判 6:全丢一判
 int8 Bo_Mark;
 int16 Co_Mark;
@@ -527,7 +529,7 @@ int8 left_land_flag = 0;
 void yl_Search_line()
 {   
     //数据初始化
-	{
+	
         int16 left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
         int16 left_next_line = 0;                            //判断扫描是否进入了新的一行
         int16 left_find_flag = 0;                            //左边是否找到黑线标志												                
@@ -561,7 +563,7 @@ void yl_Search_line()
         int8 begin;
 
         jh = LINE_NUM-1;
-    }
+    
     //
 
 
@@ -630,26 +632,26 @@ void yl_Search_line()
         else
         {   //判不出来,重新扫
             Ma_Mark = 0;
-            return 0;           
+            return;           
         }
     }
 
     //正常扫描从56行开始,隔两行扫往0扫
     for(; jh>=0; jh -=2)
     {
-        if(!img[jh][middleline[jh + 1]])
+        if(!img[jh][middleline[jh + 2]])
         {   //从上一行的中点开始扫,如果是黑点,则扫完退出
-            if(jh > 30 && (As_Mark == 2 || As_Mark == 3)){
+            if(left_black[jh + 6] == -1){
                 //提早较多扫完，且之前单边丟线,弯道补线
-                Ma_Mark = As_Mark;
-                //FullBend(begin, (As_Mark == 2)? -1 : 1);
+                Ma_Mark = 2;
+                FullBend(jh, -1, begin);
             }
             vaild_mark = jh; //停止搜索,记录终止行
             break;
         }
 
         //搜左边
-        for(jw_left = middleline[jh + 1]; jw_left >= 0; jw_left--)
+        for(jw_left = middleline[jh + 2]; jw_left >= 0; jw_left--)
         {
             if(!img[jh][jw_left] && img[jh][jw_left + 1])
             {
@@ -658,7 +660,7 @@ void yl_Search_line()
         }
 
         //搜右边
-        for(jw_right = middleline[jh + 1]; jw_right < CAMERA_W; jw_right++)
+        for(jw_right = middleline[jh + 2]; jw_right < CAMERA_W; jw_right++)
         {
             if(!img[jh][jw_right] && img[jh][jw_right - 1])
             {
@@ -668,7 +670,7 @@ void yl_Search_line()
 
         if(jw_left == -1 && jw_right == CAMERA_W)
         {   //两行丟线
-            if(Ma_Mark == 6 || Ma_Mask == 9)
+            if(Ma_Mark == 6 || Ma_Mark == 9)
             {   //直接用上一场的数据
                 break;
             }
@@ -709,6 +711,13 @@ void yl_Search_line()
                 }
             }
             
+            left_black[jh] = jw_left;
+            right_black[jh] = jw_right; 
+            middleline[jh] = (jw_left + jw_right) >> 1;
+
+            left_black[jh + 1] = jw_left;      
+            right_black[jh + 1] = jw_right; 
+            middleline[jh + 1] = (jw_left + jw_right) >> 1;
 
             if(jw_left < 0)
             {   //左丢线,记录丟线宽度
@@ -730,7 +739,7 @@ void yl_Search_line()
 
 
             }
-            else if(jw_right == CMAERA_W)
+            else if(jw_right == CAMERA_W)
             {   //右丟线,记录丟线宽度
                 if(As_Mark == 3){
                     Co_Mark ++;}
@@ -750,18 +759,18 @@ void yl_Search_line()
 
 
             }
-            else if(jw_left >=0 && jw_right < CAMERA_W)
+            else if(jw_left >=0 && jw_right < CAMERA_W && jw_right - jw_left > 10 &&
+             jw_right - jw_left <= right_black[jh + 2] - left_black[jh + 2])
             {   //直道
                 if(As_Mark == 1){
                     Co_Mark ++;}
                 else{
                     As_Mark = 1;
                     Co_Mark = 0;}
-                left_black[jh] = jw_left;
-                right_black[jh] = jw_right; 
+                img[jh][middleline[jh]] = !img[jh][middleline[jh]];
             } 
 
-            middleline[jh] = (jw_left + jw_right) >> 1;            
+     
         }
     }
 
@@ -769,10 +778,10 @@ void yl_Search_line()
 
 void FullLine(Site_t begin, Site_t end, int8 line[])
 {
-    int8 step = (begin.y - end.y) / (beginy.x - end. x);
+    int8 step = (begin.y - end.y) / (begin.x - end. x);
     for(uint8 tem_i = end.y + 1; tem_i > begin.y; tem_i--  ){
         line[tem_i] = line[tem_i + 1] + step;
-        if(line[tem+i] > CAMERA_W || line[tem + i] < 0)
+        if(line[tem_i] > CAMERA_W || line[tem_i] < 0)
         {
             break;
         }
@@ -784,64 +793,67 @@ uint8 IsStraight(int8 line[])
     return ((line[50] + line[35] - line[20] << 1)  < 3);
 }
 
-void FullBend(int8 jh_ma, int8 direction)
+void FullBend(int8 jh_ma, int8 direction, int8 jh_begin)
 {
-    uint jw, jh, jh_left, jh_right;
-    if(direction == 1) //left
+    uint8 jw, jh, jh_left, jh_right;
+    if(direction == 1) //right
     {
-        for(jh = jh_ma; !img[jh][CAMERA - 1] && jh < CAMERA_H - 1; jh ++);
-        if(img[jh][CAMERA - 1])
+        for(jh = jh_ma; !img[jh][CAMERA_W - 1] && jh < CAMERA_H - 1; jh ++);
+        if(img[jh][CAMERA_W - 1])
         {
-            for(jw = CAMERA - 1; jw > middleline[jh_ma]; jw --)
+            for(jw = CAMERA_W - 1; jw >  middleline[CAMERA_H - 1]; jw --)
             {
                 for(jh_left = jh; jh_left > 1; jh_left --)
                 {
                     if(img[jh_left][jw] && img[jh_left - 1][jw]) break;
                 }
 
-                for(jh_right = jh; jh_right < CAMERA - 2; jh_right ++)
+                for(jh_right = jh; jh_right < CAMERA_H - 2; jh_right ++)
                 {
                     if(img[jh_right][jw] && img[jh_right - 1][jw]) break;
                 }
 
-                if((jh_left + jh_right) >> 1 < jh_ma)
+                if(jh_right == CAMERA_H - 2)//(jh_left + jh_right) >> 1 < jh_ma)
                 {
-                    Site_t begin = {jw + 1, jh}, end = {middleline[jh_ma], jh_ma};
-                    FullLine(begin, end, middleline);
+                    // Site_t begin = {jw + 1, jh}, end = {middleline[jh_begin], jh_begin};
+                    // FullLine(begin, end, middleline);
                     break;
                 }
                 else 
                 {
-                    jh = jh_left + jh_right) >> 1;
+                    jh = (jh_left + jh_right) >> 1;
+                    img[jh][jw] = !img[jh][jw];
                 }
             }
+        }
     }
-    else if(direction == -1) //right
+    else if(direction == -1) //left
     {
         for(jh = jh_ma; !img[jh][0] && jh < CAMERA_H - 1; jh ++);
         if(img[jh][0])
         {
-            for(jw = 0; jw < middleline[jh_ma]; jw ++)
+            for(jw = 0; jw < middleline[CAMERA_H - 1]; jw ++)
             {
                 for(jh_left = jh; jh_left > 1; jh_left --)
                 {
-                    if(img[jh_left][jw] && img[jh_left - 1][jw]) break;
+                    if(img[jh_left][jw] && !img[jh_left - 1][jw]) break;
                 }
 
-                for(jh_right = jh; jh_right < CAMERA - 2; jh_right ++)
+                for(jh_right = jh; jh_right < CAMERA_H - 2; jh_right ++)
                 {
-                    if(img[jh_right][jw] && img[jh_right - 1][jw]) break;
+                    if(!img[jh_right][jw] && img[jh_right - 1][jw]) break;
                 }
 
-                if((jh_left + jh_right) >> 1 < jh_ma)
+                if(jh_right == CAMERA_H - 2)//(jh_left + jh_right) >> 1 < jh_ma)
                 {
-                    Site_t begin = {jw + 1, jh}, end = {middleline[jh_ma], jh_ma};
-                    FullLine(begin, end, middleline);
+                    // Site_t begin = {jw + 1, jh}, end = {middleline[jh_ma], jh_ma};
+                    // FullLine(begin, end, middleline);
                     break;
                 }
-                else
+                else 
                 {
-                     jh = (jh_left + jh_right) >> 1;
+                    jh = (jh_left + jh_right) >> 1;
+                    img[jh][jw] = !img[jh][jw];
                 }
             }
         }

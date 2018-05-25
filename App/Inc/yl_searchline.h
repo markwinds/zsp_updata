@@ -14,6 +14,7 @@ enum road_condition{
 
 extern enum road_condition road_mark;
 extern int8 state_line[5];
+extern int8 Ma_Mark;
 extern int8 is_rightcircul_flag;
 extern int8 is_leftcircul_flag;
 
@@ -28,7 +29,7 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent);
 
 void FullLine(Site_t, Site_t, int8 line[]);
 uint8 IsStraight(int8 line[]);
-void FullBend(int8, int8);
+void FullBend(int8, int8, int8);
 
 #endif
 

@@ -103,7 +103,7 @@ void DcdMode()
 {
 	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 	//temp_s[6] = Find_slope();
-	Search_line(); //找线
+	yl_Search_line();//Search_line(); //找线
 	Negation();
 	// img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
@@ -116,7 +116,7 @@ void DcdMode()
 		// if(state_line[0] == 0)Judge_circul();
 		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
-		LCD_numf(tem_site_str[5], (double)Increase, GREEN, BLUE);
+		LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
 		LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
 		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
 	}
