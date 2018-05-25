@@ -5,7 +5,7 @@
 Screen_Data screen_data[] = {
 	
 	{"M_KP", &(motor_pid.P), 0.1, 1},
-	{"M_KI", &(motor_pid.I), 0.001, 2},
+	{"M_KI", &(motor_pid.I), 0.01, 2},
 	{"M_KD", &(motor_pid.D), 0.01, 3},
 	
 	{"enM", &(motor_go), 99, 0}, //使能电机
@@ -19,8 +19,8 @@ Screen_Data screen_data[] = {
 	{"de_pic", &(delete_picture), 1, 0},
 	{"se_pic", &(read_all_picture), 1, 0},
 
-	{"S_KP", &(steer_pid.P), 0.01, 5},
-	{"S_KD", &(steer_pid.D), 0.1, 6},
+	{"S_KP", &(steer_pid.P), 2, 5},
+	{"S_KD", &(steer_pid.D), 1, 6},
 	{"outxy",&(out_xy),2,0},
 
 	{"end", &(temp_s[9]), 1202, 0}

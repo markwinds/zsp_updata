@@ -10,7 +10,7 @@
 #define DEGREE_OF_ERROR  5       //当行与行之间的中心线差值超过此值时此数据将会被舍弃
 #define CLOSE_TO_EDGE    5       //中心线接近图像的边缘，结束扫描                             这个值在中线判别更改后也要更改
 
-#define CAMERA_HARDWARE_ERROR  -4          //摄像头杆偏离中线导致的硬件偏差,右偏为正
+#define CAMERA_HARDWARE_ERROR  -3          //摄像头杆偏离中线导致的硬件偏差,右偏为正
 #define TRAPEZOID_CORRECT   0.15     //梯形矫正 此值越大矫正力度越大
 #define ROAD_WIDE	        39    //路宽的一半
 //#define DIP_CORRECT         1.414   //倾角矫正
@@ -37,6 +37,7 @@ extern int isisland_count;    //环岛距离计数
 extern int8 vaild_mark;
 
 extern float temp_s[10];
+extern float offset_excel[60][80];
 
 //extern int rode_wide[CAMERA_H];
 

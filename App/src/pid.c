@@ -77,7 +77,10 @@ int Steer_Pid(PID* tem_P)
 	// {
 	// 	average_offset[0] = STEER_KP * offset_p + STEER_KI * offset_i + STEER_KD * offset_d;
 	// }
-	average_offset[0] = cor_sp * tem_P->P * average_offset[1] + tem_P->D * (average_offset[1] - average_offset[2])/20;
+	//average_offset[0] = cor_sp * tem_P->P * average_offset[1] + tem_P->D * (average_offset[1] - average_offset[2])/20;
+	//average_offset[0] = tem_P->P * average_offset[1] + tem_P->D * (average_offset[1] - average_offset[2]);
+	if(abs(average_offset[1])<13) average_offset[0] = tem_P->P * average_offset[1]/20.0;
+	average_offset[0] = tem_P->P * average_offset[1]/10.0;
 	if (average_offset[0] > DEGREE_MAX) average_offset[0] = DEGREE_MAX;
 	if (average_offset[0] < -DEGREE_MAX) average_offset[0] = -DEGREE_MAX;
 	return average_offset[0];
