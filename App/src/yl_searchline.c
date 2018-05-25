@@ -516,6 +516,14 @@ int8 Count_black(int16 jh, int8 start, int8 end, int8 extent)
     return end - start + 1;
 }
 #endif
+
+/*!
+ *  @brief      搜线主体
+ *  @since      v5.0
+ *  @introducation  
+ *  @update
+ *      <2018.5.25.yl> 初步完成弯道补线算法
+ */
 int8 Ma_Mark;
 // 描述这场图像状态
 // 0:全丟线 1:直道 2:左弯道 3.右弯道 4:十字 6:左圆环 9:右圆环
@@ -529,7 +537,7 @@ int8 left_land_flag = 0;
 void yl_Search_line()
 {   
     //数据初始化
-	
+
         int16 left_black_before = CAMERA_W / 2;              //上一次左边扫描到的黑线位置
         int16 left_next_line = 0;                            //判断扫描是否进入了新的一行
         int16 left_find_flag = 0;                            //左边是否找到黑线标志												                
@@ -563,7 +571,7 @@ void yl_Search_line()
         int8 begin;
 
         jh = LINE_NUM-1;
-    
+
     //
 
 
@@ -604,7 +612,7 @@ void yl_Search_line()
             middleline[jh] = (jw_left + jw_right)>>1;
         }
         else if(jw_left == -1 && jw_right == CAMERA_W)
-        {   //两边丟线,十字复判
+        {   //两边丟线,十字复判,丟线行用上一场数据
 
         }
         else if(jw_right == CAMERA_W || jw_left == -1)
@@ -636,6 +644,7 @@ void yl_Search_line()
         }
     }
 
+    //********************************************************************************
     //正常扫描从56行开始,隔两行扫往0扫
     for(; jh>=0; jh -=2)
     {
@@ -643,10 +652,12 @@ void yl_Search_line()
         {   //从上一行的中点开始扫,如果是黑点,则扫完退出
             if(left_black[jh + 6] == -1){
                 //提早较多扫完，且之前单边丟线,弯道补线
+                vaild_mark = begin;
                 Ma_Mark = 2;
                 FullBend(jh, -1, begin);
             }
-            vaild_mark = jh; //停止搜索,记录终止行
+            else
+                vaild_mark = jh; //停止搜索,记录终止行
             break;
         }
 
@@ -671,28 +682,14 @@ void yl_Search_line()
         if(jw_left == -1 && jw_right == CAMERA_W)
         {   //两行丟线
             if(Ma_Mark == 6 || Ma_Mark == 9)
-            {   //直接用上一场的数据
+            {   //全部直接用上一场的数据
                 break;
             }
+            //仅丟线行用上一场数据
         }
-        // else if(jw_left == -1 && jh > 10)
-        // {   //左丟线
-        //     As_Mark = 2; //一判
-        // }
-        // else if(jw_right == CAMERA_W && jh > 10)
-        // {   //右丟线
-        //     As_Mark = 1; //一判
-        // }
-        // else if(jw_left >= -1 && jw_right <= CAMERA_W && jw_right > jw_left )
-        // {   //正常搜到
-        //     left_black[jh] = jw_left; 
-        //     right_black[jh] = jw_right;
-        //     middleline = (jw_left + jw_right) >> 1;
-        // }
         else
         {
-            
-            
+             
             if(jw_right - jw_left > right_black[jh + 2] - left_black[jh + 2])
             {   //圆环判断,如果赛道一边为直线,另一边先丟线,后出现赛道变宽,再丟线,初判成圆环.
                 if(right_black[jh + 2] < jw_right)
@@ -710,14 +707,6 @@ void yl_Search_line()
                     }
                 }
             }
-            
-            left_black[jh] = jw_left;
-            right_black[jh] = jw_right; 
-            middleline[jh] = (jw_left + jw_right) >> 1;
-
-            left_black[jh + 1] = jw_left;      
-            right_black[jh + 1] = jw_right; 
-            middleline[jh + 1] = (jw_left + jw_right) >> 1;
 
             if(jw_left < 0)
             {   //左丢线,记录丟线宽度
@@ -736,8 +725,8 @@ void yl_Search_line()
                         left_land_flag = 3;
                     }
                 }
-
-
+                left_black[jh] = jw_left + right_black[jh] - jw_right;
+                right_black[jh] = jw_right; 
             }
             else if(jw_right == CAMERA_W)
             {   //右丟线,记录丟线宽度
@@ -756,8 +745,8 @@ void yl_Search_line()
                         right_land_flag = 3;
                     }              
                 }
-
-
+                right_black[jh] = left_black[jh] - jw_left +jw_right;                 
+                left_black[jh] = jw_left;
             }
             else if(jw_left >=0 && jw_right < CAMERA_W && jw_right - jw_left > 10 &&
              jw_right - jw_left <= right_black[jh + 2] - left_black[jh + 2])
@@ -767,17 +756,33 @@ void yl_Search_line()
                 else{
                     As_Mark = 1;
                     Co_Mark = 0;}
-                img[jh][middleline[jh]] = !img[jh][middleline[jh]];
-            } 
+                left_black[jh] = jw_left;
+                right_black[jh] = jw_right; 
 
-     
+            } 
+            //算中线
+            middleline[jh] = (jw_left + jw_right) >> 1;
+            if(middleline[jh] < 0) middleline[jh] = 0;
+            else if(middleline[jh] > CAMERA_W - 1) middleline[jh] = CAMERA_W - 1;
+            img[jh][middleline[jh]] = !img[jh][middleline[jh]];             
+            //补下一条中线
+            left_black[jh + 1] = (jw_left < 0)? 0:jw_left;      
+            right_black[jh + 1] = (jw_right > (CAMERA_W - 1))? (CAMERA_W - 1):jw_right; 
+            middleline[jh + 1] = (jw_left + jw_right) >> 1;
+            img[jh + 1][middleline[jh + 1]] = !img[jh + 1][middleline[jh + 1]];            
         }
     }
 
 }
 
-void FullLine(Site_t begin, Site_t end, int8 line[])
-{
+/*!
+ *  @brief      两点斜率补线函数
+ *  @since      v5.0
+ *  @introducation  begin是高点,end是低点,line是要补线的数组.
+ *                  begin,end都是坐标类型
+ */
+void FullLine(Site_t begin, Site_t end, int16 line[])
+{   
     int8 step = (begin.y - end.y) / (begin.x - end. x);
     for(uint8 tem_i = end.y + 1; tem_i > begin.y; tem_i--  ){
         line[tem_i] = line[tem_i + 1] + step;
@@ -788,11 +793,22 @@ void FullLine(Site_t begin, Site_t end, int8 line[])
     }
 }
 
-uint8 IsStraight(int8 line[])
+/*!
+ *  @brief      检查一条线是否是直线
+ *  @since      v5.0
+ *  @introducation  检查是否时在[20,50]范围内是直线
+ */
+uint8 IsStraight(int16 line[])
 {
     return ((line[50] + line[35] - line[20] << 1)  < 3);
 }
 
+/*!
+ *  @brief      弯道布线
+ *  @since      v5.0
+ *  @introducation  jh_ma是丟线后的一点,direction为-1表示左弯,1表示右弯
+ *                  jh_begin是丟线起始点
+ */
 void FullBend(int8 jh_ma, int8 direction, int8 jh_begin)
 {
     uint8 jw, jh, jh_left, jh_right;
