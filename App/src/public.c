@@ -188,7 +188,7 @@ void Controll()
 	}
 	else if(lcd_mode == IMG_MODE)
 	{
-		if (total_distance < 1000)
+		if (total_distance < 1000 && abs(motor_speed) > 7)
 		{
 			cmotor = &motor_pid; //电机
 		}

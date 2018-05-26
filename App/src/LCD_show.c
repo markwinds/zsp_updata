@@ -85,7 +85,7 @@ void PORTD_IRQHandler()
 	flag = PORTD_ISFR;
 	PORTD_ISFR = ~0; //清中断标志位
 
-	DELAY_MS(20);
+	DELAY_MS(10);
 
 	if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13)) //中键按下
 	{
@@ -151,7 +151,7 @@ void Open_UI()
 			}
 		}
 		key_on = 0;
-		DELAY_MS(200); //消抖
+		DELAY_MS(400); //消抖
 		enable_irq(PORTD_IRQn);
 	}
 }
