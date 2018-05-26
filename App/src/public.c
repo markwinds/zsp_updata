@@ -121,7 +121,7 @@ void DcdMode()
 		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
 		LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
-		LCD_numf(tem_site_data[4], (float)vaild_mark, GREEN, BLUE);
+		LCD_numf(tem_site_data[4], (float)Ma_Offset, GREEN, BLUE);
 		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
 	}
 
@@ -199,7 +199,7 @@ void Controll()
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
-		csteer = &steer_pid;
+		csteer = NULL;//s&steer_pid;
 	}
 	else if(lcd_mode == STOP_MODE)
 	{

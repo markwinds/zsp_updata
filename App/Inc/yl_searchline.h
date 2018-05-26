@@ -12,20 +12,25 @@ enum road_condition{
     cross,
     rest
 };
-
 extern enum road_condition road_mark;
 extern int8 state_line[5];
 extern int8 Ma_Mark;
 extern int8 is_rightcircul_flag;
 extern int8 is_leftcircul_flag;
 
-extern int8 Ma_Offset;
-extern int8 Be_Offset;
+extern float Ma_Offset;
+extern float Be_Offset;
+extern float La_Offset;
 
 int8 Judge_block(int16 *jh, uint8 *s_num);
 void Judge_body();
 void Judge_circul();
+#ifdef OLD
 void Get_error_cal(float*, int*);
+#else
+void Get_error_cal(float*);
+#endif 
+
 void Get_middle_line();
 void Goin_rightcircul();
 void Goin_leftcircul();

@@ -512,7 +512,7 @@ void Search_line()
 	// 	}
 	// }
 	//为了补线重新加了函数
-	Get_error_cal(&offset, &count);
+	//Get_error_cal(&offset, &count);
 
 	/*---------------更新偏差度队列---------------------*/
 	for (i = 10; i > 1; i--)

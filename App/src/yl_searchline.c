@@ -376,9 +376,9 @@ void Goin_leftcircul()
 
 //这个是原来偏差函数的基础上，添加了补线后偏差算法
 //<2018.5.18.yl>加入了左圆补线
+#ifdef OLD
 void Get_error_cal(float *offset, int *count)
 {
-#if 0
     int i;
     float qoff = 1;
     if (is_rightcircul_flag == 1)
@@ -411,14 +411,17 @@ void Get_error_cal(float *offset, int *count)
             }
         }
 #elif 1
+void Get_error_cal(float *offset)
+{
     float qoff = 0;
+    *offset = 0;
     for (uint8 i = LINE_NUM - 1; i >= vaild_mark; i--)
     {
         qoff += 0.035;
         *offset = *offset + qoff * (float)(middleline[i] - CAMERA_W / 2); //offset是补偿，用来描述整体赛道的偏向,<0偏左
-        (*count)++;   
         img[i][middleline[i]] = !img[i][middleline[i]];
     }
+    *offset /= (LINE_NUM - vaild_mark);
 #endif
 }
 
@@ -548,8 +551,9 @@ int16 Co_Mark;
 int8 Ne_Mark;
 //左右圆环标志
 
-int8 Ma_Offset = 0;
-int8 Be_Offset = 0;
+float Ma_Offset = 0;
+float Be_Offset = 0;
+float La_Offset = 0;
 
 int8 right_land_flag = 0;
 int8 left_land_flag = 0;
@@ -563,6 +567,7 @@ void yl_Search_line()
         int16 jw_right;  
         int16 jh;                                            //行参数        
 
+        Ma_Mark = 1;
         As_Mark = 1;
         Ne_Mark = 1;
         Co_Mark = 0;
@@ -675,13 +680,13 @@ void yl_Search_line()
     {
         if(!img[jh][middleline[jh + 2]])
         {   //从上一行的中点开始扫,如果是黑点,则扫完退出
-            if(jh < 50 && left_black[jh + 6] == 0 && begin_s && Ma_Mark == 1){
+            if(jh < 50 && left_black[jh + 6] == 0 && begin_s && Ma_Mark != 4){
                 //提早较多扫完，且之前单边丟线,弯道补线
                 vaild_mark = begin_s;
                 Ma_Mark = 2;
                 FullBend(jh, -1, begin_s);
             }
-            else if(jh < 50 && right_black[jh + 6] == CAMERA_W - 1 && begin_s && Ma_Mark == 1){
+            else if(jh < 50 && right_black[jh + 6] == CAMERA_W - 1 && begin_s && Ma_Mark != 4){
                 //提早较多扫完，且之前单边丟线,弯道补线
                 vaild_mark = begin_s;
                 Ma_Mark = 3;
@@ -748,10 +753,18 @@ void yl_Search_line()
 
             if(jw_left < 0)
             {   //左丢线,记录丟线宽度
+                if(Ma_Mark == 4)
+                {
+                    jw_right = CAMERA_W - 1;
+                }
                 Ne_Mark = 2;
             }
             else if(jw_right == CAMERA_W)
             {   //右丟线,记录丟线宽度
+                if(Ma_Mark == 4)
+                {
+                    jw_left = -1;
+                }
                 Ne_Mark = 3;
             }
             else if(jw_left >=0 && jw_right < CAMERA_W && jw_right - jw_left > 10 &&
@@ -768,9 +781,13 @@ void yl_Search_line()
                     Site_t begin = {(jw_left + jw_right) >> 1, jh},end = {middleline[end_i], end_i};  
                     FullLine(begin, end, middleline);  
                 }
+                else if(Ma_Mark == 4)
+                {
+                    jw_right = CAMERA_W - 1;
+                    jw_left = -1;
+                }
             } 
   
-
             //算中线
             left_black[jh] = (jw_left < 0)? 0:jw_left;      
             right_black[jh] = (jw_right > (CAMERA_W - 1))? (CAMERA_W - 1):jw_right; 
@@ -781,7 +798,6 @@ void yl_Search_line()
             left_black[jh - 1] = left_black[jh];   
             right_black[jh - 1] = right_black[jh];
             middleline[jh - 1] = (middleline[jh]);   
-
 
         }
 
@@ -835,9 +851,7 @@ void yl_Search_line()
             Co_Mark = 0;
         }      
     }
-    float offset = 0;
-    int count = 0;
-    Get_error_cal(&offset, &count);
+    Get_error_cal(&Ma_Offset);
 }
 
 /*!

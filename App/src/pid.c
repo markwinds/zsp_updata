@@ -20,6 +20,7 @@ PID motor_pid = {0, 0, 0};
 int32 iError = 0; //当前误差
 int32 LastError = 0; //当前误差
 int32 PrevError = 0;
+int16 tem_pid;
 int Increase = 0;
 void Control_core()
 {
@@ -58,7 +59,7 @@ void Control_core()
 	}
 }
 
-
+#ifdef OLD
 int Steer_Pid(PID* tem_P)
 {
 	//for (i = 1; i < 6; i++)
@@ -82,7 +83,17 @@ int Steer_Pid(PID* tem_P)
 	if (average_offset[0] < -DEGREE_MAX) average_offset[0] = -DEGREE_MAX;
 	return average_offset[0];
 }
+#else
+int Steer_Pid(PID* tem_P)
+{
 
+	tem_pid = tem_P->P * Ma_Offset + tem_P->D * (Ma_Offset - La_Offset);
+	if (tem_pid > DEGREE_MAX) tem_pid = DEGREE_MAX;
+	if (tem_pid < -DEGREE_MAX) tem_pid = -DEGREE_MAX;
+	La_Offset = Ma_Offset;
+	return tem_pid;
+}
+#endif
 //增量式PID 电机 控制
 void PID_Realize(PID* tem_P,int32 ActualSpeed, int32 SetSpeed)
 {
@@ -90,7 +101,7 @@ void PID_Realize(PID* tem_P,int32 ActualSpeed, int32 SetSpeed)
 	//最后得出的实际增量
 	ac_quad = ActualSpeed;
 	iError = SetSpeed - ActualSpeed; //计算当前误差
-	//加速度 ********************强制装换数据类型 防止数据出错*********************
+	//加速度 ********************强制转换数据类型 防止数据出错*********************
 	Increase += (int)(tem_P->P * (iError - LastError) + tem_P->I * iError + tem_P->D * (iError - 2 * LastError + PrevError));
 	PrevError = LastError;	   //更新前次误差
 	LastError = iError;		   //更新上次误差
