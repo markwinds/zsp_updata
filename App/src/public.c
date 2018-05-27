@@ -88,7 +88,9 @@ void init_Sys()
 	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler); //设置 PORTA 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);   //设置 DMA0 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(PORTD_VECTORn, PORTD_IRQHandler); //ui所需中断的初始化
-
+        
+	Co_Steer[0].D = 5;
+	
 	camera_get_img(); //相机获取第一帧图像
 }
 
@@ -199,7 +201,7 @@ void Controll()
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
-		csteer = NULL;//s&steer_pid;
+		csteer = &Co_Steer[0];
 	}
 	else if(lcd_mode == STOP_MODE)
 	{

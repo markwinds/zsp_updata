@@ -9,7 +9,7 @@ Screen_Data screen_data[] = {
 	{"M_KD", &(motor_pid.D), 0.01, 3},
 	
 	{"enM", &(motor_go), 99, 0}, //使能电机
-	{"speed", &(motor_speed), 10, 4},
+	{"speed", &(motor_speed), 10, 0},
 
 	{"length", &(total_distance), 500, 0},
 
@@ -21,7 +21,8 @@ Screen_Data screen_data[] = {
 
 	{"S_KP", &(steer_pid.P), 0.01, 5},
 	{"S_KD", &(steer_pid.D), 0.1, 6},
-
+	{"Co_KP", &(Co_Steer[0].P), 0.1, 4},
+	{"Co_KD", &(Co_Steer[0].D), 0.1, 0},
 	{"end", &(temp_s[9]), 1202, 0}
 	
 };
