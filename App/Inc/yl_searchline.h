@@ -18,6 +18,9 @@ extern int8 Ma_Mark;
 extern int8 is_rightcircul_flag;
 extern int8 is_leftcircul_flag;
 
+extern int8 left_virtual[CAMERA_H];
+extern int8 right_virtual[CAMERA_H];
+
 extern float Ma_Offset;
 extern float Be_Offset;
 extern float La_Offset;

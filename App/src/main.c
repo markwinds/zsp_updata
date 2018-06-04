@@ -43,6 +43,7 @@ void main(void)
 		{
 			DcdMode(); //显示模式下，显示赛道
 		}
+		
 		else if (lcd_mode == PICTURE_MODE)
 		{
 			read_Picture_Array(); //falsh!
