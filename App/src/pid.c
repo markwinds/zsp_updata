@@ -14,7 +14,7 @@ double cor_sp = 1;
 
 Speed_mode car_mode = CHECH;
 float steer_engine_degree = 0;              //舵机的偏转角度，可正可负，正右负左
-float motor_speed = 100;
+float motor_speed = 0;
 PID steer_pid = {0, 0, 0};
 PID motor_pid = {0, 0, 0};
 int32 iError = 0; //当前误差
@@ -28,8 +28,8 @@ void Control_core()
 	if (LOW_SPEED == car_mode)//低速模式
 	{
 		steer_engine_degree = average_offset[1]*4.5;
-		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
-		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
+		if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
+		if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
 		motor_speed = 100;
 	}
 
@@ -37,8 +37,8 @@ void Control_core()
 	{
 		//Steer_Pid();
 		steer_engine_degree = average_offset[0];
-		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
-		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
+		if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
+		if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
 		//motor_speed = 0;
 	}	
 
@@ -46,8 +46,8 @@ void Control_core()
 	{
 		//Steer_Pid();
 		steer_engine_degree = average_offset[0];
-		if (steer_engine_degree > DEGREE_MAX) steer_engine_degree = DEGREE_MAX;
-		if (steer_engine_degree < -DEGREE_MAX) steer_engine_degree = -DEGREE_MAX;
+		if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
+		if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
 		//if (total_distance > 1000)
 		//{
 		//	motor_speed = 0;
@@ -88,8 +88,8 @@ int Steer_Pid(PID* tem_P)
 {
 
 	tem_pid = tem_P->P * Ma_Offset + tem_P->D * (Ma_Offset - La_Offset);
-	if (tem_pid > DEGREE_MAX) tem_pid = DEGREE_MAX;
-	if (tem_pid < -DEGREE_MAX) tem_pid = -DEGREE_MAX;
+	if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
+	if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
 	La_Offset = Ma_Offset;
 	return tem_pid;
 }

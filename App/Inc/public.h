@@ -11,6 +11,8 @@ extern Size_t imgsize;
 //extern int _temp;
 extern Site_t line_site;
 
+extern float tem_st;
+
 extern void init_Sys();
 extern void do_Sys();
 void DcdMode();

@@ -110,8 +110,9 @@ void DcdMode()
 {
 	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 	//temp_s[6] = Find_slope();
+	
 	yl_Search_line();//Search_line(); //找线
-
+    LCD_numf(tem_site_str[5], (double)1, GREEN, BLUE);
 	// img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
 	if (is_show_line != 4)
@@ -127,9 +128,10 @@ void DcdMode()
 		// if(state_line[0] == 0)Judge_circul();
 		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
-		LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
+		// LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
+		// LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);		
 		LCD_numf(tem_site_data[4], (float)Ma_Offset, GREEN, BLUE);
-		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
+
 	}
 
 	/*----------彩色显示边线,还有显示网格-----------*/
@@ -142,20 +144,20 @@ void DcdMode()
 		int i;
 		for (i = vaild_mark; i < 60; i++)
 		{
-			line_site.x = left_black[i];
+			line_site.x = left_virtual[i];
 			line_site.y = i;
-			if (left_black[i] == -3)
+			if (left_virtual[i] == -3)
 				break;
-			if (left_black[i] >= 0 && left_black[i] <= CAMERA_W - 1)
+			if (left_virtual[i] >= 0 && left_virtual[i] <= CAMERA_W - 1)
 				LCD_point(line_site, RED);
 		}
 		for (i = vaild_mark; i < 60; i++)
 		{
-			line_site.x = right_black[i];
+			line_site.x = right_virtual[i];
 			line_site.y = i;
-			if (right_black[i] == -3)
+			if (right_virtual[i] == -3)
 				break;
-			if (right_black[i] >= 0 && left_black[i] <= CAMERA_W - 1)
+			if (right_virtual[i] >= 0 && right_virtual[i] <= CAMERA_W - 1)
 				LCD_point(line_site, BLUE);
 		}
 	}
@@ -183,7 +185,7 @@ void Controll()
 			Con_Motor(0);
 		}
 		csteer = NULL;
-		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
+		ftm_pwm_duty(FTM0, FTM_CH6, 430); //舵机回中
 	}
 	else if (lcd_mode == PICTURE_MODE)
 	{
@@ -191,7 +193,7 @@ void Controll()
 		ClearPid();
 		Con_Motor(0);
 		csteer = NULL;
-		ftm_pwm_duty(FTM0, FTM_CH6, 380);
+		ftm_pwm_duty(FTM0, FTM_CH6, 430);
 	}
 	else if(lcd_mode == IMG_MODE)
 	{
@@ -206,7 +208,7 @@ void Controll()
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
-		csteer = &Co_Steer[0];
+		csteer = &Co_Steer[3];
 	}
 	else if(lcd_mode == STOP_MODE)
 	{

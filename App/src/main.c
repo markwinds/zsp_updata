@@ -2,6 +2,7 @@
 #include "common.h"
 #include "include.h"
 
+float tem_st = 430;
 Screen_Data screen_data[] = {
 	
 	{"M_KP", &(motor_pid.P), 0.1, 1},

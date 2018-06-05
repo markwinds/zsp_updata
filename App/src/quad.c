@@ -33,7 +33,7 @@ void PIT0_IRQHandler(void)
     }
     if(csteer)
     {
-        ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)Steer_Pid( csteer ));
+        ftm_pwm_duty(FTM0, FTM_CH6, 430 + (int)Steer_Pid( csteer ));
     }
     quad_last = quad_val;    
 }
