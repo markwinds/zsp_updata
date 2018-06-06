@@ -29,7 +29,7 @@ void Control_core()
 	{
 		steer_engine_degree = average_offset[1]*4.5;
 		if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
-		if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
+		if (steer_engine_degree < L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
 		motor_speed = 100;
 	}
 
@@ -38,7 +38,7 @@ void Control_core()
 		//Steer_Pid();
 		steer_engine_degree = average_offset[0];
 		if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
-		if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
+		if (steer_engine_degree < L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
 		//motor_speed = 0;
 	}	
 
@@ -47,7 +47,7 @@ void Control_core()
 		//Steer_Pid();
 		steer_engine_degree = average_offset[0];
 		if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
-		if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
+		if (steer_engine_degree < L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
 		//if (total_distance > 1000)
 		//{
 		//	motor_speed = 0;
@@ -86,10 +86,10 @@ int Steer_Pid(PID* tem_P)
 #else
 int Steer_Pid(PID* tem_P)
 {
-
-	tem_pid = tem_P->P * Ma_Offset + tem_P->D * (Ma_Offset - La_Offset);
-	if (steer_engine_degree > R_DEGREE_MAX) steer_engine_degree = R_DEGREE_MAX;
-	if (steer_engine_degree < -L_DEGREE_MAX) steer_engine_degree = -L_DEGREE_MAX;
+	float tp = (abs(Ma_Offset) + tem_P->P) / 2;
+	tem_pid = tp * Ma_Offset + tem_P->D * (Ma_Offset - La_Offset);
+	if (tem_pid > R_DEGREE_MAX) tem_pid = R_DEGREE_MAX;
+	if (tem_pid < L_DEGREE_MAX) tem_pid = L_DEGREE_MAX;
 	La_Offset = Ma_Offset;
 	return tem_pid;
 }

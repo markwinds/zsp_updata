@@ -419,8 +419,10 @@ void Get_error_cal(float *offset)
     {
         qoff += 0.035;
         *offset = *offset + qoff * (float)(middleline[i] - CAMERA_W / 2); //offset是补偿，用来描述整体赛道的偏向,<0偏左
+
         img[i][middleline[i]] = !img[i][middleline[i]];
     }
+    //LCD_numf(tem_site_str[5], (double)LINE_NUM - vaild_mark, GREEN, BLUE);    
     *offset /= (LINE_NUM - vaild_mark);
     if(Ma_Mark == 2)
     {
@@ -627,7 +629,6 @@ void yl_Search_line()
 
     //
 
-    LCD_numf(tem_site_str[5], (double)2, GREEN, BLUE);
     //先扫3行______从59到57
     for(;jh > LINE_NUM - 4; jh--)
     {
@@ -705,7 +706,6 @@ void yl_Search_line()
         }
     }
 
-    LCD_numf(tem_site_str[5], (double)3, GREEN, BLUE);
     //********************************************************************************
     //正常扫描______从56行开始,隔两行扫往0扫
     for(; jh>=2; jh -=2)
@@ -819,7 +819,7 @@ void yl_Search_line()
             vaild_mark = jh;
             break;
         }
-        else if(Lo_Mark == 4 && min_road > 30)
+        else if(Lo_Mark == 2 && min_road > 30)
         {
             min_road --;
             Lo_Mark = 1;
@@ -931,7 +931,6 @@ void yl_Search_line()
     {   
         Lo_End = vaild_mark + 2;
     }    
-    LCD_numf(tem_site_str[5], 4, GREEN, BLUE);
     //补线
     if(Lo_Start > Lo_End)
     {
@@ -941,34 +940,36 @@ void yl_Search_line()
         begin.x = right_virtual[Lo_Start];
         end.x = right_virtual[Lo_End];
         FullLine(end, begin, right_virtual);
-        for(jh = Lo_Start; jh <= Lo_End; jh--)
+        for(jh = Lo_Start; jh >= Lo_End; jh--)
         {
             middleline[jh] = (left_virtual[jh] + right_virtual[jh]) >> 1;
             if(middleline[jh] < 0) middleline[jh] = 0;
             else if(middleline[jh] > CAMERA_W - 1) middleline[jh] = CAMERA_W - 1;                
         }
     }
-    LCD_numf(tem_site_str[5], (double)5, GREEN, BLUE);
     tem_m = Lo_End - vaild_mark;
-    // if(vaild_mark < 20)
-    // {
-    //     Ma_Mark = 1;
-    // }
-    // else if(Lo_End > 5 && tem_m < 5 && Lo_Start - Lo_End > 8)
-    // {
-    //     if(left_black[Lo_Start - 2] == 0 && left_black[Lo_Start - 4] == 0 && 
-    //         left_black[Lo_End + 2] == 0 && left_black[Lo_End + 4] == 0)
-    //     {
-    //         Ma_Mark = 2;
-    //         Be_Offset = BlockOffset(Lo_End,-1);
-    //     }
-    //     else if(right_black[Lo_Start - 2] == CAMERA_W - 1 && right_black[Lo_Start - 4] == CAMERA_W - 1 && 
-    //         right_black[Lo_End + 2] == CAMERA_W - 1 && right_black[Lo_End + 4] == CAMERA_W - 1)
-    //     {
-    //         Ma_Mark = 3;
-    //         Be_Offset = BlockOffset(Lo_End,1);
-    //     }
-    // }
+    if(vaild_mark < 20)
+    {
+        Ma_Mark = 1;
+    }
+    else if(Lo_End > 5 && tem_m < 5 && Lo_Start - Lo_End > 8)
+    {
+        if(left_black[Lo_Start - 2] == 0 && left_black[Lo_Start - 4] == 0 && 
+            left_black[Lo_End + 2] == 0 && left_black[Lo_End + 4] == 0)
+        {
+            Ma_Mark = 2;
+        }
+        else if(right_black[Lo_Start - 2] == CAMERA_W - 1 && right_black[Lo_Start - 4] == CAMERA_W - 1 && 
+            right_black[Lo_End + 2] == CAMERA_W - 1 && right_black[Lo_End + 4] == CAMERA_W - 1)
+        {
+            Ma_Mark = 3;
+        }
+    }
+    if(Ma_Mark == 2 || Ma_Mark == 3)
+    {
+        Be_Offset = Lo_End;  
+        Be_Offset = Lo_End;               
+    }
     Get_error_cal(&Ma_Offset);
 }
 
@@ -980,8 +981,8 @@ void yl_Search_line()
  */
 void FullLine(Site_t begin, Site_t end, int8 line[])
 { 
-    LCD_point(begin,GREEN);  
-    LCD_point(end,GREEN);
+    // LCD_point(begin,GREEN);  
+    // LCD_point(end,GREEN);
     float f_step;
     float base = (float)end.x;  
     int8 step = (end.y - begin.y);

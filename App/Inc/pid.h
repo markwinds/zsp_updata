@@ -4,7 +4,7 @@
 #include "include.h"
 #include "common.h"
 
-#define	R_DEGREE_MAX  75     //舵机最大偏角
+#define	R_DEGREE_MAX  100     //舵机最大偏角
 #define L_DEGREE_MAX -100
 #define M_QUITE_AREA  7     //中速偏差的静态区，将对数据使用静态处理
 #define M_BACK1       3.5      //脱离中线的速度为1挡时

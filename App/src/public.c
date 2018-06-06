@@ -74,11 +74,18 @@ void do_Sys()
  ***/
 void init_Sys()
 {
+
+	NVIC_SetPriorityGrouping(3);	 //设置优先级分组,4bit 抢占优先级,没有亚优先级
+	NVIC_SetPriority(PORTA_IRQn, 0); //配置优先级 摄像头
+	NVIC_SetPriority(DMA0_IRQn, 1);  //配置优先级 摄像头
+	NVIC_SetPriority(PIT0_IRQn, 2);  //配置优先级 基本硬件和基本控制
+	NVIC_SetPriority(PORTD_IRQn, 2); //配置优先级 摄像头	
+
 	LCD_init();
 	camera_init(imgbuff);
-	UI_INIT();		  
+	UI_INIT();
 	led_init(LED0);
-	Quad_Init();	  //编码器中断
+	Quad_Init(); //编码器中断
 	flash_init();
 	flash_Out();	  //读取数据	
 	ftm_pwm_init(FTM2, FTM_CH0, 300, 0);
@@ -89,9 +96,9 @@ void init_Sys()
 	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);   //设置 DMA0 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(PORTD_VECTORn, PORTD_IRQHandler); //ui所需中断的初始化
         
-	Co_Steer[1].P = 1;
-	Co_Steer[1].D = 0;
-	Co_Steer[2].P = Co_Steer[3].P = 2;
+	Co_Steer[0].P = 2;
+	Co_Steer[0].D = 5;
+	Co_Steer[2].P = Co_Steer[3].P = 7;
 	Co_Steer[2].D = Co_Steer[3].D = 5;
 
 	middleline[59] = middleline[58] = middleline[57] = 40;
@@ -108,11 +115,10 @@ void init_Sys()
  ***/
 void DcdMode()
 {
-	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
+	// img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 	//temp_s[6] = Find_slope();
 	
 	yl_Search_line();//Search_line(); //找线
-    LCD_numf(tem_site_str[5], (double)1, GREEN, BLUE);
 	// img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
 	if (is_show_line != 4)
@@ -208,7 +214,7 @@ void Controll()
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
-		csteer = &Co_Steer[3];
+		csteer = &Co_Steer[0];
 	}
 	else if(lcd_mode == STOP_MODE)
 	{

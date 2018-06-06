@@ -22,7 +22,7 @@ Screen_Data screen_data[] = {
 
 	{"S_KP", &(steer_pid.P), 0.01, 5},
 	{"S_KD", &(steer_pid.D), 0.1, 6},
-	{"Co_KP", &(Co_Steer[0].P), 0.1, 4},
+	{"Co_KP", &(Co_Steer[0].P), 0.1, 0},
 	{"Co_KD", &(Co_Steer[0].D), 0.1, 0},
 	{"end", &(temp_s[9]), 1202, 0}
 	
@@ -34,9 +34,10 @@ void main(void)
 	//steer_pid.P = 0;
 	while (1)
 	{
+		img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 		/*----------使能赛道采集,再去处理图像---------*/
 		ov7725_eagle_img_flag = IMG_START; //开始采集图像
-		PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
+		PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然会导致一开中断就马上触发中断)
 		enable_irq(PORTA_IRQn);			   //允许PTA的中断
 
 		/*-----------根据模式进行处理----------*/
