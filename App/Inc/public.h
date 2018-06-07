@@ -15,6 +15,8 @@ extern char offset_y[10000];
 extern int count_x;
 extern float out_xy;
 
+extern float tem_st;
+
 extern void init_Sys();
 extern void do_Sys();
 void DcdMode();

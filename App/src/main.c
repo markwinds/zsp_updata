@@ -2,6 +2,7 @@
 #include "common.h"
 #include "include.h"
 
+float tem_st = 430;
 Screen_Data screen_data[] = {
 	
 	{"M_KP", &(motor_pid.P), 0.1, 1},
@@ -9,7 +10,7 @@ Screen_Data screen_data[] = {
 	{"M_KD", &(motor_pid.D), 0.01, 3},
 	//{"temp", &(temp_1), 1, 0},
 	{"enM", &(motor_go), 99, 0}, //使能电机
-	{"speed", &(motor_speed), 10, 4},
+	{"speed", &(motor_speed), 10, 0},
 
 	{"length", &(total_distance), 500, 0},
 
@@ -19,10 +20,11 @@ Screen_Data screen_data[] = {
 	{"de_pic", &(delete_picture), 1, 0},
 	{"se_pic", &(read_all_picture), 1, 0},
 
-	{"S_KP", &(steer_pid.P), 2, 5},
-	{"S_KD", &(steer_pid.D), 1, 6},
+	{"S_KP", &(steer_pid.P), 0.01, 5},
+	{"S_KD", &(steer_pid.D), 0.1, 6},
+	{"Co_KP", &(Co_Steer[0].P), 0.1, 0},
+	{"Co_KD", &(Co_Steer[0].D), 0.1, 0},
 	{"outxy",&(out_xy),2,0},
-
 	{"end", &(temp_s[9]), 1202, 0}
 	
 };
@@ -33,9 +35,10 @@ void main(void)
 	//steer_pid.P = 0;
 	while (1)
 	{
+		img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 		/*----------使能赛道采集,再去处理图像---------*/
 		ov7725_eagle_img_flag = IMG_START; //开始采集图像
-		PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然回导致一开中断就马上触发中断)
+		PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然会导致一开中断就马上触发中断)
 		enable_irq(PORTA_IRQn);			   //允许PTA的中断
 
 		/*-----------根据模式进行处理----------*/
@@ -43,6 +46,7 @@ void main(void)
 		{
 			DcdMode(); //显示模式下，显示赛道
 		}
+		
 		else if (lcd_mode == PICTURE_MODE)
 		{
 			read_Picture_Array(); //falsh!

@@ -115,11 +115,18 @@ void do_Sys()
  ***/
 void init_Sys()
 {
+
+	NVIC_SetPriorityGrouping(3);	 //设置优先级分组,4bit 抢占优先级,没有亚优先级
+	NVIC_SetPriority(PORTA_IRQn, 0); //配置优先级 摄像头
+	NVIC_SetPriority(DMA0_IRQn, 1);  //配置优先级 摄像头
+	NVIC_SetPriority(PIT0_IRQn, 2);  //配置优先级 基本硬件和基本控制
+	NVIC_SetPriority(PORTD_IRQn, 2); //配置优先级 摄像头	
+
 	LCD_init();
 	camera_init(imgbuff);
-	UI_INIT();		  
+	UI_INIT();
 	led_init(LED0);
-	Quad_Init();	  //编码器中断
+	Quad_Init(); //编码器中断
 	flash_init();
 	flash_Out();	  //读取数据	
 	ftm_pwm_init(FTM2, FTM_CH0, 300, 0);
@@ -129,7 +136,14 @@ void init_Sys()
 	set_vector_handler(PORTA_VECTORn, PORTA_IRQHandler); //设置 PORTA 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(DMA0_VECTORn, DMA0_IRQHandler);   //设置 DMA0 的中断服务函数为 PORTA_IRQHandler
 	set_vector_handler(PORTD_VECTORn, PORTD_IRQHandler); //ui所需中断的初始化
+        
+	Co_Steer[0].P = 2;
+	Co_Steer[0].D = 5;
+	Co_Steer[2].P = Co_Steer[3].P = 7;
+	Co_Steer[2].D = Co_Steer[3].D = 5;
 
+	middleline[59] = middleline[58] = middleline[57] = 40;
+	
 	camera_get_img(); //相机获取第一帧图像
 }
 
@@ -142,14 +156,18 @@ void init_Sys()
  ***/
 void DcdMode()
 {
-	img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
+	// img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 	//temp_s[6] = Find_slope();
-	Search_line(); //找线
-	Negation();
+	
+	yl_Search_line();//Search_line(); //找线
 	// img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
 	if (is_show_line != 4)
-		LCD_Img_Binary_G(site, size, img);
+	{
+		Negation();		
+		LCD_Img_Binary_G(site, size, img);		
+	}
+
 
 	/*------------在图像下面显示数据-----------*/
 	if (is_show_va)
@@ -158,8 +176,12 @@ void DcdMode()
 		LCD_numf(tem_site_str[4], (double)average_offset[0], GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
 		LCD_numf(tem_site_str[5], (double)ac_quad, GREEN, BLUE);
-		LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
+		//LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
 		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
+		// LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
+		// LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);		
+		LCD_numf(tem_site_data[4], (float)Ma_Offset, GREEN, BLUE);
+
 	}
 
 	/*----------彩色显示边线,还有显示网格-----------*/
@@ -170,22 +192,22 @@ void DcdMode()
 	if (is_show_line == 2 || is_show_line == 3) //边线
 	{
 		int i;
-		for (i = 0; i < 60; i++)
+		for (i = vaild_mark; i < 60; i++)
 		{
-			line_site.x = left_black[i];
+			line_site.x = left_virtual[i];
 			line_site.y = i;
-			if (left_black[i] == -3)
+			if (left_virtual[i] == -3)
 				break;
-			if (left_black[i] >= 0)
+			if (left_virtual[i] >= 0 && left_virtual[i] <= CAMERA_W - 1)
 				LCD_point(line_site, RED);
 		}
-		for (i = 0; i < 60; i++)
+		for (i = vaild_mark; i < 60; i++)
 		{
-			line_site.x = right_black[i];
+			line_site.x = right_virtual[i];
 			line_site.y = i;
-			if (right_black[i] == -3)
+			if (right_virtual[i] == -3)
 				break;
-			if (right_black[i] >= 0)
+			if (right_virtual[i] >= 0 && right_virtual[i] <= CAMERA_W - 1)
 				LCD_point(line_site, BLUE);
 		}
 	}
@@ -213,8 +235,7 @@ void Controll()
 			Con_Motor(0);
 		}
 		csteer = NULL;
-		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
-		//ftm_pwm_duty(FTM0, FTM_CH6, 430 + temp_1);
+		ftm_pwm_duty(FTM0, FTM_CH6, 430); //舵机回中
 	}
 	else if (lcd_mode == PICTURE_MODE)
 	{
@@ -222,11 +243,11 @@ void Controll()
 		ClearPid();
 		Con_Motor(0);
 		csteer = NULL;
-		ftm_pwm_duty(FTM0, FTM_CH6, 380);
+		ftm_pwm_duty(FTM0, FTM_CH6, 430);
 	}
 	else if(lcd_mode == IMG_MODE)
 	{
-		if (total_distance < 1000)
+		if (total_distance < 1000 && abs(motor_speed) > 7)
 		{
 			cmotor = &motor_pid; //电机
 			//Con_Motor(100);
@@ -238,10 +259,12 @@ void Controll()
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
-		csteer = &steer_pid;
+		csteer = &Co_Steer[0];
 	}
 	else if(lcd_mode == STOP_MODE)
 	{
+		Ma_Mark = 1;
+		middleline[59] = middleline[58] = middleline[57] = 40;
 		if(stop_save_motor < 7) stop_save_motor = motor_speed;
 		motor_speed = 0;
 	}

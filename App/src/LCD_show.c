@@ -159,7 +159,7 @@ void Open_UI()
 			}
 		}
 		key_on = 0;
-		DELAY_MS(200); //消抖
+		DELAY_MS(400); //消抖
 		enable_irq(PORTD_IRQn);
 	}
 }

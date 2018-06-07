@@ -5,6 +5,8 @@
 #include "common.h"
 
 #define	DEGREE_MAX    110     //舵机最大偏角
+#define	R_DEGREE_MAX  100     //舵机最大偏角
+#define L_DEGREE_MAX -100
 #define M_QUITE_AREA  7     //中速偏差的静态区，将对数据使用静态处理
 #define M_BACK1       3.5      //脱离中线的速度为1挡时
 #define M_BACK1_SPEED 3      //回中速度为1挡
@@ -41,7 +43,7 @@ typedef enum Speed_mode
 	OTHER
 }Speed_mode;
 
-typedef struct PID
+typedef struct PID_t
 {
 	float P;
 	float I;
@@ -52,8 +54,10 @@ extern Speed_mode car_mode;
 extern float steer_engine_degree;        //舵机转动的角度
 extern float motor_speed;                //电机转速
 extern double cor_sp;
+
 extern PID *cmotor, *csteer;
 extern PID motor_pid,steer_pid;
+extern PID Co_Steer[10];
 
 int Steer_Pid(PID*);
 void PID_Realize(PID*,int32, int32);
