@@ -97,5 +97,6 @@ void UI_INIT();
 void Open_UI();
 extern void flash_In();
 extern void flash_Out();
+int check_Key(uint32 flag);
 
 #endif

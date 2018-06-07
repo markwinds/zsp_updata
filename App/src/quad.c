@@ -1,7 +1,7 @@
 #include "common.h"
 #include "include.h"
 
-
+//float temp_1=0;
 long quad_val = 0;
 long quad_last = 0;
 long ac_quad = 0;
@@ -33,7 +33,8 @@ void PIT0_IRQHandler(void)
     }
     if(csteer)
     {
-        ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)Steer_Pid( csteer ));
+        ftm_pwm_duty(FTM0, FTM_CH6, 430 + (int)Steer_Pid( csteer ));
+        //ftm_pwm_duty(FTM0, FTM_CH6, 430 + temp_1);
     }
     quad_last = quad_val;    
 }

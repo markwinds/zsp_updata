@@ -79,13 +79,21 @@ Lcd_State *p_current_state = &imgbuff_show;
 void PORTD_IRQHandler()
 {
 	uint32 flag;
+	int h=50;
+	int i=0;
 
 	while (!PORTD_ISFR)
 		;
 	flag = PORTD_ISFR;
 	PORTD_ISFR = ~0; //清中断标志位
 
-	DELAY_MS(20);
+	for(i=0;i<50;i++)
+	{
+		DELAY_MS(1);
+		h -= check_Key(flag);
+	}
+	
+	if(h!=0) return;
 
 	if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13)) //中键按下
 	{
@@ -518,4 +526,34 @@ void flash_Out()
 		}
 		i++;
 	}
+}
+
+
+int check_Key(uint32 flag)
+{
+	if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13)) //中键按下
+	{
+		return 1;
+	}
+	else if (gpio_get(KEY_PTxn[0]) == KEY_DOWN && flag & (1 << 10))
+	{
+		return 1;
+	}
+	else if (gpio_get(KEY_PTxn[1]) == KEY_DOWN && flag & (1 << 14))
+	{
+		return 1;
+	}
+	else if (gpio_get(KEY_PTxn[2]) == KEY_DOWN && flag & (1 << 11))
+	{
+		return 1;
+	}
+	else if (gpio_get(KEY_PTxn[3]) == KEY_DOWN && flag & (1 << 12))
+	{
+		return 1;
+	}
+	else if ((gpio_get(KEY_PTxn[4]) == KEY_DOWN && flag & (1 << 7)) && IMG_MODE == lcd_mode) //如果是flash按键按下,且是在图像模式下
+	{
+		return 1; //如果flash写入图像信息的键按下，标志位置1
+	}
+	return 0;
 }

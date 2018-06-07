@@ -2,7 +2,7 @@
 #include "include.h"
 
 
-
+//extern float temp_1;
 extern long quad_val;
 extern long quad_last;
 extern long ac_quad;

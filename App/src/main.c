@@ -7,7 +7,7 @@ Screen_Data screen_data[] = {
 	{"M_KP", &(motor_pid.P), 0.1, 1},
 	{"M_KI", &(motor_pid.I), 0.01, 2},
 	{"M_KD", &(motor_pid.D), 0.01, 3},
-	
+	//{"temp", &(temp_1), 1, 0},
 	{"enM", &(motor_go), 99, 0}, //使能电机
 	{"speed", &(motor_speed), 10, 4},
 

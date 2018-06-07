@@ -155,9 +155,9 @@ void DcdMode()
 	if (is_show_va)
 	{
 		// if(state_line[0] == 0)Judge_circul();
-		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
+		LCD_numf(tem_site_str[4], (double)average_offset[0], GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
-		LCD_numf(tem_site_str[5], (double)Increase, GREEN, BLUE);
+		LCD_numf(tem_site_str[5], (double)ac_quad, GREEN, BLUE);
 		LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
 		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
 	}
@@ -214,6 +214,7 @@ void Controll()
 		}
 		csteer = NULL;
 		ftm_pwm_duty(FTM0, FTM_CH6, 380); //舵机回中
+		//ftm_pwm_duty(FTM0, FTM_CH6, 430 + temp_1);
 	}
 	else if (lcd_mode == PICTURE_MODE)
 	{
@@ -228,6 +229,7 @@ void Controll()
 		if (total_distance < 1000)
 		{
 			cmotor = &motor_pid; //电机
+			//Con_Motor(100);
 		}
 		else
 		{
