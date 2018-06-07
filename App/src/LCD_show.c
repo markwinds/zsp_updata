@@ -159,7 +159,7 @@ void Open_UI()
 			}
 		}
 		key_on = 0;
-		DELAY_MS(400); //消抖
+		//DELAY_MS(400); //消抖
 		enable_irq(PORTD_IRQn);
 	}
 }
@@ -357,6 +357,10 @@ Lcd_State *data_Up(Lcd_State *pThis)
 		if(screen_data[6 * (page - 1) + current_row - 1].icrement == 99)
 		{
 			*(screen_data[6 * (page - 1) + current_row - 1].data_value) *= -1;
+		}
+		else if(0 == strcmp(screen_data[6 * (page - 1) + current_row - 1].data_name, "speed") && *(screen_data[6 * (page - 1) + current_row - 1].data_value)==0)
+		{
+			*(screen_data[6 * (page - 1) + current_row - 1].data_value)=(float)100.0;
 		}
 		else
 		{

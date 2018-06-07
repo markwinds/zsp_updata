@@ -970,7 +970,7 @@ void yl_Search_line()
         Be_Offset = Lo_End;  
         Be_Offset = Lo_End;               
     }
-    Get_error_cal(&Ma_Offset);
+    //Get_error_cal(&Ma_Offset);
 }
 
 /*!

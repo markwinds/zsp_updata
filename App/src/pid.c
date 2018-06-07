@@ -93,7 +93,7 @@ int Steer_Pid(PID* tem_P)
 	s=(double)average_offset[1]/(double)30.0;
 	if(s<0) 
 	{
-		j=-1.6;
+		j=-1;
 		s=-s;
 	}	
 	s=s*100+0.5;
@@ -102,7 +102,7 @@ int Steer_Pid(PID* tem_P)
 
 	if(abs(s)<10) average_offset[0]=0;
 		//average_offset[0]=100 *(double)arcsin[(int)s-1]*j;	
-	else average_offset[0]=tem_P->P *(double)arcsin[(int)s-1]*j+tem_P->D *(average_offset[1] - average_offset[2])*(average_offset[1]<average_offset[2]);
+	else average_offset[0]=tem_P->P *(double)arcsin[(int)s-1]*j+tem_P->D *(average_offset[1] - average_offset[2]);
 	if (average_offset[0] > DEGREE_MAX) average_offset[0] = DEGREE_MAX;
 	if (average_offset[0] < -DEGREE_MAX) average_offset[0] = -DEGREE_MAX;
 	return average_offset[0];

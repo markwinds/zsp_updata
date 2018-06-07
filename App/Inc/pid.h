@@ -5,8 +5,8 @@
 #include "common.h"
 
 #define	DEGREE_MAX    110     //舵机最大偏角
-#define	R_DEGREE_MAX  100     //舵机最大偏角
-#define L_DEGREE_MAX -100
+#define	R_DEGREE_MAX  110     //舵机最大偏角
+#define L_DEGREE_MAX -110
 #define M_QUITE_AREA  7     //中速偏差的静态区，将对数据使用静态处理
 #define M_BACK1       3.5      //脱离中线的速度为1挡时
 #define M_BACK1_SPEED 3      //回中速度为1挡
@@ -15,6 +15,7 @@
 #define M_BACK_SPEED  1
 #define M_BUFF_AREA   12
 #define M_BUFF_SPEED  2
+#define OLD
 
 //#define STEER_KP     3.0 
 //#define STEER_KI     3.0

@@ -159,7 +159,8 @@ void DcdMode()
 	// img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
 	//temp_s[6] = Find_slope();
 	
-	yl_Search_line();//Search_line(); //找线
+	//yl_Search_line();
+	Search_line(); //找线
 	// img_compress(img, imgbuff, CAMERA_SIZE);		//图像压缩
 	// LCD_Img_Binary_Z(site, size, imgbuff, imgsize); //lcd显示图像
 	if (is_show_line != 4)
@@ -259,10 +260,15 @@ void Controll()
 			Con_Motor(0);
 		}
 		//ftm_pwm_duty(FTM0, FTM_CH6, 380 + (int)steer_engine_degree); //舵机
-		csteer = &Co_Steer[0];
+		csteer = &steer_pid;
 	}
 	else if(lcd_mode == STOP_MODE)
 	{
+		cmotor = NULL;
+		csteer = NULL;
+		ftm_pwm_duty(FTM2, FTM_CH0, 0);
+		ftm_pwm_duty(FTM2, FTM_CH1, 0);
+		ftm_pwm_duty(FTM0, FTM_CH6, 430);
 		Ma_Mark = 1;
 		middleline[59] = middleline[58] = middleline[57] = 40;
 		if(stop_save_motor < 7) stop_save_motor = motor_speed;

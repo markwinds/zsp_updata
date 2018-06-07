@@ -12,7 +12,7 @@ Screen_Data screen_data[] = {
 	{"enM", &(motor_go), 99, 0}, //使能电机
 	{"speed", &(motor_speed), 10, 0},
 
-	{"length", &(total_distance), 500, 0},
+	{"length", &(total_distance), 1000, 0},
 
 //	{"Aspeed", &(velocity), 0, 0},	
 
