@@ -133,9 +133,9 @@ void DcdMode()
 	if (!is_show_va)
 	{
 		// if(state_line[0] == 0)Judge_circul();
-		LCD_numf(tem_site_str[4], (double)Ma_Mark, GREEN, BLUE);
+		LCD_numf(tem_site_str[4], (double)(Ma_Mark + 0.2), GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
-		// LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
+		LCD_numf(tem_site_str[5], (double)vaild_mark, GREEN, BLUE);
 		// LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);		
 		LCD_numf(tem_site_data[4], (float)Ma_Offset, GREEN, BLUE);
 

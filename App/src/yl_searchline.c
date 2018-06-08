@@ -659,7 +659,7 @@ void yl_Search_line()
             }
         }
 
-        if(jw_left >= 0 && jw_right < CAMERA_W && jw_right - jw_left > 50)
+        if(jw_left >= 0 && jw_right < CAMERA_W && jw_right - jw_left > 30)
         {   //正确扫描到赛道,记录下赛道长度,记录左右点,中线为平均值
             if(As_Mark == 1){
                 Co_Mark ++;}
@@ -760,7 +760,7 @@ void yl_Search_line()
         //搜左边
         for(jw_left = middleline[jh + 2]; jw_left >= 0; jw_left--)
         {
-            if(!img[jh][jw_left] && img[jh][jw_left + 1])
+            if(!img[jh][jw_left])
             {
                 break;
             }
@@ -769,7 +769,7 @@ void yl_Search_line()
         //搜右边
         for(jw_right = middleline[jh + 2]; jw_right < CAMERA_W; jw_right++)
         {
-            if(!img[jh][jw_right] && img[jh][jw_right - 1])
+            if(!img[jh][jw_right])
             {
                 break;
             }
@@ -831,7 +831,10 @@ void yl_Search_line()
                 min_road = tem_m;
             }      
 
-
+            if(tem_m < min_road)
+            {
+                min_road = tem_m;
+            }                  
         }
 
         //_______________________________处理标记,算中线__________________________________________
@@ -871,7 +874,7 @@ void yl_Search_line()
             left_virtual[jh] = left_black[jh];
         }
         else{
-            left_virtual[jh] = left_virtual[jh + 2] > left_black[jh]? left_virtual[jh + 2] + 1: left_black[jh];
+            left_virtual[jh] = left_virtual[jh + 2] >= left_black[jh]? left_virtual[jh + 2] + 1: left_black[jh];
         }
 
         if(!Lor_Mark)
@@ -879,7 +882,7 @@ void yl_Search_line()
             right_virtual[jh] = right_black[jh];            
         }
         else{
-            right_virtual[jh] = right_virtual[jh + 2] > right_black[jh]? right_black[jh] : right_virtual[jh + 2] - 1;
+            right_virtual[jh] = right_virtual[jh + 2] >= right_black[jh]? right_black[jh] : right_virtual[jh + 2] - 1;
         }
 
         middleline[jh] = (right_virtual[jh] + left_virtual[jh]) >> 1;
@@ -966,12 +969,12 @@ void yl_Search_line()
     }
     //_______________________________补线__________________________________________
     //补一下右丟线结束标志
-    if(Lor_End <= vaild_mark && Lor_Start)
+    if(Lor_End <= vaild_mark - 2 && Lor_Start)
     {   
         Lor_End = vaild_mark + 4;
     }  
     //补一下左丟线结束标志
-    if(Lol_End <= vaild_mark && Lol_Start)
+    if(Lol_End <= vaild_mark - 2 && Lol_Start)
     {   
         Lol_End = vaild_mark + 4;
     }    
@@ -1001,26 +1004,24 @@ void yl_Search_line()
     }
 
 
-    if(vaild_mark < 20)
+    if(vaild_mark < 20 && (Lor_Start > 20 && Lol_Start > 20) )
     {
         Ma_Mark = 1;
     }
 
     tem_m = Lor_End - vaild_mark;
-    if(vaild_mark > 20 && Lor_End > 5 && tem_m < 5 && tem_m > 0 && Lor_Start - Lor_End > 8)
+    if(vaild_mark > 15  && tem_m < 5  && Lor_Start - Lor_End > 8)
     {
-        if(right_black[Lor_Start - 2] == CAMERA_W - 1 && right_black[Lor_Start - 4] == CAMERA_W - 1 && 
-            right_black[Lor_End + 2] == CAMERA_W - 1 && right_black[Lor_End + 4] == CAMERA_W - 1)
+        if(right_black[vaild_mark + 4] == CAMERA_W - 1 &&  right_black[Lor_End + 2] == CAMERA_W - 1 )
         {
             Ma_Mark = 3;
         }
     }
 
     tem_m = Lol_End - vaild_mark;
-    if(vaild_mark > 20 && Lol_End > 5 && tem_m < 5 && tem_m > 0 && Lol_Start - Lol_End > 8)
+    if(vaild_mark > 15  && tem_m < 5  && Lol_Start - Lol_End > 8)
     {
-        if(left_black[Lol_Start - 2] == 0 && left_black[Lol_Start - 4] == 0 && 
-            left_black[Lol_End + 2] == 0 && left_black[Lol_End + 4] == 0)
+        if(left_black[vaild_mark + 4] == 0 && left_black[Lol_End + 2] == 0)
         {
             Ma_Mark = 2;
         }
