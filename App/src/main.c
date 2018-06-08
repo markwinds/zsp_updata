@@ -34,7 +34,9 @@ void main(void)
 	//steer_pid.P = 0;
 	while (1)
 	{
+		enable_irq(PORTD_IRQn);
 		img_extract(img, imgbuff, CAMERA_SIZE); //解压图像
+		disable_irq(PORTD_IRQn); //消抖			
 		/*----------使能赛道采集,再去处理图像---------*/
 		ov7725_eagle_img_flag = IMG_START; //开始采集图像
 		PORTA_ISFR = ~0;				   //写1清中断标志位(必须的，不然会导致一开中断就马上触发中断)

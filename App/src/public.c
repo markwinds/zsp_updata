@@ -64,7 +64,7 @@ void do_Sys()
 		delete_Picture(); //flash!
 		delete_picture = 0;
 	}
-	enable_irq(PORTD_IRQn); //使能按键中断
+	//enable_irq(PORTD_IRQn); //使能按键中断
 }
 
 
@@ -104,6 +104,7 @@ void init_Sys()
 	middleline[59] = middleline[58] = middleline[57] = 40;
 	
 	camera_get_img(); //相机获取第一帧图像
+	enable_irq(PORTD_IRQn);
 }
 
 
@@ -129,10 +130,10 @@ void DcdMode()
 
 
 	/*------------在图像下面显示数据-----------*/
-	if (is_show_va)
+	if (!is_show_va)
 	{
 		// if(state_line[0] == 0)Judge_circul();
-		LCD_numf(tem_site_str[4], (double)ac_quad, GREEN, BLUE);
+		LCD_numf(tem_site_str[4], (double)Ma_Mark, GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
 		// LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
 		// LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);		

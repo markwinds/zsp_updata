@@ -585,10 +585,15 @@ void yl_Search_line()
         As_Mark = 1;
         Ne_Mark = 1;
         Co_Mark = 0;
-        int8 Lo_Mark = 0;
+        int16 Lor_Mark = 0;
 
-        int8 Lo_Start = 0;
-        int8 Lo_End = 0;
+        int8 Lor_Start = 0;
+        int8 Lor_End = 0;
+
+        int16 Lol_Mark = 0;
+
+        int8 Lol_Start = 0;
+        int8 Lol_End = 0;
 
         int8 begin_s = 0;
         int8 begin_d = 0;
@@ -665,7 +670,6 @@ void yl_Search_line()
         }
         else if(jw_left == -1 && jw_right == CAMERA_W)
         {   //两边丟线,十字复判,丟线行用上一场数据
-            middleline[jh] = 40;
         }
         else if(jw_right == CAMERA_W || jw_left == -1)
         {   //单边丟线,直接赛宽补线
@@ -691,6 +695,11 @@ void yl_Search_line()
                 if(middleline[jh] > CAMERA_W - 6) middleline[jh] = CAMERA_W - 6;
             }
         }
+        else if(jw_left >= 0 && jw_right < CAMERA_W && jw_right - jw_left < 20)
+        {   //起跑线
+            lcd_mode = STOP_MODE;
+            return ;        
+        }
         else
         {   //判不出来,重新扫
             Ma_Mark = 0;
@@ -704,6 +713,15 @@ void yl_Search_line()
         {
             min_road = tem_m;
         }
+    }
+    //判圆环
+    if(As_Mark == 2 && Co_Mark > 1 && Ma_Mark == 1)
+    {
+        CheckCircul(-1);
+    }
+    if(As_Mark == 3 && Co_Mark > 1 && Ma_Mark == 1)
+    {
+        CheckCircul(1);
     }
 
     //********************************************************************************
@@ -737,7 +755,7 @@ void yl_Search_line()
             break;
         }
 
-        //________________________________________________________________________
+        //________________________________搜线________________________________________
 
         //搜左边
         for(jw_left = middleline[jh + 2]; jw_left >= 0; jw_left--)
@@ -757,12 +775,13 @@ void yl_Search_line()
             }
         }
 
-        //_________________________________________________________________________
+        //_______________________________判断路况,打标记__________________________________________
 
         // 处理一下
         if((jw_right - jw_left > 75))
         {   //两边丟线
-            Lo_Mark ++;
+            Lol_Mark ++;
+            Lor_Mark ++;
             Ne_Mark = 4;
             if(Ma_Mark == 6 || Ma_Mark == 9)
             {   //圆环出现,全部直接用上一场的数据
@@ -779,7 +798,8 @@ void yl_Search_line()
                 {
                     jw_right = CAMERA_W - 1;
                 }
-                Lo_Mark ++;
+                Lol_Mark ++;
+                Lor_Mark ++;                
                 Ne_Mark = 2;
             }
             else if(jw_right == CAMERA_W)
@@ -788,41 +808,57 @@ void yl_Search_line()
                 {
                     jw_left = -1;
                 }
-                Lo_Mark ++;
+                Lor_Mark ++;
+                Lol_Mark ++;
                 Ne_Mark = 3;
             }
             //路宽判丢
             else if(tem_m > min_road)
             {   
-                Lo_Mark ++;
+                if(jw_left < left_black[jh + 2])
+                {
+                    Lol_Mark ++; 
+                }
+                if(jw_right > right_black[jh + 2])
+                {
+                    Lor_Mark ++;
+                }
             }
             else if(tem_m < min_road)
             {
-                Lo_Mark = 0;
+                Lol_Mark = 0;
+                Lor_Mark = 0;
                 min_road = tem_m;
             }      
 
 
         }
 
-        //判丢标记
-        if(Lo_Mark && !Lo_Start)
+        //_______________________________处理标记,算中线__________________________________________
+        //左判丢标记
+        if(Lol_Mark && !Lol_Start)
         {
-            Lo_Start = jh + 1;
+            Lol_Start = jh + 1;
         }
-        else if(!Lo_Mark && Lo_Start && !Lo_End)
+        else if(!Lol_Mark && Lol_Start && !Lol_End)
         {
-            Lo_End = jh;
+            Lol_End = jh;
         }
-        else if(Lo_Mark && Lo_End)
+
+        //右判丢标记
+        if(Lor_Mark && !Lor_Start)
+        {
+            Lor_Start = jh + 1;
+        }
+        else if(!Lor_Mark && Lor_Start && !Lor_End)
+        {
+            Lor_End = jh;
+        }
+
+        if((Lor_Mark || Lol_Mark) && Lor_End && Lol_End)
         {
             vaild_mark = jh;
             break;
-        }
-        else if(Lo_Mark == 2 && min_road > 30)
-        {
-            min_road --;
-            Lo_Mark = 1;
         }
 
         //算中线
@@ -830,22 +866,25 @@ void yl_Search_line()
         right_black[jh] = (jw_right > (CAMERA_W - 1))? (CAMERA_W - 1):jw_right; 
              
 
-
-        if(!Lo_Mark)
+        if(!Lol_Mark)
         {
             left_virtual[jh] = left_black[jh];
-            right_virtual[jh] = right_black[jh];
-            middleline[jh] = (left_black[jh] + right_black[jh]) >> 1;
-            if(middleline[jh] < 0) middleline[jh] = 0;
-            else if(middleline[jh] > CAMERA_W - 1) middleline[jh] = CAMERA_W - 1;               
         }
         else{
-            left_virtual[jh] = left_virtual[jh + 2] > left_black[jh]? left_virtual[jh + 2] : left_black[jh];
-            right_virtual[jh] = right_virtual[jh + 2] > right_black[jh]? right_black[jh] : right_virtual[jh + 2];
-            middleline[jh] = (left_virtual[jh] + right_virtual[jh]) >> 1;
-            if(middleline[jh] < 0) middleline[jh] = 0;
-            else if(middleline[jh] > CAMERA_W - 1) middleline[jh] = CAMERA_W - 1;               
+            left_virtual[jh] = left_virtual[jh + 2] > left_black[jh]? left_virtual[jh + 2] + 1: left_black[jh];
         }
+
+        if(!Lor_Mark)
+        {
+            right_virtual[jh] = right_black[jh];            
+        }
+        else{
+            right_virtual[jh] = right_virtual[jh + 2] > right_black[jh]? right_black[jh] : right_virtual[jh + 2] - 1;
+        }
+
+        middleline[jh] = (right_virtual[jh] + left_virtual[jh]) >> 1;
+        if(middleline[jh] < 0) middleline[jh] = 0;
+        else if(middleline[jh] > CAMERA_W - 1) middleline[jh] = CAMERA_W - 1;     
 
         if(right_virtual[jh] - left_virtual[jh] <= 5)
         {
@@ -925,50 +964,75 @@ void yl_Search_line()
         */
               
     }
-
-    //补一下丟线结束标志
-    if(Lo_End <= vaild_mark && Lo_Start)
+    //_______________________________补线__________________________________________
+    //补一下右丟线结束标志
+    if(Lor_End <= vaild_mark && Lor_Start)
     {   
-        Lo_End = vaild_mark + 2;
+        Lor_End = vaild_mark + 4;
+    }  
+    //补一下左丟线结束标志
+    if(Lol_End <= vaild_mark && Lol_Start)
+    {   
+        Lol_End = vaild_mark + 4;
     }    
-    //补线
-    if(Lo_Start > Lo_End)
+    Lol_End += 2;
+    Lor_End += 2;
+    //右补线
+    if(Lor_Start > Lor_End)
     {
-        Site_t begin = {left_virtual[Lo_Start], Lo_Start},end = {left_virtual[Lo_End], Lo_End};
-
+        Site_t begin = {left_virtual[Lor_Start], Lor_Start},end = {left_virtual[Lor_End], Lor_End};
         FullLine(end, begin, left_virtual);
-        begin.x = right_virtual[Lo_Start];
-        end.x = right_virtual[Lo_End];
-        FullLine(end, begin, right_virtual);
-        for(jh = Lo_Start; jh >= Lo_End; jh--)
+    }
+    //左补线
+    if(Lol_Start > Lol_End)
+    {
+        Site_t begin = {left_virtual[Lol_Start], Lol_Start},end = {left_virtual[Lol_End], Lol_End};
+        FullLine(end, begin, left_virtual);
+    }
+    //补回中线
+    if(Lol_Start || Lor_Start)
+    {   
+        for(jh = Lol_Start > Lor_Start? Lol_Start : Lor_Start; jh >= vaild_mark; jh--)
         {
             middleline[jh] = (left_virtual[jh] + right_virtual[jh]) >> 1;
             if(middleline[jh] < 0) middleline[jh] = 0;
             else if(middleline[jh] > CAMERA_W - 1) middleline[jh] = CAMERA_W - 1;                
-        }
+        }        
     }
-    tem_m = Lo_End - vaild_mark;
+
+
     if(vaild_mark < 20)
     {
         Ma_Mark = 1;
     }
-    else if(Lo_End > 5 && tem_m < 5 && Lo_Start - Lo_End > 8)
+
+    tem_m = Lor_End - vaild_mark;
+    if(vaild_mark > 20 && Lor_End > 5 && tem_m < 5 && tem_m > 0 && Lor_Start - Lor_End > 8)
     {
-        if(left_black[Lo_Start - 2] == 0 && left_black[Lo_Start - 4] == 0 && 
-            left_black[Lo_End + 2] == 0 && left_black[Lo_End + 4] == 0)
-        {
-            Ma_Mark = 2;
-        }
-        else if(right_black[Lo_Start - 2] == CAMERA_W - 1 && right_black[Lo_Start - 4] == CAMERA_W - 1 && 
-            right_black[Lo_End + 2] == CAMERA_W - 1 && right_black[Lo_End + 4] == CAMERA_W - 1)
+        if(right_black[Lor_Start - 2] == CAMERA_W - 1 && right_black[Lor_Start - 4] == CAMERA_W - 1 && 
+            right_black[Lor_End + 2] == CAMERA_W - 1 && right_black[Lor_End + 4] == CAMERA_W - 1)
         {
             Ma_Mark = 3;
         }
     }
-    if(Ma_Mark == 2 || Ma_Mark == 3)
+
+    tem_m = Lol_End - vaild_mark;
+    if(vaild_mark > 20 && Lol_End > 5 && tem_m < 5 && tem_m > 0 && Lol_Start - Lol_End > 8)
     {
-        Be_Offset = Lo_End;  
-        Be_Offset = Lo_End;               
+        if(left_black[Lol_Start - 2] == 0 && left_black[Lol_Start - 4] == 0 && 
+            left_black[Lol_End + 2] == 0 && left_black[Lol_End + 4] == 0)
+        {
+            Ma_Mark = 2;
+        }
+    }
+    //_______________________________算偏差__________________________________________
+    if(Ma_Mark == 2)
+    {
+        Be_Offset = Lol_End;           
+    }
+    else if(Ma_Mark == 3)
+    {
+        Be_Offset = Lor_End;         
     }
     Get_error_cal(&Ma_Offset);
 }
@@ -1126,6 +1190,29 @@ int8 BlockOffset(int8 jh_ma,int8 direction)
     }
     if(black)return black - white;
     else return 30;
+}
+
+void CheckCircul(int8 direction)
+{
+    int8 tem_mark = 0;
+    if(direction == - 1)
+    {
+        for(int8 jh = CAMERA_H - 1; jh > 10; jh --)
+        {
+            if(img[jh][5])
+            {
+                
+            }
+            if(!img[jh][5])
+            {
+
+            }
+        }
+    }
+    else if(direction == 1)
+    {
+
+    }
 }
 // void Search_line_left()
 // {

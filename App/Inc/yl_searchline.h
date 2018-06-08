@@ -43,6 +43,7 @@ void FullLine(Site_t, Site_t, int8 line[]);
 uint8 IsStraight(int8 line[]);
 uint8 FullBend(int8, int8, int8);
 int8 BlockOffset(int8,int8);
+void CheckCircul(int8);
 
 #endif
 
