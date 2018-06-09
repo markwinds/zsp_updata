@@ -110,7 +110,7 @@ int Steer_Pid(PID* tem_P)
 #else
 int Steer_Pid(PID* tem_P)
 {
-	float tp = (abs(Ma_Offset) + tem_P->P) / 2;
+	float tp = (abs(Ma_Offset)/ 2 + tem_P->P) ;
 	tem_pid = tp * Ma_Offset + tem_P->D * (Ma_Offset - La_Offset);
 	if (tem_pid > R_DEGREE_MAX) tem_pid = R_DEGREE_MAX;
 	if (tem_pid < L_DEGREE_MAX) tem_pid = L_DEGREE_MAX;

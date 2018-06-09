@@ -87,13 +87,7 @@ void PORTD_IRQHandler()
 	flag = PORTD_ISFR;
 	PORTD_ISFR = ~0; //清中断标志位
 
-	for(i=0;i<50;i++)
-	{
-		DELAY_MS(1);
-		h -= check_Key(flag);
-	}
-	
-	if(h!=0) return;
+	DELAY_MS(20);
 
 	if (gpio_get(KEY_PTxn[5]) == KEY_DOWN && flag & (1 << 13)) //中键按下
 	{
@@ -119,8 +113,7 @@ void PORTD_IRQHandler()
 	{
 		save_picture = 1; //如果flash写入图像信息的键按下，标志位置1
 	}
-	key_on = 1;				 //记录有按键按下
-	disable_irq(PORTD_IRQn); //消抖
+	key_on = 1;
 }
 
 /*结构体的元素个数存放在colour[MAX_OPTION - 1]中 
@@ -137,7 +130,7 @@ void Open_UI()
 			break;
 	}
 	colour[MAX_OPTION - 1] = 300 * n; //记录要处理的数据个数
-	if (1 == key_on)				  //有按键按下才刷新
+	if (key_on != 0)				  //有按键按下才刷新
 	{
 		m = 6 * (page - 1);
 		LCD_clear(WHITE); //清屏防止上次留下残影
@@ -160,7 +153,7 @@ void Open_UI()
 		}
 		key_on = 0;
 		//DELAY_MS(400); //消抖
-		enable_irq(PORTD_IRQn);
+		//enable_irq(PORTD_IRQn);
 	}
 }
 
