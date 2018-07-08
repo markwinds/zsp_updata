@@ -12,6 +12,9 @@
 #include "common.h"
 #include "include.h"
 
+float S=0.05;
+int first_ten=0;
+float ave_first_ten=0;
 float average_offset[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //偏差度，为平均偏差度
 uint8 imgbuff[CAMERA_SIZE];									  //定义存储接收图像的数组
 uint8 img[CAMERA_H][CAMERA_W];
@@ -199,7 +202,7 @@ void Search_line()
 		}
 	} //while
 
-
+	
 
 	/*---------------------------------------------------------根据图像判断路况------------------------------------------------------*/
 	/*
@@ -261,6 +264,15 @@ void Search_line()
 		offset *= (0.05*(i-10)+1.2);
 	}
 	
+	first_ten=0;
+	ave_first_ten=0;
+	for(i=59;i>49;i--)
+	{
+		first_ten+=(40-middleline[i]);
+		ave_first_ten+=(right_black[i]-left_black[i]);
+	}
+	//ave_first_ten = first_ten/10;
+
 	//为了补线重新加了函数
 	//Get_error_cal(&offset, &count);
 

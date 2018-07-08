@@ -175,14 +175,16 @@ void DcdMode()
 	if (!is_show_va)
 	{
 		// if(state_line[0] == 0)Judge_circul();
-		LCD_numf(tem_site_str[4], (double)average_offset[0], GREEN, BLUE);
+		//LCD_numf(tem_site_str[4], (double)average_offset[0], GREEN, BLUE);
 		// if(state_line[0] == 3) Goin_circul();
-		LCD_numf(tem_site_str[5], (double)ac_quad, GREEN, BLUE);
+		LCD_numf(tem_site_str[5],first_ten, GREEN, BLUE);
 		//LCD_numf(tem_site_data[4], (float)average_offset[1], GREEN, BLUE);
-		LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);
+		LCD_numf(tem_site_data[5], ave_first_ten, GREEN, BLUE);
 		// LCD_numf(tem_site_str[5], (double)Ma_Mark, GREEN, BLUE);
 		// LCD_numf(tem_site_data[5], (float)cor_sp, GREEN, BLUE);		
-		LCD_numf(tem_site_data[4], (float)Ma_Offset, GREEN, BLUE);
+		//LCD_numf(tem_site_data[4], (float)Ma_Offset, GREEN, BLUE);
+		Site_t site={40,50};
+		LCD_point(site, RED);
 
 	}
 

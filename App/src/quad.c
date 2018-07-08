@@ -1,10 +1,11 @@
 #include "common.h"
 #include "include.h"
 
-//float temp_1=0;
+//float temp_p=0;
 long quad_val = 0;
 long quad_last = 0;
 long ac_quad = 0;
+int motor_speed_ture=0;
 /*!
  *  @brief      main函数
  *  @since      v5.0
@@ -29,12 +30,12 @@ void PIT0_IRQHandler(void)
     ftm_quad_clean(FTM1);
     if(cmotor)
     {
-        PID_Realize(cmotor,(quad_val - quad_last)/3, (int)(motor_speed));       
+        PID_Realize(cmotor,(quad_val - quad_last)/3, (int)(motor_speed_ture));       
     }
     if(csteer)
     {
-        ftm_pwm_duty(FTM0, FTM_CH6, 430 + (int)Steer_Pid( csteer ));
-        //ftm_pwm_duty(FTM0, FTM_CH6, 430 + temp_1);
+        ftm_pwm_duty(FTM0, FTM_CH6, 425 + (int)Steer_Pid( csteer ));
+        //ftm_pwm_duty(FTM0, FTM_CH6, 430 + temp_p);
     }
     quad_last = quad_val;    
 }

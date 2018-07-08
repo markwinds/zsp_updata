@@ -4,7 +4,7 @@
 #include "include.h"
 #include "common.h"
 
-#define	DEGREE_MAX    110     //舵机最大偏角
+#define	DEGREE_MAX    80     //舵机最大偏角
 #define	R_DEGREE_MAX  110     //舵机最大偏角
 #define L_DEGREE_MAX -110
 #define M_QUITE_AREA  7     //中速偏差的静态区，将对数据使用静态处理
@@ -32,6 +32,7 @@ extern int32 iError; //当前误差
 extern int32 LastError; //当前误差
 extern int32 PrevError;
 extern float arcsin[99];
+extern int pwm[251];
 
 
 typedef enum Speed_mode
